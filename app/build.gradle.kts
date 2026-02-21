@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("ru.practicum.android.diploma.plugins.developproperties")
+    id("com.google.devtools.ksp") version "2.1.20-1.0.31"
 }
 
 android {
@@ -36,6 +37,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        viewBinding = true
     }
 }
 
@@ -55,4 +57,26 @@ dependencies {
     androidTestImplementation(libs.uiTests.junitExt)
     androidTestImplementation(libs.uiTests.espressoCore)
     // endregion
+
+    // Lifecycle (ViewModel, LiveData)
+    implementation(libs.androidX.lifecycle.viewmodel)
+    implementation(libs.androidX.lifecycle.livedata)
+
+    // Navigation Component
+    implementation(libs.androidX.navigation.fragment)
+    implementation(libs.androidX.navigation.ui)
+
+    // Koin DI
+    implementation(libs.koin.android)
+
+    // Room
+    implementation(libs.androidX.room.runtime)
+    implementation(libs.androidX.room.ktx)
+    ksp(libs.androidX.room.compiler)
+
+    // Retrofit & OkHttp
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp.logging)
+    implementation(libs.gson)
 }
