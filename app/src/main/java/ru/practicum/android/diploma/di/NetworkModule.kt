@@ -7,6 +7,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 val networkModule = module {
     single { createRetrofit() }
 
+    // Экземпляр ApiService. Раскоментировать как только Вовчик выполнит третий таск
+    single { //get<Retrofit>().create(ApiService::class.java)
+    }
 }
 
 private fun createRetrofit(): Retrofit {
