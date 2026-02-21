@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("ru.practicum.android.diploma.plugins.developproperties")
     id("com.google.devtools.ksp") version "2.1.20-1.0.31"
+    id("io.gitlab.arturbosch.detekt")
 }
 
 android {
@@ -28,16 +29,34 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 
     buildFeatures {
         buildConfig = true
         viewBinding = true
+    }
+
+    detekt {
+        buildUponDefaultConfig = true
+        allRules = false
+
+        reports {
+            html.enabled = true
+            xml.enabled = true
+            txt.enabled = true
+            xml.outputLocation.set(file("build/reports/detekt/detekt.xml"))
+        }
+    }
+
+    tasks.register("detektAll") {
+        dependsOn("detekt")
+        description = "Run detekt analysis for all modules"
+        group = "verification"
     }
 }
 

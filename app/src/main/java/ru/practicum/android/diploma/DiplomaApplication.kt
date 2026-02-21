@@ -6,6 +6,6 @@ class DiplomaApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // TODO: здесь нужна инициализация Koin
+        //здесь нужна инициализация Koin
     }
 }
