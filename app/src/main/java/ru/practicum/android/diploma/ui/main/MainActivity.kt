@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.main
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -19,11 +20,23 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        setupNavigation()
     }
 
     private fun setupNavigation() {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
+        navController = navHostFragment.navController
 
+        binding.bottomNavigationView.setupWithNavController(navController)
+
+    }
+
+    private fun hideBottomNavigation() {
+        binding.bottomNavigationView.visibility = View.GONE
+    }
+
+    private fun showBottomNavigation() {
+        binding.bottomNavigationView.visibility = View.VISIBLE
     }
 
 }
