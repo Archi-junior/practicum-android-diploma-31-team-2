@@ -18,7 +18,7 @@
     </fragment>
     <fragment
         android:id="@+id/branchChooseFragment"
-        android:name="ru.practicum.android.diploma.ui.branch_choose.BranchChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.branch.BranchChooseFragment"
         android:label="fragment_search"
         tools:layout="@layout/search_fragment" >
         <action
@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/workChooseFragment"
-        android:name="ru.practicum.android.diploma.ui.work_choose.WorkChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.work.WorkChooseFragment"
         android:label="WorkChooseFragment"
         tools:layout="@layout/work_choose_fragment">
         <action
@@ -52,7 +52,7 @@
         tools:layout="@layout/team_fragment"/>
     <fragment
         android:id="@+id/regionChooseFragment"
-        android:name="ru.practicum.android.diploma.ui.region_choose.RegionChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.region.RegionChooseFragment"
         android:label="RegionChooseFragment"
         tools:layout="@layout/region_choose_fragment">
         <action
@@ -81,7 +81,7 @@
         tools:layout="@layout/favorite_fragment"/>
     <fragment
         android:id="@+id/countryChooseFragment"
-        android:name="ru.practicum.android.diploma.ui.country_choose.CountryChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.country.CountryChooseFragment"
         android:label="CountryChooseFragment"
         tools:layout="@layout/country_choose_fragment">
         <action
