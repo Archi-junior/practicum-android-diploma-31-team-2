@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Practicum-Android-Diploma</string>
+    <string name="bottom_nav_main">Главное</string>
+    <string name="bottom_nav_favorite">Избранное</string>
+    <string name="bottom_nav_team">Команда</string>
 
     <string name="job_search">Поиск вакансий</string>
     <string name="enter_request">Введите запрос</string>
