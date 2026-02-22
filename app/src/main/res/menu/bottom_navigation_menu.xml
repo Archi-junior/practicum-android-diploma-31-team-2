@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/mainFragment"
+        android:id="@+id/searchFragment"
         android:icon="@drawable/ic_bottom_nav_main"
         android:title="@string/bottom_nav_main" />
 
