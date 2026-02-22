@@ -31,12 +31,4 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun hideBottomNavigation() {
-        binding.bottomNavigationView.visibility = View.GONE
-    }
-
-    private fun showBottomNavigation() {
-        binding.bottomNavigationView.visibility = View.VISIBLE
-    }
-
 }
