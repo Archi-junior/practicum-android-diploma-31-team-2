@@ -88,4 +88,45 @@
             android:id="@+id/action_countryChooseFragment_to_workChooseFragment"
             app:destination="@id/workChooseFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/branchChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.branch_choose.BranchChooseFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/search_fragment" >
+    </fragment>
+    <fragment
+        android:id="@+id/workChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.work_choose.WorkChooseFragment"
+        android:label="WorkChooseFragment"
+        tools:layout="@layout/work_choose_fragment"/>
+    <fragment
+        android:id="@+id/vacancyFragment"
+        android:name="ru.practicum.android.diploma.ui.vacancy.VacancyFragment"
+        android:label="VacancyFragment"
+        tools:layout="@layout/vacancy_fragment"/>
+    <fragment
+        android:id="@+id/teamFragment"
+        android:name="ru.practicum.android.diploma.ui.team.TeamFragment"
+        android:label="TeamFragment"
+        tools:layout="@layout/team_fragment"/>
+    <fragment
+        android:id="@+id/regionChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.region_choose.RegionChooseFragment"
+        android:label="RegionChooseFragment"
+        tools:layout="@layout/region_choose_fragment"/>
+    <fragment
+        android:id="@+id/filtersFragment"
+        android:name="ru.practicum.android.diploma.ui.filters.FiltersFragment"
+        android:label="FiltersFragment"
+        tools:layout="@layout/filters_fragment"/>
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="ru.practicum.android.diploma.ui.favorite.FavoriteFragment"
+        android:label="FavoriteFragment"
+        tools:layout="@layout/favorite_fragment"/>
+    <fragment
+        android:id="@+id/countryChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.country_choose.CountryChooseFragment"
+        android:label="CountryChooseFragment"
+        tools:layout="@layout/country_choose_fragment"/>
 </navigation>
