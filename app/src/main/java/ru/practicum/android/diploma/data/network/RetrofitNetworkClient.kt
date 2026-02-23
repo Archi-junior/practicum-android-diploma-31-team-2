@@ -29,14 +29,7 @@ class RetrofitNetworkClient(
                         ApiResponseData.Industries(apiService.getIndustries())
                     }
                     is ApiRequest.Vacancies -> {
-                        val vacanciesResponse = apiService.getVacancies(
-                            areaId = apiRequest.areaId,
-                            industryId = apiRequest.industryId,
-                            text = apiRequest.text,
-                            salaryVal = apiRequest.salaryVal,
-                            page = apiRequest.page,
-                            onlyWithSalary = apiRequest.onlyWithSalary
-                        )
+                        val vacanciesResponse = apiService.getVacancies(apiRequest.toQueryMap())
                         ApiResponseData.Vacancies(
                             found = vacanciesResponse.found,
                             pages = vacanciesResponse.pages,
@@ -69,16 +62,13 @@ class RetrofitNetworkClient(
     }
 
     private fun isConnected(): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
-
-        return when {
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-            else -> false
-        }
+        val connectivityManager = context.getSystemService(
+            Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        return capabilities != null &&
+            (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
     }
 
     companion object {
