@@ -32,7 +32,7 @@ class RetrofitNetworkClient(
                         apiRequest.onlyWithSalary,
                     )
                     is ApiRequest.VacancyDetails -> VacancyDetailsResponse(apiService.getVacancyDetails(apiRequest.id))
-                }.apply { resultCode = 200 }
+                }.apply { resultCode = HTTP_OK }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: IOException) {
@@ -40,7 +40,7 @@ class RetrofitNetworkClient(
                 ApiResponse().apply { noConnection = true }
             } catch (e: Exception) {
                 Log.e("ApiService", "doRequest failed", e)
-                ApiResponse().apply { resultCode = 500 }
+                ApiResponse().apply { resultCode = HTTP_INTERNAL_ERROR }
             }
         }
     }
@@ -49,13 +49,14 @@ class RetrofitNetworkClient(
         val connectivityManager = context.getSystemService(
             Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        if (capabilities != null) {
-            when {
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
-            }
-        }
-        return false
+        return capabilities != null &&
+            (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+    }
+
+    companion object {
+        const val HTTP_OK = 200
+        const val HTTP_INTERNAL_ERROR = 500
     }
 }
