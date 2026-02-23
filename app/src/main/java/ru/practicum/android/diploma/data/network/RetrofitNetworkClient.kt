@@ -4,16 +4,20 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import com.google.gson.JsonParseException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class RetrofitNetworkClient(
     private val context: Context,
     private val apiService: ApiService,
 ) : NetworkClient {
 
+    @Suppress("TooGenericExceptionCaught")
     override suspend fun doRequest(apiRequest: ApiRequest): ApiResponse<ApiResponseData> {
         if (!isConnected()) {
             return ApiResponse.NoConnection
@@ -54,8 +58,17 @@ class RetrofitNetworkClient(
                 val message = e.message()
                 Log.e("RetrofitNetworkClient", "HTTP error $code: $message", e)
                 ApiResponse.Error(code, message)
-            } catch (e: Exception) {
-                Log.e("RetrofitNetworkClient", "Unexpected error: ${e.message}", e)
+            } catch (e: JsonParseException) {
+                Log.e("RetrofitNetworkClient", "JSON parsing error: ${e.message}", e)
+                ApiResponse.Error(HTTP_INTERNAL_ERROR, "Data parsing error")
+            } catch (e: SocketTimeoutException) {
+                Log.e("RetrofitNetworkClient", "Timeout error: ${e.message}", e)
+                ApiResponse.NoConnection
+            } catch (e: UnknownHostException) {
+                Log.e("RetrofitNetworkClient", "Unknown host: ${e.message}", e)
+                ApiResponse.NoConnection
+            } catch (e: RuntimeException) {
+                Log.e("RetrofitNetworkClient", "Unexpected runtime error: ${e.message}", e)
                 ApiResponse.Error(HTTP_INTERNAL_ERROR, e.message)
             }
         }
