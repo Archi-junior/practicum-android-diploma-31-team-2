@@ -2,9 +2,9 @@ package ru.practicum.android.diploma.data.network
 
 sealed interface ApiRequest {
 
-    object Areas : ApiRequest
+    data object Areas : ApiRequest
 
-    object Industries : ApiRequest
+    data object Industries : ApiRequest
 
     data class Vacancies(
         val areaId: Int? = null,

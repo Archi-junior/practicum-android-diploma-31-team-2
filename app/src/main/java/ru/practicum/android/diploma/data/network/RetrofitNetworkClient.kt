@@ -14,48 +14,74 @@ class RetrofitNetworkClient(
     private val apiService: ApiService,
 ) : NetworkClient {
 
-    override suspend fun doRequest(apiRequest: ApiRequest): ApiResponse {
-
-        if (!isConnected()) return ApiResponse().apply { noConnection = true }
+    override suspend fun doRequest(apiRequest: ApiRequest): ApiResponse<ApiResponseData> {
+        if (!isConnected()) {
+            return ApiResponse.NoConnection
+        }
 
         return withContext(Dispatchers.IO) {
             try {
-                when (apiRequest) {
-                    is ApiRequest.Areas -> AreasResponse(apiService.getAreas())
-                    is ApiRequest.Industries -> IndustriesResponse(apiService.getIndustries())
-                    is ApiRequest.Vacancies -> apiService.getVacancies(
-                        apiRequest.areaId,
-                        apiRequest.industryId,
-                        apiRequest.text,
-                        apiRequest.salaryVal,
-                        apiRequest.page,
-                        apiRequest.onlyWithSalary,
-                    )
-                    is ApiRequest.VacancyDetails -> VacancyDetailsResponse(apiService.getVacancyDetails(apiRequest.id))
-                }.apply { resultCode = 200 }
+                val response = when (apiRequest) {
+                    is ApiRequest.Areas -> {
+                        ApiResponseData.Areas(apiService.getAreas())
+                    }
+                    is ApiRequest.Industries -> {
+                        ApiResponseData.Industries(apiService.getIndustries())
+                    }
+                    is ApiRequest.Vacancies -> {
+                        val vacanciesResponse = apiService.getVacancies(
+                            areaId = apiRequest.areaId,
+                            industryId = apiRequest.industryId,
+                            text = apiRequest.text,
+                            salaryVal = apiRequest.salaryVal,
+                            page = apiRequest.page,
+                            onlyWithSalary = apiRequest.onlyWithSalary
+                        )
+                        ApiResponseData.Vacancies(
+                            found = vacanciesResponse.found,
+                            pages = vacanciesResponse.pages,
+                            page = vacanciesResponse.page,
+                            items = vacanciesResponse.items
+                        )
+                    }
+                    is ApiRequest.VacancyDetails -> {
+                        val vacancy = apiService.getVacancyDetails(apiRequest.id)
+                        ApiResponseData.VacancyDetails(vacancy)
+                    }
+                }
+                ApiResponse.Success(response)
+
             } catch (e: CancellationException) {
                 throw e
             } catch (e: IOException) {
-                Log.e("ApiService", "Network error", e)
-                ApiResponse().apply { noConnection = true }
+                Log.e("RetrofitNetworkClient", "Network error: ${e.message}", e)
+                ApiResponse.NoConnection
+            } catch (e: retrofit2.HttpException) {
+                val code = e.code()
+                val message = e.message()
+                Log.e("RetrofitNetworkClient", "HTTP error $code: $message", e)
+                ApiResponse.Error(code, message)
             } catch (e: Exception) {
-                Log.e("ApiService", "doRequest failed", e)
-                ApiResponse().apply { resultCode = 500 }
+                Log.e("RetrofitNetworkClient", "Unexpected error: ${e.message}", e)
+                ApiResponse.Error(HTTP_INTERNAL_ERROR, e.message)
             }
         }
     }
 
     private fun isConnected(): Boolean {
-        val connectivityManager = context.getSystemService(
-            Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        if (capabilities != null) {
-            when {
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
-            }
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+
+        return when {
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
         }
-        return false
+    }
+
+    companion object {
+        const val HTTP_INTERNAL_ERROR = 500
     }
 }

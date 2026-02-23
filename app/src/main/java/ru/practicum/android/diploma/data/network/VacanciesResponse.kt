@@ -7,4 +7,4 @@ data class VacanciesResponse(
     val pages: Int,
     val page: Int,
     val items: List<VacancyDto>
-) : ApiResponse()
+)
