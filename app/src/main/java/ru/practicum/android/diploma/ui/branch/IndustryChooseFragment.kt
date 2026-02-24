@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import ru.practicum.android.diploma.R
 
-class BranchChooseFragment : Fragment(R.layout.branch_choose_fragment){
+class IndustryChooseFragment : Fragment(R.layout.industry_choose_fragment){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     }

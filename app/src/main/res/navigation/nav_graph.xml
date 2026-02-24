@@ -18,9 +18,9 @@
     </fragment>
     <fragment
         android:id="@+id/branchChooseFragment"
-        android:name="ru.practicum.android.diploma.ui.branch.BranchChooseFragment"
-        android:label="fragment_search"
-        tools:layout="@layout/search_fragment" >
+        android:name="ru.practicum.android.diploma.ui.branch.IndustryChooseFragment"
+        android:label="branch_choose_fragment"
+        tools:layout="@layout/industry_choose_fragment" >
         <action
             android:id="@+id/action_branchChooseFragment_to_filtersFragment"
             app:destination="@id/filtersFragment" />
