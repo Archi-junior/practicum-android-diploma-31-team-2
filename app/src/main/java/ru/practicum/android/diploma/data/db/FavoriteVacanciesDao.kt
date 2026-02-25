@@ -9,12 +9,15 @@ import androidx.room.Query
 interface FavoriteVacanciesDao {
 
     @Insert(entity = FavoriteVacancyEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertVacancy(favoriteVacancyEntity: FavoriteVacancyEntity)
+    suspend fun insert(favoriteVacancyEntity: FavoriteVacancyEntity)
 
     @Query("DELETE FROM favorite_vacancies WHERE id = :vacancyId")
-    suspend fun deleteVacancy(vacancyId: String)
+    suspend fun delete(vacancyId: String)
 
     @Query("SELECT * FROM favorite_vacancies ORDER BY name")
-    suspend fun getVacancies(): List<FavoriteVacancyEntity>
+    suspend fun getAll(): List<FavoriteVacancyEntity>
+
+    @Query("SELECT * FROM favorite_vacancies WHERE id = :id")
+    suspend fun getById(id: String): FavoriteVacancyEntity?
 
 }

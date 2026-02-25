@@ -1,6 +1,6 @@
-package ru.practicum.android.diploma.data.dto
+package ru.practicum.android.diploma.domain.models
 
-data class SalaryDto(
+data class Salary(
     val id: String,
     val from: Int?,
     val to: Int?,
