@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/searchFragment">
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="ru.practicum.android.diploma.ui.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/search_fragment" >
+        <action
+            android:id="@+id/action_searchFragment_to_filtersFragment"
+            app:destination="@id/filtersFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_vacancyFragment"
+            app:destination="@id/vacancyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/branchChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.branch.IndustryChooseFragment"
+        android:label="branch_choose_fragment"
+        tools:layout="@layout/industry_choose_fragment" >
+        <action
+            android:id="@+id/action_branchChooseFragment_to_filtersFragment"
+            app:destination="@id/filtersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/workChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.work.WorkChooseFragment"
+        android:label="WorkChooseFragment"
+        tools:layout="@layout/work_choose_fragment">
+        <action
+            android:id="@+id/action_workChooseFragment_to_countryChooseFragment"
+            app:destination="@id/countryChooseFragment" />
+        <action
+            android:id="@+id/action_workChooseFragment_to_regionChooseFragment"
+            app:destination="@id/regionChooseFragment" />
+        <action
+            android:id="@+id/action_workChooseFragment_to_filtersFragment"
+            app:destination="@id/filtersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/vacancyFragment"
+        android:name="ru.practicum.android.diploma.ui.vacancy.VacancyFragment"
+        android:label="VacancyFragment"
+        tools:layout="@layout/vacancy_fragment"/>
+    <fragment
+        android:id="@+id/teamFragment"
+        android:name="ru.practicum.android.diploma.ui.team.TeamFragment"
+        android:label="TeamFragment"
+        tools:layout="@layout/team_fragment"/>
+    <fragment
+        android:id="@+id/regionChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.region.RegionChooseFragment"
+        android:label="RegionChooseFragment"
+        tools:layout="@layout/region_choose_fragment">
+        <action
+            android:id="@+id/action_regionChooseFragment_to_workChooseFragment"
+            app:destination="@id/workChooseFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/filtersFragment"
+        android:name="ru.practicum.android.diploma.ui.filters.FiltersFragment"
+        android:label="FiltersFragment"
+        tools:layout="@layout/filters_fragment">
+        <action
+            android:id="@+id/action_filtersFragment_to_workChooseFragment"
+            app:destination="@id/workChooseFragment" />
+        <action
+            android:id="@+id/action_filtersFragment_to_branchChooseFragment"
+            app:destination="@id/branchChooseFragment" />
+        <action
+            android:id="@+id/action_filtersFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="ru.practicum.android.diploma.ui.favorite.FavoriteFragment"
+        android:label="FavoriteFragment"
+        tools:layout="@layout/favorite_fragment"/>
+    <fragment
+        android:id="@+id/countryChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.country.CountryChooseFragment"
+        android:label="CountryChooseFragment"
+        tools:layout="@layout/country_choose_fragment">
+        <action
+            android:id="@+id/action_countryChooseFragment_to_workChooseFragment"
+            app:destination="@id/workChooseFragment" />
+    </fragment>
+</navigation>
