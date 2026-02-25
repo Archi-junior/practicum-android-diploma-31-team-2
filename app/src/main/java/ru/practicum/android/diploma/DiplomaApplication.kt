@@ -49,20 +49,6 @@ class DiplomaApplication : Application() {
 
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
 
-            //val areasResponse = retrofitNetworkClient.doRequest(ApiRequest.Areas)
-            //Log.d("ApiRequest", areasResponse.toString())
-
-            //val industriesResponse = retrofitNetworkClient.doRequest(ApiRequest.Industries)
-            //Log.d("ApiRequest", industriesResponse.toString())
-
-            //val vacancyDetailsResponse = retrofitNetworkClient.doRequest(ApiRequest.VacancyDetails("15896345-5efe-4328-a25e-941016aaa97d"))
-            //Log.d("ApiRequest", vacancyDetailsResponse.toString())
-
-            //val vacancies = retrofitNetworkClient.doRequest(ApiRequest.Vacancies())
-            //val vacancies = retrofitNetworkClient.doRequest(ApiRequest.Vacancies(
-            //    text = "developer",
-            //    areaId = 3745,
-            //))
             val apiResponse = retrofitNetworkClient.doRequest(
                 ApiRequest.Vacancies(
                     text = "developer",

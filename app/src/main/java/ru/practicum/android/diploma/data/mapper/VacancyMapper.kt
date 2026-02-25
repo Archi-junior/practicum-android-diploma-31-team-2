@@ -104,32 +104,20 @@ fun FavoriteVacancyEntity.toDomain(gson: Gson): Vacancy =
             )
         },
         experience = experienceId?.let {
-            Experience(
-                id = it,
-                name= experienceName.toString(),
-            )
+            Experience(id = it, name= experienceName.toString())
         },
         schedule = scheduleId?.let {
-            Schedule(
-                id = it,
-                name = scheduleName.toString(),
-            )
+            Schedule(id = it, name = scheduleName.toString())
         },
         employment = employmentId?.let {
-            Employment(
-                id = it,
-                name = employmentName.toString(),
-            )
+            Employment(id = it, name = employmentName.toString())
         },
         contacts = contactsId?.let {
             Contacts(
                 id = it,
                 name = contactsName.toString(),
                 email = contactsEmail.toString(),
-                phones = gson.fromJson(
-                    contactsPhones,
-                    Array<Phone>::class.java
-                ).toList(),
+                phones = gson.fromJson(contactsPhones, Array<Phone>::class.java).toList(),
             )
         },
         employer = Employer(
@@ -141,18 +129,9 @@ fun FavoriteVacancyEntity.toDomain(gson: Gson): Vacancy =
             id = areaId,
             name = areaName,
             parentId = areaParentId,
-            areas = gson.fromJson(
-                areas,
-                Array<Area>::class.java
-            ).toList(),
+            areas = gson.fromJson(areas, Array<Area>::class.java).toList(),
         ),
-        skills = gson.fromJson(
-            skills,
-            Array<String>::class.java
-        ).toList(),
+        skills = gson.fromJson(skills, Array<String>::class.java).toList(),
         url = url,
-        industry = Industry(
-            id = industryId,
-            name = industryName,
-        ),
+        industry = Industry(id = industryId, name = industryName),
     )
