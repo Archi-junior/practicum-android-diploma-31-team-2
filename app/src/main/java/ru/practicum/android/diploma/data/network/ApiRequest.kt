@@ -6,7 +6,7 @@ sealed interface ApiRequest {
 
     data object Industries : ApiRequest
 
-    data class Vacancies(
+    data class VacanciesFilter(
         val areaId: Int? = null,
         val industryId: Int? = null,
         val text: String? = null,
