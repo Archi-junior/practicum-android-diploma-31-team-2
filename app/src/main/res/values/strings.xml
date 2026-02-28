@@ -59,7 +59,7 @@
 
     <string name="list_empty">Список пуст</string>
 
-    <string name="over_app_worked">Над приложением работали</string>
+    <string name="over_app_worked">Над приложением \nработали</string>
     <string name="Anna_Arkhipovna_Testing">Анна Архиповна Тестирование</string>
     <string name="Olga_Petrovna_Assessment">Ольга Петровна Оценка</string>
     <string name="Veniamin_Petrovich_Design">Вениамин Петрович Дизайн</string>
