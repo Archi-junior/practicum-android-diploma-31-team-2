@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/searchFragment"
+        android:icon="@drawable/ic_bottom_nav_main"
+        android:title="@string/bottom_nav_main" />
+
+    <item
+        android:id="@+id/favoriteFragment"
+        android:icon="@drawable/ic_bottom_nav_favorites"
+        android:title="@string/bottom_nav_favorite" />
+
+    <item
+        android:id="@+id/teamFragment"
+        android:icon="@drawable/ic_bottom_nav_team"
+        android:title="@string/bottom_nav_team" />
+
+</menu>

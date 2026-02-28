@@ -1,3 +1,67 @@
 <resources>
     <string name="app_name">Practicum-Android-Diploma</string>
+    <string name="bottom_nav_main">Главное</string>
+    <string name="bottom_nav_favorite">Избранное</string>
+    <string name="bottom_nav_team">Команда</string>
+    <string name="filter_icon">иконка фильтра</string>
+
+    <string name="job_search">Поиск вакансий</string>
+    <string name="enter_request">Введите запрос</string>
+    <string name="main">Главная</string>
+    <string name="filter_title">Настройки фильтрации</string>
+    <string name="favorites">Избранное</string>
+    <string name="team">Команда</string>
+
+    <string name="no_internet">Нет интернета</string>
+
+    <string name="there_are_no_such_vacancies">Таких вакансий нет</string>
+    <string name="couldnt_et_list_of_vacancies">Не удалось получить список вакансий</string>
+
+    <string name="vacancies_found">Найдено %d вакансий</string>
+
+    <string name="filtering_settings">Настройки фильтрации</string>
+    <string name="place_of_work">Место работы</string>
+    <string name="industry">Отрасль</string>
+    <string name="expected_salary">Ожидаемая зарплата</string>
+    <string name="enter_the_amount">Введите сумму</string>
+    <string name="do_not_show_without_salary">Не показывать без зарплаты</string>
+
+    <string name="choosing_a_place_of_work">Выбор место работы</string>
+    <string name="country">Страна</string>
+    <string name="region">Регион</string>
+
+    <string name="choosing_country">Выбор страны</string>
+
+    <string name="no_such_region">Такого региона нет</string>
+
+    <string name="couldnt_get_list">Не удалось получить список</string>
+
+    <string name="choose">Выбрать</string>
+
+    <string name="apply">Применить</string>
+    <string name="throw_off">Сбросить</string>
+
+    <string name="choosing_an_industry">Выбор отрасли</string>
+    <string name="choosing_region">Выбор региона</string>
+    <string name="enter_industry">Введите отрасль</string>
+
+    <string name="vacancy">Вакансия</string>
+    <string name="required_experience">Требуемый опыт</string>
+    <string name="job_description">Описание вакансии</string>
+    <string name="responsibilities">Обязанности</string>
+    <string name="requirements">Требования</string>
+    <string name="conditions">Условия</string>
+    <string name="key_skills">Ключевые навыки</string>
+
+    <string name="vacancy_was_not_found_or_deleted">Вакансия не найдина или удалена</string>
+
+    <string name="server_error">Ошибка сервера</string>
+
+    <string name="list_empty">Список пуст</string>
+
+    <string name="over_app_worked">Над приложением работали</string>
+    <string name="Anna_Arkhipovna_Testing">Анна Архиповна Тестирование</string>
+    <string name="Olga_Petrovna_Assessment">Ольга Петровна Оценка</string>
+    <string name="Veniamin_Petrovich_Design">Вениамин Петрович Дизайн</string>
+    <string name="Anton_Androidovich">Антон Андроидович</string>
 </resources>
