@@ -1,0 +1,160 @@
+Index: .idea/deploymentTargetSelector.xml
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+deleted file mode 100644
+--- a/.idea/deploymentTargetSelector.xml	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
++++ /dev/null	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
+@@ -1,18 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="deploymentTargetSelector">
+-    <selectionStates>
+-      <SelectionState runConfigName="app">
+-        <option name="selectionMode" value="DROPDOWN" />
+-        <DropdownSelection timestamp="2026-02-24T15:17:08.339831100Z">
+-          <Target type="DEFAULT_BOOT">
+-            <handle>
+-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\User\.android\avd\Pixel_6.avd" />
+-            </handle>
+-          </Target>
+-        </DropdownSelection>
+-        <DialogSelection />
+-      </SelectionState>
+-    </selectionStates>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/AndroidProjectSystem.xml
+===================================================================
+diff --git a/.idea/AndroidProjectSystem.xml b/.idea/AndroidProjectSystem.xml
+deleted file mode 100644
+--- a/.idea/AndroidProjectSystem.xml	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
++++ /dev/null	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="AndroidProjectSystem">
+-    <option name="providerId" value="com.android.tools.idea.GradleProjectSystem" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29__Changes_.xml
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29__Changes_.xml
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29__Changes_.xml	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
++++ /dev/null	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
+@@ -1,4 +0,0 @@
+-<changelist name="Uncommitted_changes_before_Checkout_at_23_02_2026_17_29_[Changes]" date="1771856961358" recycled="false" toDelete="true">
+-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29_[Changes]/shelved.patch" />
+-  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 23.02.2026 17:29 [Changes]" />
+-</changelist>
+\ No newline at end of file
+Index: .idea/migrations.xml
+===================================================================
+diff --git a/.idea/migrations.xml b/.idea/migrations.xml
+deleted file mode 100644
+--- a/.idea/migrations.xml	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
++++ /dev/null	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="ProjectMigrations">
+-    <option name="MigrateToGradleLocalJavaHome">
+-      <set>
+-        <option value="$PROJECT_DIR$" />
+-      </set>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29_[Changes]/shelved.patch
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29_[Changes]/shelved.patch b/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29_[Changes]/shelved.patch
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29_[Changes]/shelved.patch	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
++++ /dev/null	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
+@@ -1,19 +0,0 @@
+-Index: gradle/wrapper/gradle-wrapper.properties
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>#Sun Nov 12 02:07:38 ALMT 2023\r\ndistributionBase=GRADLE_USER_HOME\r\ndistributionPath=wrapper/dists\r\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.4-all.zip\r\nzipStoreBase=GRADLE_USER_HOME\r\nzipStorePath=wrapper/dists\r\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>ISO-8859-1
+-===================================================================
+-diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+---- a/gradle/wrapper/gradle-wrapper.properties	(revision 5d6966f2e2853ec7b7553c46c4a529833dc9af4c)
+-+++ b/gradle/wrapper/gradle-wrapper.properties	(date 1771854402291)
+-@@ -1,6 +1,6 @@
+--#Sun Nov 12 02:07:38 ALMT 2023
+-+#Mon Feb 23 16:46:42 MSK 2026
+- distributionBase=GRADLE_USER_HOME
+- distributionPath=wrapper/dists
+--distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-all.zip
+-+distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-bin.zip
+- zipStoreBase=GRADLE_USER_HOME
+- zipStorePath=wrapper/dists
+Index: .idea/deviceManager.xml
+===================================================================
+diff --git a/.idea/deviceManager.xml b/.idea/deviceManager.xml
+deleted file mode 100644
+--- a/.idea/deviceManager.xml	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
++++ /dev/null	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
+@@ -1,13 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="DeviceTable">
+-    <option name="columnSorters">
+-      <list>
+-        <ColumnSorterState>
+-          <option name="column" value="Name" />
+-          <option name="order" value="ASCENDING" />
+-        </ColumnSorterState>
+-      </list>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/markdown.xml
+===================================================================
+diff --git a/.idea/markdown.xml b/.idea/markdown.xml
+deleted file mode 100644
+--- a/.idea/markdown.xml	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
++++ /dev/null	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
+@@ -1,8 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="MarkdownSettings">
+-    <option name="previewPanelProviderInfo">
+-      <ProviderInfo name="Compose (experimental)" className="com.intellij.markdown.compose.preview.ComposePanelProvider" />
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/runConfigurations.xml
+===================================================================
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+deleted file mode 100644
+--- a/.idea/runConfigurations.xml	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
++++ /dev/null	(revision 6faf9bcd10b326b6046fe26ac6570aff3b33df89)
+@@ -1,17 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="RunConfigurationProducerService">
+-    <option name="ignoredProducers">
+-      <set>
+-        <option value="com.intellij.execution.junit.AbstractAllInDirectoryConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.AllInPackageConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.PatternConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.TestInClassConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.UniqueIdConfigurationProducer" />
+-        <option value="com.intellij.execution.junit.testDiscovery.JUnitTestDiscoveryConfigurationProducer" />
+-        <option value="org.jetbrains.kotlin.idea.junit.KotlinJUnitRunConfigurationProducer" />
+-        <option value="org.jetbrains.kotlin.idea.junit.KotlinPatternConfigurationProducer" />
+-      </set>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29_[Changes]1/shelved.patch b/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_02_2026_17_29_[Changes]1/shelved.patch
+deleted file mode 100644

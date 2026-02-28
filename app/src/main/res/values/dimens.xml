@@ -9,4 +9,6 @@
     <dimen name="layout_24dp">24dp</dimen>
     <dimen name="layout_56dp">56dp</dimen>
     <dimen name="layout_60dp">60dp</dimen>
+    <dimen name="layout_64dp">64dp</dimen>
+    <dimen name="layout_92dp">92dp</dimen>
 </resources>
