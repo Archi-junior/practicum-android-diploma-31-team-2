@@ -14,15 +14,17 @@ class DiplomaApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        //здесь нужна инициализация Koin
+
         startKoin {
             androidContext(this@DiplomaApplication)
-            modules(domainModule,
+            modules(
+                domainModule,
                 dataModule,
                 networkModule,
                 repositoryModule,
                 interactorModule,
                 viewModelModule
-            ) }
+            )
+        }
     }
 }

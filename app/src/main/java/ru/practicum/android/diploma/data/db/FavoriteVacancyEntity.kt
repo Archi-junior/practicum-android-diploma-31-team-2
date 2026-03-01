@@ -11,6 +11,7 @@ data class FavoriteVacancyEntity(
     val name: String,
     val description: String,
 
+    val salaryId: String?,
     val salaryFrom: Int?,
     val salaryTo: Int?,
     val salaryCurrency: String?,
@@ -41,6 +42,7 @@ data class FavoriteVacancyEntity(
     val areaId: Int,
     val areaName: String,
     val areaParentId: Int?,
+    val areas: String,
 
     val skills: String,
 
