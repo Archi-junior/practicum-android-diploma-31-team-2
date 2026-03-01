@@ -5,10 +5,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
-import ru.practicum.android.diploma.data.VacanciesRepositoryImpl
 import ru.practicum.android.diploma.data.db.AppDatabase
 import ru.practicum.android.diploma.data.db.FavoriteVacanciesDao
-import ru.practicum.android.diploma.domain.VacanciesRepository
 
 val dataModule = module {
 
@@ -28,9 +26,5 @@ val dataModule = module {
 
     factory<FavoriteVacanciesDao> {
         get<AppDatabase>().favoriteVacanciesDao()
-    }
-
-    single<VacanciesRepository> {
-        VacanciesRepositoryImpl(get())
     }
 }
