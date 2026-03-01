@@ -117,7 +117,7 @@ fun FavoriteVacancyEntity.toDomain(gson: Gson): Vacancy =
                 id = it,
                 name = contactsName.toString(),
                 email = contactsEmail.toString(),
-                phones = gson.fromJson(contactsPhones, Array<Phone>::class.java).toList(),
+                phones = contactsPhones?.let { gson.fromJson(it, Array<Phone>::class.java).toList() } ?: emptyList()
             )
         },
         employer = Employer(
