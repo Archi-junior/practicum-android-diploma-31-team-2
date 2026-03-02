@@ -77,88 +77,151 @@
                 android:layout_marginTop="@dimen/layout_24dp"
                 android:background="@drawable/shape_vacancy_employer"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                style="@style/VacancyImageView.EmployerPlaceholder"
                 android:id="@+id/ivEmployerPlaceholder"
+                style="@style/VacancyImageView.EmployerPlaceholder"
                 android:src="@drawable/ic_placeholder_employer"
-                app:layout_constraintStart_toStartOf="@id/vEmployer"
-                app:layout_constraintTop_toTopOf="@id/vEmployer"
-                app:layout_constraintBottom_toBottomOf="@id/vEmployer"/>
-
-            <TextView
-                style="@style/VacancyText.EmployerName"
-                android:id="@+id/tvEmployerName"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintVertical_chainStyle="packed"
-                app:layout_constraintStart_toEndOf="@id/ivEmployerPlaceholder"
-                app:layout_constraintEnd_toEndOf="@id/vEmployer"
-                app:layout_constraintTop_toTopOf="@id/vEmployer"
-                app:layout_constraintBottom_toTopOf="@id/tvAddress"
-                tools:text="Еда"/>
-
-            <TextView
-                style="@style/VacancyText.Address"
-                android:id="@+id/tvAddress"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toEndOf="@id/ivEmployerPlaceholder"
-                app:layout_constraintEnd_toEndOf="@id/vEmployer"
-                app:layout_constraintTop_toBottomOf="@id/tvEmployerName"
-                app:layout_constraintBottom_toTopOf="@+id/tvContacts"
-                tools:text="Пермь, Ленина, 13"/>
-
-            <TextView
-                style="@style/VacancyText.Contacts"
-                android:id="@+id/tvContacts"
-                app:layout_constraintStart_toEndOf="@id/ivEmployerPlaceholder"
-                app:layout_constraintEnd_toEndOf="@id/vEmployer"
-                app:layout_constraintTop_toBottomOf="@id/tvAddress"
                 app:layout_constraintBottom_toBottomOf="@id/vEmployer"
-                tools:text="Иванов Иван Иванович, 123@gmail.com, +7 (999) 123-45-67, +7 (999) 987-65-43"/>
+                app:layout_constraintStart_toStartOf="@id/vEmployer"
+                app:layout_constraintTop_toTopOf="@id/vEmployer" />
 
             <TextView
-                style="@style/VacancyText.ExperienceTitle"
+                android:id="@+id/tvEmployerName"
+                style="@style/VacancyText.EmployerName"
+                app:layout_constraintBottom_toTopOf="@id/tvAddress"
+                app:layout_constraintEnd_toEndOf="@id/vEmployer"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/ivEmployerPlaceholder"
+                app:layout_constraintTop_toTopOf="@id/vEmployer"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Еда" />
+
+            <TextView
+                android:id="@+id/tvAddress"
+                style="@style/VacancyText.Address"
+                app:layout_constraintBottom_toTopOf="@+id/tvContacts"
+                app:layout_constraintEnd_toEndOf="@id/vEmployer"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/ivEmployerPlaceholder"
+                app:layout_constraintTop_toBottomOf="@id/tvEmployerName"
+                tools:text="Пермь, Ленина, 13" />
+
+            <TextView
+                android:id="@+id/tvContacts"
+                style="@style/VacancyText.Contacts"
+                app:layout_constraintBottom_toBottomOf="@id/vEmployer"
+                app:layout_constraintEnd_toEndOf="@id/vEmployer"
+                app:layout_constraintStart_toEndOf="@id/ivEmployerPlaceholder"
+                app:layout_constraintTop_toBottomOf="@id/tvAddress"
+                tools:text="Иванов Иван Иванович, 123@gmail.com, +7 (999) 123-45-67, +7 (999) 987-65-43" />
+
+            <TextView
                 android:id="@+id/tvExperienceTitle"
+                style="@style/VacancyText.ExperienceTitle"
                 android:text="@string/required_experience"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/vEmployer"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vEmployer" />
 
             <TextView
-                style="@style/VacancyText.ExperienceName"
                 android:id="@+id/tvExperienceName"
-                app:layout_constraintStart_toStartOf="parent"
+                style="@style/VacancyText.ExperienceName"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvExperienceTitle"
-                tools:text="От 1 года до 3 лет"/>
+                tools:text="От 1 года до 3 лет" />
 
             <TextView
-                style="@style/VacancyText.ScheduleName"
                 android:id="@+id/tvScheduleName"
-                app:layout_constraintStart_toStartOf="parent"
+                style="@style/VacancyText.ScheduleName"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvExperienceName"
-                tools:text="Полная занятость, Удаленная работа"/>
+                tools:text="Полная занятость, Удаленная работа" />
 
             <TextView
-                style="@style/VacancyText.DescriptionTitle"
                 android:id="@+id/tvDescriptionTitle"
+                style="@style/VacancyText.DescriptionTitle"
                 android:text="@string/job_description"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvScheduleName"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvScheduleName" />
 
             <TextView
-                style="@style/VacancyText.Description"
                 android:id="@+id/tvDescription"
-                app:layout_constraintStart_toStartOf="parent"
+                style="@style/VacancyText.Description"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvDescriptionTitle"
-                tools:text="На данный момент, мы развиваем 3 портала"/>
+                tools:text="На данный момент, мы развиваем 3 портала" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="ivShare,ivFavorite,tvName,tvSalary,svMain" />
+
+    <ImageView
+        style="@style/VacancyImageView.VacancyNotFound"
+        android:id="@+id/ivVacancyNotFound"
+        android:src="@drawable/vacancy_not_found"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivBack"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvVacancyNotFound"
+        style="@style/VacancyText.VacancyNotFound"
+        android:text="@string/vacancy_was_not_found_or_deleted"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivVacancyNotFound" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupVacancyNotFound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="ivVacancyNotFound,tvVacancyNotFound" />
+
+    <ImageView
+        style="@style/VacancyImageView.ServerError"
+        android:id="@+id/ivServerError"
+        android:src="@drawable/server_error"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivBack"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvServerError"
+        style="@style/VacancyText.ServerError"
+        android:text="@string/server_error"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivVacancyNotFound"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupServerError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="ivServerError,tvServerError" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        style="@style/VacancyProgressBar"
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivBack"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
