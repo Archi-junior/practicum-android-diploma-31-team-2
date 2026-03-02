@@ -53,7 +53,7 @@
     <string name="conditions">Условия</string>
     <string name="key_skills">Ключевые навыки</string>
 
-    <string name="vacancy_was_not_found_or_deleted">Вакансия не найдина или удалена</string>
+    <string name="vacancy_was_not_found_or_deleted">Вакансия не найдена или \nудалена</string>
 
     <string name="server_error">Ошибка сервера</string>
 
