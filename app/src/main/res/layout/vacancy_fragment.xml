@@ -91,19 +91,31 @@
                 style="@style/VacancyText.EmployerName"
                 android:id="@+id/tvEmployerName"
                 app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintVertical_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@id/ivEmployerPlaceholder"
                 app:layout_constraintEnd_toEndOf="@id/vEmployer"
-                app:layout_constraintTop_toTopOf="@id/ivEmployerPlaceholder"
+                app:layout_constraintTop_toTopOf="@id/vEmployer"
+                app:layout_constraintBottom_toTopOf="@id/tvAddress"
                 tools:text="Еда"/>
 
             <TextView
-                style="@style/VacancyText.AreaName"
-                android:id="@+id/tvAreaName"
+                style="@style/VacancyText.Address"
+                android:id="@+id/tvAddress"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toEndOf="@id/ivEmployerPlaceholder"
                 app:layout_constraintEnd_toEndOf="@id/vEmployer"
                 app:layout_constraintTop_toBottomOf="@id/tvEmployerName"
-                tools:text="Москва"/>
+                app:layout_constraintBottom_toTopOf="@+id/tvContacts"
+                tools:text="Пермь, Ленина, 13"/>
+
+            <TextView
+                style="@style/VacancyText.Contacts"
+                android:id="@+id/tvContacts"
+                app:layout_constraintStart_toEndOf="@id/ivEmployerPlaceholder"
+                app:layout_constraintEnd_toEndOf="@id/vEmployer"
+                app:layout_constraintTop_toBottomOf="@id/tvAddress"
+                app:layout_constraintBottom_toBottomOf="@id/vEmployer"
+                tools:text="Иванов Иван Иванович, 123@gmail.com, +7 (999) 123-45-67, +7 (999) 987-65-43"/>
 
             <TextView
                 style="@style/VacancyText.ExperienceTitle"
