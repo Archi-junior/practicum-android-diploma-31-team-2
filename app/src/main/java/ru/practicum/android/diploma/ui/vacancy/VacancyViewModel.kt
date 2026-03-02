@@ -25,10 +25,12 @@ class VacancyViewModel(
             val resultDb = favoritesVacancyInteractor.getById(vacancyId).single()
             when (val resultHttp = vacanciesInteractor.getDetails(vacancyId).single()) {
                 is ResultHttp.Success -> {
-                    VacancyState.Content(
-                        vacancy = resultHttp.data.copy(),
-                        isFavorite = resultDb is ResultDb.Success && resultDb.data != null,
-                        onlyFavoriteChanged = false,
+                    stateLiveData.postValue(
+                        VacancyState.Content(
+                            vacancy = resultHttp.data.copy(),
+                            isFavorite = resultDb is ResultDb.Success && resultDb.data != null,
+                            onlyFavoriteChanged = false,
+                        )
                     )
                 }
                 is ResultHttp.Error -> {

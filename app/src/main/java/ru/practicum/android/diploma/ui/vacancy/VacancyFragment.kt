@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
@@ -37,8 +39,27 @@ class VacancyFragment : Fragment(){
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     private fun showContent(vacancy: Vacancy) {
         binding.apply {
+
+            groupMain.isVisible = true
+            groupVacancyNotFound.isVisible = false
+            groupServerError.isVisible = false
+            progressBar.isVisible = false
+
+            Glide.with(ivEmployerPlaceholder)
+                .load(vacancy.employer.logo)
+                .placeholder(R.drawable.ic_placeholder_employer)
+                .transform(RoundedCorners(
+                    resources.getDimensionPixelSize(R.dimen.layout_12dp))
+                )
+                .into(ivEmployerPlaceholder)
+
             tvName.text = vacancy.name
             tvSalary.text = when {
                 vacancy.salary ==  null -> resources.getString(R.string.vacancy_salary_not_specified)
