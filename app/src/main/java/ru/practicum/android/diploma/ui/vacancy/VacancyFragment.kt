@@ -4,11 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyFragmentBinding
+import ru.practicum.android.diploma.domain.models.Vacancy
 
 class VacancyFragment : Fragment(){
 
+    private val viewModel by viewModel<VacancyViewModel> {
+        parametersOf(requireArguments().getString(ARGS_VACANCY))
+    }
     private var _binding: VacancyFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -22,6 +31,79 @@ class VacancyFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
+            render(it)
+        }
+    }
+
+    private fun showContent(vacancy: Vacancy) {
+        binding.apply {
+            tvName.text = vacancy.name
+            tvSalary.text = when {
+                vacancy.salary ==  null -> resources.getString(R.string.vacancy_salary_not_specified)
+                vacancy.salary.from != null && vacancy.salary.to == null -> {
+                    resources.getString(R.string.vacancy_salary_from)
+                        .format(vacancy.salary.from, vacancy.salary.currency)
+                }
+                vacancy.salary.from == null && vacancy.salary.to != null -> {
+                    resources.getString(R.string.vacancy_salary_to)
+                        .format(vacancy.salary.to, vacancy.salary.currency)
+                }
+                vacancy.salary.from != null && vacancy.salary.to != null -> {
+                    resources.getString(R.string.vacancy_salary_from_to)
+                        .format(vacancy.salary.from, vacancy.salary.to, vacancy.salary.currency)
+                }
+                else -> resources.getString(R.string.vacancy_salary_not_specified)
+            }
+            tvEmployerName.text = vacancy.employer.name
+            tvAddress.text = vacancy.address?.fullAddress ?: vacancy.area.name
+            tvContacts.text = vacancy.contacts?.let {
+                "${it.name}, ${it.email}, ${it.phones.joinToString(", ") { child -> child.formatted }}"
+            }
+            tvExperienceName.text = vacancy.experience?.name
+            tvScheduleName.text = vacancy.schedule?.name
+            tvDescription.text = HtmlCompat.fromHtml(
+                vacancy.description,
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+        }
+    }
+
+    private fun showLoading() {
+        binding.apply {
+            groupMain.isVisible = false
+            groupVacancyNotFound.isVisible = false
+            groupServerError.isVisible = false
+            progressBar.isVisible = true
+        }
+    }
+
+    private fun showNotFound() {
+        binding.apply {
+            groupMain.isVisible = false
+            groupVacancyNotFound.isVisible = true
+            groupServerError.isVisible = false
+            progressBar.isVisible = false
+        }
+    }
+
+    private fun showServerError() {
+        binding.apply {
+            groupMain.isVisible = false
+            groupVacancyNotFound.isVisible = false
+            groupServerError.isVisible = true
+            progressBar.isVisible = false
+        }
+    }
+
+    private fun render(state: VacancyState) {
+        when (state) {
+            is VacancyState.Content -> showContent(state.vacancy)
+            is VacancyState.Loading -> showLoading()
+            is VacancyState.NotFound -> showNotFound()
+            is VacancyState.Error -> showServerError()
+        }
     }
 
     companion object {
