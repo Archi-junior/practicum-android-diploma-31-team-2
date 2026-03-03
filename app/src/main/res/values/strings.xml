@@ -45,6 +45,11 @@
     <string name="choosing_region">Выбор региона</string>
     <string name="enter_industry">Введите отрасль</string>
 
+    <string name="start_search">Начните поиск</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="retry">Обновить</string>
+    <string name="total_found">Найдено %d вакансий</string>
+
     <string name="vacancy">Вакансия</string>
     <string name="required_experience">Требуемый опыт</string>
     <string name="job_description">Описание вакансии</string>
