@@ -44,6 +44,20 @@ class VacancyViewModel(
         }
     }
 
+    fun onAddedToFavorites() {
+        viewModelScope.launch {
+            val state = stateLiveData.value as VacancyState.Content
+            if (state.isFavorite) favoritesVacancyInteractor.delete(vacancyId)
+            else favoritesVacancyInteractor.insert(state.vacancy)
+            stateLiveData.postValue(
+                state.copy(
+                    isFavorite = !state.isFavorite,
+                    onlyFavoriteChanged = true,
+                )
+            )
+        }
+    }
+
     companion object {
         const val HTTP_NOT_FOUND = 404
     }

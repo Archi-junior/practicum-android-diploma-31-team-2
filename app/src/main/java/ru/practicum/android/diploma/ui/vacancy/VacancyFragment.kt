@@ -37,6 +37,8 @@ class VacancyFragment : Fragment(){
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
+
+        binding.ivFavorite.setOnClickListener { viewModel.onAddedToFavorites() }
     }
 
     override fun onDestroy() {
@@ -120,7 +122,13 @@ class VacancyFragment : Fragment(){
 
     private fun render(state: VacancyState) {
         when (state) {
-            is VacancyState.Content -> showContent(state.vacancy)
+            is VacancyState.Content -> {
+                binding.ivFavorite.setImageResource(
+                    if (state.isFavorite) R.drawable.ic_vacancy_is_favourite
+                    else R.drawable.ic_vacancy_add_favourites
+                )
+                if (!state.onlyFavoriteChanged) showContent(state.vacancy)
+            }
             is VacancyState.Loading -> showLoading()
             is VacancyState.NotFound -> showNotFound()
             is VacancyState.Error -> showServerError()
