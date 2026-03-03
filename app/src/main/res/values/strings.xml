@@ -15,7 +15,7 @@
     <string name="no_internet">Нет интернета</string>
 
     <string name="there_are_no_such_vacancies">Таких вакансий нет</string>
-    <string name="couldnt_et_list_of_vacancies">Не удалось получить список вакансий</string>
+    <string name="couldnt_get_list_of_vacancies">Не удалось получить \nсписок вакансий</string>
 
     <string name="vacancies_found">Найдено %d вакансий</string>
 
@@ -69,4 +69,5 @@
     <string name="vacancy_salary_from">от %s %s</string>
     <string name="vacancy_salary_to">до %s %s</string>
     <string name="vacancy_salary_from_to">от %s до %s %s</string>
+    <string name="vacancy_contacts">%s %s %s</string>
 </resources>
