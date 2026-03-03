@@ -1,0 +1,278 @@
+Index: app/src/main/java/ru/practicum/android/diploma/data/network/ApiService.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ru.practicum.android.diploma.data.network\r\n\r\nimport retrofit2.http.GET\r\nimport retrofit2.http.Path\r\nimport retrofit2.http.QueryMap\r\nimport ru.practicum.android.diploma.data.dto.AreaDto\r\nimport ru.practicum.android.diploma.data.dto.IndustryDto\r\nimport ru.practicum.android.diploma.data.dto.VacancyDto\r\n\r\ninterface ApiService {\r\n\r\n    @GET(\"areas\")\r\n    suspend fun getAreas(): List<AreaDto>\r\n\r\n    @GET(\"industries\")\r\n    suspend fun getIndustries(): List<IndustryDto>\r\n\r\n    @GET(\"vacancies\")\r\n    suspend fun getVacancies(\r\n        @QueryMap params: Map<String, String>\r\n    ): VacanciesResponse\r\n\r\n    @GET(\"vacancies/{id}\")\r\n    suspend fun getVacancyDetails(\r\n        @Path(\"id\") id: String\r\n    ): VacancyDto\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/ru/practicum/android/diploma/data/network/ApiService.kt b/app/src/main/java/ru/practicum/android/diploma/data/network/ApiService.kt
+--- a/app/src/main/java/ru/practicum/android/diploma/data/network/ApiService.kt	(revision bcef5a1806441ab2be26b7c56b9b1f8771721974)
++++ b/app/src/main/java/ru/practicum/android/diploma/data/network/ApiService.kt	(date 1772484973153)
+@@ -1,5 +1,6 @@
+ package ru.practicum.android.diploma.data.network
+ 
++import kotlinx.coroutines.flow.Flow
+ import retrofit2.http.GET
+ import retrofit2.http.Path
+ import retrofit2.http.QueryMap
+@@ -18,7 +19,7 @@
+     @GET("vacancies")
+     suspend fun getVacancies(
+         @QueryMap params: Map<String, String>
+-    ): VacanciesResponse
++    ): Flow<VacanciesResponse>
+ 
+     @GET("vacancies/{id}")
+     suspend fun getVacancyDetails(
+Index: app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ru.practicum.android.diploma.ui.search\r\n\r\nimport android.os.Bundle\r\nimport android.view.View\r\nimport androidx.fragment.app.Fragment\r\nimport ru.practicum.android.diploma.R\r\n\r\nclass SearchFragment : Fragment(R.layout.search_fragment){\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt b/app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt
+--- a/app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt	(revision bcef5a1806441ab2be26b7c56b9b1f8771721974)
++++ b/app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt	(date 1772484973176)
+@@ -1,12 +1,101 @@
+ package ru.practicum.android.diploma.ui.search
+ 
+ import android.os.Bundle
++import android.text.Editable
++import android.text.TextWatcher
++import android.view.LayoutInflater
+ import android.view.View
++import android.view.ViewGroup
++import androidx.core.view.isVisible
+ import androidx.fragment.app.Fragment
++import androidx.fragment.app.viewModels
++import androidx.lifecycle.Lifecycle
++import androidx.lifecycle.lifecycleScope
++import androidx.lifecycle.repeatOnLifecycle
++import kotlinx.coroutines.flow.collectLatest
++import kotlinx.coroutines.launch
+ import ru.practicum.android.diploma.R
++import ru.practicum.android.diploma.databinding.SearchFragmentBinding
++import ru.practicum.android.diploma.presentation.SearchViewModel
+ 
+-class SearchFragment : Fragment(R.layout.search_fragment){
++class SearchFragment : Fragment(R.layout.search_fragment) {
++
++    private var _binding: SearchFragmentBinding? = null
++    private val binding get() = _binding!!
++
++    private val viewModel: SearchViewModel by viewModels()
++
++    // Адаптер для RecyclerView (не показываем полностью)
++    private val adapter = VacancyAdapter()
++
++    override fun onCreateView(
++        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
++    ): View {
++        _binding = SearchFragmentBinding.inflate(inflater, container, false)
++        return binding.root
++    }
++
+     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+         super.onViewCreated(view, savedInstanceState)
++
++        // Настраиваем RecyclerView
++        binding.vacancyRecyclerView.adapter = adapter
++
++        // 1️⃣ Обработчик изменения текста
++        binding.searchEditText.addTextChangedListener(object : TextWatcher {
++            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
++            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
++            override fun afterTextChanged(s: Editable?) {
++                viewModel.onQueryChanged(s?.toString() ?: "")
++            }
++        })
++
++        // 2️⃣ Наблюдение за состоянием ViewModel
++        viewLifecycleOwner.lifecycleScope.launch {
++            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
++                viewModel.uiState.collectLatest { state ->
++                    renderState(state)
++                }
++            }
++        }
+     }
++
++    /** Отрисовка UI в зависимости от UiState */
++    private fun renderState(state: UiState<List<Vacancy>>) {
++        when (state) {
++            is UiState.Loading -> {
++                binding.progressBar.isVisible = true
++                binding.vacancyRecyclerView.isVisible = false
++                binding.emptyRoot.isVisible = false
++                binding.errorRoot.isVisible = false
++            }
++            is UiState.Success -> {
++                binding.progressBar.isVisible = false
++                binding.vacancyRecyclerView.isVisible = true
++                binding.emptyRoot.isVisible = false
++                binding.errorRoot.isVisible = false
++                adapter.submitList(state.data)   // обновляем список вакансий
++                binding.resultCount.text = "Найдено: ${state.data.size}"
++            }
++            is UiState.Empty -> {
++                binding.progressBar.isVisible = false
++                binding.vacancyRecyclerView.isVisible = false
++                binding.emptyRoot.isVisible = true
++                binding.errorRoot.isVisible = false
++            }
++            is UiState.ServerError, is UiState.NoConnection -> {
++                binding.progressBar.isVisible = false
++                binding.vacancyRecyclerView.isVisible = false
++                binding.emptyRoot.isVisible = false
++                binding.errorRoot.isVisible = true
++                binding.errorMessage.text = state.message ?: "Сервер недоступен"
++            }
++        }
++    }
++
++    override fun onDestroyView() {
++        super.onDestroyView()
++        _binding = null
++    }
+ }
++
+Index: app/src/main/res/layout/search_fragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"?attr/colorPrimary\">\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/search_fragment.xml b/app/src/main/res/layout/search_fragment.xml
+--- a/app/src/main/res/layout/search_fragment.xml	(revision bcef5a1806441ab2be26b7c56b9b1f8771721974)
++++ b/app/src/main/res/layout/search_fragment.xml	(date 1772484973188)
+@@ -1,7 +1,127 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    android:background="?attr/colorPrimary">
++    android:background="?attr/colorPrimary"
++    tools:context=".ui.search.SearchFragment">
++
++    <androidx.constraintlayout.widget.Guideline
++        android:id="@+id/leftBorder16dp"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:orientation="vertical"
++        app:layout_constraintGuide_begin="@dimen/layout_16dp" />
++
++    <androidx.constraintlayout.widget.Guideline
++        android:id="@+id/rightBorder16dp"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:orientation="vertical"
++        app:layout_constraintGuide_end="@dimen/layout_16dp" />
++
++    <com.google.android.material.textfield.TextInputEditText
++        android:id="@+id/searchEditText"
++        style="@style/Regular_16"
++        android:layout_width="@dimen/layout_0dp"
++        android:layout_height="@dimen/layout_56dp"
++        android:autofillHints=""
++        android:background="@drawable/bg_light_gray"
++        android:drawableEnd="@drawable/ic_search"
++        android:hint="@string/enter_request"
++        android:imeOptions="actionDone"
++        android:inputType="text"
++        android:maxLines="1"
++        android:paddingHorizontal="@dimen/layout_16dp"
++        android:textColor="@color/black"
++        android:textColorHint="@color/gray"
++        android:textCursorDrawable="@drawable/bg_cursor"
++        app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
++        app:layout_constraintHorizontal_bias="0.0"
++        app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
++        app:layout_constraintTop_toTopOf="parent"
++        tools:ignore="MissingConstraints" />
++
++    <TextView
++        android:id="@+id/quantityVacancy"
++        style="@style/Regular_16"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_marginTop="@dimen/layout_4dp"
++        android:background="@drawable/bg_blue"
++        android:paddingHorizontal="@dimen/layout_12dp"
++        android:paddingVertical="@dimen/layout_4dp"
++        android:textColor="@color/white"
++        android:visibility="gone"
++        app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
++        app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
++        app:layout_constraintTop_toBottomOf="@id/searchEditText" />
++
++    <ImageView
++        android:id="@+id/imageSearch"
++        android:layout_width="@dimen/layout_0dp"
++        android:layout_height="@dimen/layout_0dp"
++        android:src="@drawable/image_search"
++        android:visibility="gone"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
++        app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
++        app:layout_constraintTop_toBottomOf="@+id/searchEditText"
++        app:layout_constraintVertical_bias="0.5" />
++
++    <ProgressBar
++        android:id="@+id/progressBar"
++        android:layout_width="@dimen/layout_48dp"
++        android:layout_height="@dimen/layout_48dp"
++        android:layout_gravity="center"
++        android:indeterminateTint="@color/blue"
++        android:visibility="gone"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
++        app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
++        app:layout_constraintTop_toBottomOf="@+id/searchEditText"
++        tools:ignore="MissingConstraints" />
++
++    <androidx.recyclerview.widget.RecyclerView
++        android:id="@+id/vacancyRecyclerView"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:layout_marginTop="@dimen/layout_8dp"
++        android:visibility="gone"
++        app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
++        app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
++        app:layout_constraintTop_toBottomOf="@id/quantityVacancy" />
++
++    <FrameLayout
++        android:id="@+id/placeholderContainer"
++        android:layout_width="0dp"
++        android:layout_height="0dp"
++        android:background="@android:color/transparent"
++        android:clickable="true"
++        android:focusable="true"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
++        app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
++        app:layout_constraintTop_toTopOf="parent">
++
++        <!-- Нет интернета -->
++        <include
++            android:id="@+id/noInternetRoot"
++            layout="@layout/placeholder_no_internet"
++            android:visibility="visible" />
++
++        <!-- Ошибка сервера -->
++        <include
++            android:id="@+id/serverErrorRoot"
++            layout="@layout/placeholder_server_error"
++            android:visibility="gone" />
++
++        <!-- Пустой результат -->
++        <include
++            android:id="@+id/emptyRoot"
++            layout="@layout/placeholder_empty"
++            android:visibility="gone" />
++    </FrameLayout>
+ 
+ </androidx.constraintlayout.widget.ConstraintLayout>

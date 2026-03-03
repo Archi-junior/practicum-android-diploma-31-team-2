@@ -14,7 +14,7 @@
 
     <string name="no_internet">Нет интернета</string>
 
-    <string name="there_are_no_such_vacancies">Таких вакансий нет</string>
+    <string name="no_vacancies">Таких вакансий нет</string>
     <string name="couldnt_et_list_of_vacancies">Не удалось получить список вакансий</string>
 
     <string name="vacancies_found">Найдено %d вакансий</string>

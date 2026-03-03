@@ -1,0 +1,225 @@
+Index: app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ru.practicum.android.diploma.ui.search\r\n\r\nimport android.annotation.SuppressLint\r\nimport android.os.Bundle\r\nimport android.text.Editable\r\nimport android.text.TextWatcher\r\nimport android.view.LayoutInflater\r\nimport android.view.MotionEvent\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport androidx.fragment.app.Fragment\r\nimport ru.practicum.android.diploma.R\r\nimport ru.practicum.android.diploma.databinding.SearchFragmentBinding\r\n\r\nclass SearchFragment : Fragment(R.layout.search_fragment) {\r\n\r\n    private var _binding: SearchFragmentBinding? = null\r\n    private val binding get() = _binding!!\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?\r\n    ): View? {\r\n        _binding = SearchFragmentBinding.inflate(inflater, container, false)\r\n        return binding.root\r\n    }\r\n\r\n    @SuppressLint(\"ClickableViewAccessibility\")\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n\r\n        binding.searchEditText.addTextChangedListener(object : TextWatcher {\r\n            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}\r\n            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}\r\n            override fun afterTextChanged(s: Editable?) {\r\n                val hasText = !s.isNullOrBlank()\r\n                val endDrawable = if (hasText) R.drawable.ic_clear else R.drawable.ic_search\r\n                binding.searchEditText.setCompoundDrawablesRelativeWithIntrinsicBounds(\r\n                    0, 0, endDrawable, 0\r\n                )\r\n            }\r\n        })\r\n\r\n        binding.searchEditText.setOnTouchListener { v, event ->\r\n            if (event.action == MotionEvent.ACTION_UP) {\r\n                val d = binding.searchEditText.compoundDrawables[2] ?: return@setOnTouchListener false\r\n                val endIconLeft = v.width - v.paddingEnd - d.intrinsicWidth\r\n                if (event.x >= endIconLeft) {\r\n                    binding.searchEditText.text?.clear()\r\n                    return@setOnTouchListener true\r\n                }\r\n            }\r\n            false\r\n        }\r\n    }\r\n\r\n    override fun onDestroyView() {\r\n        super.onDestroyView()\r\n        _binding = null\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt b/app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt
+--- a/app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt	(revision e2791ce9293c88469e5ef31cbe30e2b1a602d40a)
++++ b/app/src/main/java/ru/practicum/android/diploma/ui/search/SearchFragment.kt	(date 1772476932163)
+@@ -8,15 +8,27 @@
+ import android.view.MotionEvent
+ import android.view.View
+ import android.view.ViewGroup
++import androidx.core.view.isVisible
+ import androidx.fragment.app.Fragment
++import androidx.fragment.app.viewModels
++import androidx.lifecycle.Lifecycle
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.lifecycleScope
++import androidx.lifecycle.repeatOnLifecycle
++import kotlinx.coroutines.flow.collectLatest
++import kotlinx.coroutines.launch
+ import ru.practicum.android.diploma.R
+ import ru.practicum.android.diploma.databinding.SearchFragmentBinding
++import ru.practicum.android.diploma.presentation.SearchViewModel
++import ru.practicum.android.diploma.util.SearchState
+ 
+ class SearchFragment : Fragment(R.layout.search_fragment) {
+ 
+     private var _binding: SearchFragmentBinding? = null
+     private val binding get() = _binding!!
+ 
++    private val viewModel: SearchViewModel by viewModels()
++
+     override fun onCreateView(
+         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+     ): View? {
+@@ -51,7 +63,60 @@
+             }
+             false
+         }
+-    }
++
++    viewLifecycleOwner.lifecycleScope.launch {
++        viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
++            viewModel.uiState.collectLatest { state ->
++                setSearchState(state)
++            }
++        }
++    }
++}
++
++   private fun setSearchState(state: SearchState) {
++       when (state) {
++           SearchState.INITIAL -> {
++               binding.imageSearch.isVisible = true
++               binding.progressBar.isVisible = false
++               binding.vacancyRecyclerView.isVisible = false
++               binding.serverErrorRoot.isVisible = false
++               binding.emptyRoot.isVisible = false
++           }
++
++           SearchState.LOADING -> {
++               binding.progressBar.isVisible = true
++               binding.imageSearch.isVisible = false
++               binding.vacancyRecyclerView.isVisible = false
++               binding.serverErrorRoot.isVisible = false
++               binding.emptyRoot.isVisible = false
++           }
++
++           SearchState.RESULTS -> {
++               binding.vacancyRecyclerView.isVisible = true
++               binding.progressBar.isVisible = false
++               binding.imageSearch.isVisible = false
++               binding.serverErrorRoot.isVisible = false
++               binding.emptyRoot.isVisible = false
++           }
++
++           SearchState.ERROR -> {
++               binding.serverErrorRoot.isVisible = true
++               binding.vacancyRecyclerView.isVisible = false
++               binding.progressBar.isVisible = false
++               binding.imageSearch.isVisible = false
++               binding.emptyRoot.isVisible = false
++           }
++
++           else -> {
++               SearchState.EMPTY
++               binding.emptyRoot.isVisible = true
++               binding.serverErrorRoot.isVisible = false
++               binding.vacancyRecyclerView.isVisible = false
++               binding.progressBar.isVisible = false
++               binding.imageSearch.isVisible = false
++           }
++       }
++   }
+ 
+     override fun onDestroyView() {
+         super.onDestroyView()
+Index: app/src/main/res/values/dimens.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <dimen name=\"layout_0dp\">0dp</dimen>\r\n    <dimen name=\"layout_4dp\">4dp</dimen>\r\n    <dimen name=\"layout_8dp\">8dp</dimen>\r\n    <dimen name=\"layout_12dp\">12dp</dimen>\r\n    <dimen name=\"layout_16dp\">16dp</dimen>\r\n    <dimen name=\"layout_20dp\">20dp</dimen>\r\n    <dimen name=\"layout_24dp\">24dp</dimen>\r\n    <dimen name=\"layout_56dp\">56dp</dimen>\r\n    <dimen name=\"layout_60dp\">60dp</dimen>\r\n    <dimen name=\"layout_64dp\">64dp</dimen>\r\n    <dimen name=\"layout_92dp\">92dp</dimen>\r\n</resources>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/dimens.xml b/app/src/main/res/values/dimens.xml
+--- a/app/src/main/res/values/dimens.xml	(revision e2791ce9293c88469e5ef31cbe30e2b1a602d40a)
++++ b/app/src/main/res/values/dimens.xml	(date 1772272690960)
+@@ -7,6 +7,7 @@
+     <dimen name="layout_16dp">16dp</dimen>
+     <dimen name="layout_20dp">20dp</dimen>
+     <dimen name="layout_24dp">24dp</dimen>
++    <dimen name="layout_48dp">48dp</dimen>
+     <dimen name="layout_56dp">56dp</dimen>
+     <dimen name="layout_60dp">60dp</dimen>
+     <dimen name="layout_64dp">64dp</dimen>
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">Practicum-Android-Diploma</string>\r\n    <string name=\"bottom_nav_main\">Главное</string>\r\n    <string name=\"bottom_nav_favorite\">Избранное</string>\r\n    <string name=\"bottom_nav_team\">Команда</string>\r\n    <string name=\"filter_icon\">иконка фильтра</string>\r\n\r\n    <string name=\"job_search\">Поиск вакансий</string>\r\n    <string name=\"enter_request\">Введите запрос</string>\r\n    <string name=\"main\">Главная</string>\r\n    <string name=\"filter_title\">Настройки фильтрации</string>\r\n    <string name=\"favorites\">Избранное</string>\r\n    <string name=\"team\">Команда</string>\r\n\r\n    <string name=\"no_internet\">Нет интернета</string>\r\n\r\n    <string name=\"there_are_no_such_vacancies\">Таких вакансий нет</string>\r\n    <string name=\"couldnt_et_list_of_vacancies\">Не удалось получить список вакансий</string>\r\n\r\n    <string name=\"vacancies_found\">Найдено %d вакансий</string>\r\n\r\n    <string name=\"filtering_settings\">Настройки фильтрации</string>\r\n    <string name=\"place_of_work\">Место работы</string>\r\n    <string name=\"industry\">Отрасль</string>\r\n    <string name=\"expected_salary\">Ожидаемая зарплата</string>\r\n    <string name=\"enter_the_amount\">Введите сумму</string>\r\n    <string name=\"do_not_show_without_salary\">Не показывать без зарплаты</string>\r\n\r\n    <string name=\"choosing_a_place_of_work\">Выбор место работы</string>\r\n    <string name=\"country\">Страна</string>\r\n    <string name=\"region\">Регион</string>\r\n\r\n    <string name=\"choosing_country\">Выбор страны</string>\r\n\r\n    <string name=\"no_such_region\">Такого региона нет</string>\r\n\r\n    <string name=\"couldnt_get_list\">Не удалось получить список</string>\r\n\r\n    <string name=\"choose\">Выбрать</string>\r\n\r\n    <string name=\"apply\">Применить</string>\r\n    <string name=\"throw_off\">Сбросить</string>\r\n\r\n    <string name=\"choosing_an_industry\">Выбор отрасли</string>\r\n    <string name=\"choosing_region\">Выбор региона</string>\r\n    <string name=\"enter_industry\">Введите отрасль</string>\r\n\r\n    <string name=\"vacancy\">Вакансия</string>\r\n    <string name=\"required_experience\">Требуемый опыт</string>\r\n    <string name=\"job_description\">Описание вакансии</string>\r\n    <string name=\"responsibilities\">Обязанности</string>\r\n    <string name=\"requirements\">Требования</string>\r\n    <string name=\"conditions\">Условия</string>\r\n    <string name=\"key_skills\">Ключевые навыки</string>\r\n\r\n    <string name=\"vacancy_was_not_found_or_deleted\">Вакансия не найдина или удалена</string>\r\n\r\n    <string name=\"server_error\">Ошибка сервера</string>\r\n\r\n    <string name=\"list_empty\">Список пуст</string>\r\n\r\n    <string name=\"over_app_worked\">Над приложением работали</string>\r\n    <string name=\"Anna_Arkhipovna_Testing\">Анна Архиповна Тестирование</string>\r\n    <string name=\"Olga_Petrovna_Assessment\">Ольга Петровна Оценка</string>\r\n    <string name=\"Veniamin_Petrovich_Design\">Вениамин Петрович Дизайн</string>\r\n    <string name=\"Anton_Androidovich\">Антон Андроидович</string>\r\n</resources>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(revision e2791ce9293c88469e5ef31cbe30e2b1a602d40a)
++++ b/app/src/main/res/values/strings.xml	(date 1772351092287)
+@@ -15,7 +15,7 @@
+     <string name="no_internet">Нет интернета</string>
+ 
+     <string name="there_are_no_such_vacancies">Таких вакансий нет</string>
+-    <string name="couldnt_et_list_of_vacancies">Не удалось получить список вакансий</string>
++    <string name="couldnt_et_list_of_vacancies">Не удалось получить\nсписок вакансий</string>
+ 
+     <string name="vacancies_found">Найдено %d вакансий</string>
+ 
+Index: app/src/main/res/layout/search_fragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"?attr/colorPrimary\"\r\n    tools:context=\".ui.search.SearchFragment\">\r\n\r\n    <androidx.constraintlayout.widget.Guideline\r\n        android:id=\"@+id/leftBorder16dp\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"vertical\"\r\n        app:layout_constraintGuide_begin=\"@dimen/layout_16dp\" />\r\n\r\n    <androidx.constraintlayout.widget.Guideline\r\n        android:id=\"@+id/rightBorder16dp\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"vertical\"\r\n        app:layout_constraintGuide_end=\"@dimen/layout_16dp\" />\r\n\r\n    <com.google.android.material.textfield.TextInputEditText\r\n        android:id=\"@+id/searchEditText\"\r\n        style=\"@style/Regular_16\"\r\n        android:layout_width=\"@dimen/layout_0dp\"\r\n        android:layout_height=\"@dimen/layout_56dp\"\r\n        android:autofillHints=\"\"\r\n        android:background=\"@drawable/bg_light_gray\"\r\n        android:drawableEnd=\"@drawable/ic_search\"\r\n        android:hint=\"@string/enter_request\"\r\n        android:textCursorDrawable=\"@drawable/bg_cursor\"\r\n        android:imeOptions=\"actionDone\"\r\n        android:inputType=\"text\"\r\n        android:maxLines=\"1\"\r\n        android:paddingHorizontal=\"@dimen/layout_16dp\"\r\n        android:textColor=\"@color/black\"\r\n        android:textColorHint=\"@color/gray\"\r\n        app:layout_constraintEnd_toEndOf=\"@id/rightBorder16dp\"\r\n        app:layout_constraintHorizontal_bias=\"0.0\"\r\n        app:layout_constraintStart_toStartOf=\"@id/leftBorder16dp\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        tools:ignore=\"MissingConstraints\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/quantityVacancy\"\r\n        style=\"@style/Regular_16\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"@dimen/layout_4dp\"\r\n        android:background=\"@drawable/bg_blue\"\r\n        android:paddingHorizontal=\"@dimen/layout_12dp\"\r\n        android:paddingVertical=\"@dimen/layout_4dp\"\r\n        android:textColor=\"@color/white\"\r\n        android:visibility=\"gone\"\r\n        app:layout_constraintEnd_toEndOf=\"@id/rightBorder16dp\"\r\n        app:layout_constraintStart_toStartOf=\"@id/leftBorder16dp\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/searchEditText\" />\r\n\r\n    <ImageView\r\n        android:id=\"@+id/imageSearch\"\r\n        android:layout_width=\"@dimen/layout_0dp\"\r\n        android:layout_height=\"@dimen/layout_0dp\"\r\n        android:src=\"@drawable/image_search\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"@id/rightBorder16dp\"\r\n        app:layout_constraintStart_toStartOf=\"@id/leftBorder16dp\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/searchEditText\"\r\n        app:layout_constraintVertical_bias=\"0.5\" />\r\n\r\n    <androidx.recyclerview.widget.RecyclerView\r\n        android:id=\"@+id/vacancyRecyclerView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"@dimen/layout_8dp\"\r\n        android:visibility=\"gone\"\r\n        app:layout_constraintEnd_toEndOf=\"@id/rightBorder16dp\"\r\n        app:layout_constraintStart_toStartOf=\"@id/leftBorder16dp\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/quantityVacancy\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/search_fragment.xml b/app/src/main/res/layout/search_fragment.xml
+--- a/app/src/main/res/layout/search_fragment.xml	(revision e2791ce9293c88469e5ef31cbe30e2b1a602d40a)
++++ b/app/src/main/res/layout/search_fragment.xml	(date 1772443346199)
+@@ -30,13 +30,13 @@
+         android:background="@drawable/bg_light_gray"
+         android:drawableEnd="@drawable/ic_search"
+         android:hint="@string/enter_request"
+-        android:textCursorDrawable="@drawable/bg_cursor"
+         android:imeOptions="actionDone"
+         android:inputType="text"
+         android:maxLines="1"
+         android:paddingHorizontal="@dimen/layout_16dp"
+         android:textColor="@color/black"
+         android:textColorHint="@color/gray"
++        android:textCursorDrawable="@drawable/bg_cursor"
+         app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
+         app:layout_constraintHorizontal_bias="0.0"
+         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
+@@ -63,12 +63,26 @@
+         android:layout_width="@dimen/layout_0dp"
+         android:layout_height="@dimen/layout_0dp"
+         android:src="@drawable/image_search"
++        android:visibility="gone"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
+         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
+         app:layout_constraintTop_toBottomOf="@+id/searchEditText"
+         app:layout_constraintVertical_bias="0.5" />
+ 
++    <ProgressBar
++        android:id="@+id/progressBar"
++        android:layout_width="@dimen/layout_48dp"
++        android:layout_height="@dimen/layout_48dp"
++        android:layout_gravity="center"
++        android:indeterminateTint="@color/blue"
++        android:visibility="gone"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
++        app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
++        app:layout_constraintTop_toBottomOf="@+id/searchEditText"
++        tools:ignore="MissingConstraints" />
++
+     <androidx.recyclerview.widget.RecyclerView
+         android:id="@+id/vacancyRecyclerView"
+         android:layout_width="match_parent"
+@@ -79,4 +93,35 @@
+         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
+         app:layout_constraintTop_toBottomOf="@id/quantityVacancy" />
+ 
++    <FrameLayout
++        android:id="@+id/placeholderContainer"
++        android:layout_width="0dp"
++        android:layout_height="0dp"
++        android:background="@android:color/transparent"
++        android:clickable="true"
++        android:focusable="true"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
++        app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
++        app:layout_constraintTop_toTopOf="parent">
++
++        <!-- Нет интернета -->
++        <include
++            android:id="@+id/noInternetRoot"
++            layout="@layout/placeholder_no_internet"
++            android:visibility="visible" />
++
++        <!-- Ошибка сервера -->
++        <include
++            android:id="@+id/serverErrorRoot"
++            layout="@layout/placeholder_server_error"
++            android:visibility="gone" />
++
++        <!-- Пустой результат -->
++        <include
++            android:id="@+id/emptyRoot"
++            layout="@layout/placeholder_empty"
++            android:visibility="gone" />
++    </FrameLayout>
++
+ </androidx.constraintlayout.widget.ConstraintLayout>

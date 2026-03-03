@@ -8,14 +8,26 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.SearchFragmentBinding
+import ru.practicum.android.diploma.presentation.SearchViewModel
+import ru.practicum.android.diploma.util.SearchState
+import ru.practicum.android.diploma.util.UiState
 
 class SearchFragment : Fragment(R.layout.search_fragment) {
 
     private var _binding: SearchFragmentBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: SearchViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -40,16 +52,53 @@ class SearchFragment : Fragment(R.layout.search_fragment) {
             }
         })
 
-        binding.searchEditText.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                val d = binding.searchEditText.compoundDrawables[2] ?: return@setOnTouchListener false
-                val endIconLeft = v.width - v.paddingEnd - d.intrinsicWidth
-                if (event.x >= endIconLeft) {
-                    binding.searchEditText.text?.clear()
-                    return@setOnTouchListener true
+        // 2️⃣ Наблюдение за состоянием ViewModel
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collectLatest { state ->
+                    renderState(state)
                 }
             }
-            false
+        }
+    }
+
+    @SuppressLint("StringFormatInvalid")
+    private fun renderState(state: UiState<List<Vacancy>>) {
+        when (state) {
+
+            is UiState.Success -> {
+                binding.progressBar.isVisible = false
+                binding.vacancyRecyclerView.isVisible = true
+                binding.emptyRoot.root.isVisible = false
+                binding.serverErrorRoot.root.isVisible = false
+                binding.quantityVacancy.isVisible = true
+                binding.quantityVacancy.text = requireContext().getString(
+                    R.string.vacancies_found, state.data.size
+                )
+            }
+
+            is UiState.Error -> {
+                binding.progressBar.isVisible = false
+                binding.vacancyRecyclerView.isVisible = false
+                binding.emptyRoot.root.isVisible = false
+                binding.serverErrorRoot.root.isVisible = true
+            }
+
+            is UiState.NoConnection -> {
+                binding.progressBar.isVisible = false
+                binding.vacancyRecyclerView.isVisible = false
+                binding.emptyRoot.root.isVisible = true
+                binding.noInternetRoot.root.isVisible = false
+                binding.quantityVacancy.isVisible = true
+                binding.quantityVacancy.text = requireContext().getString(R.string.no_vacancies, state.data.size)
+            }
+
+            is UiState.Empty -> {
+                binding.progressBar.isVisible = false
+                binding.vacancyRecyclerView.isVisible = false
+                binding.noInternetRoot.root.isVisible = true
+                binding.serverErrorRoot.root.isVisible = false
+            }
         }
     }
 
