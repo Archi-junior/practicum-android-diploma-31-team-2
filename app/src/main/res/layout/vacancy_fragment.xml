@@ -60,9 +60,10 @@
     <ScrollView
         android:id="@+id/svMain"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSalary">
+        app:layout_constraintTop_toBottomOf="@+id/tvSalary"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clSvMain"
@@ -70,12 +71,8 @@
             android:layout_height="wrap_content">
 
             <View
+                style="@style/VacancyViewEmployer"
                 android:id="@+id/vEmployer"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginHorizontal="@dimen/layout_16dp"
-                android:layout_marginTop="@dimen/layout_24dp"
-                android:background="@drawable/shape_vacancy_employer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -156,6 +153,22 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvDescriptionTitle"
                 tools:text="На данный момент, мы развиваем 3 портала" />
+
+            <TextView
+                android:id="@+id/tvSkillsTitle"
+                style="@style/VacancyText.SkillsTitle"
+                android:text="@string/key_skills"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+
+            <TextView
+                android:id="@+id/tvSkills"
+                style="@style/VacancyText.Skills"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvSkillsTitle"
+                tools:text="C++,\nGo,\nNoSQL,\nSQL,\nPython" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
