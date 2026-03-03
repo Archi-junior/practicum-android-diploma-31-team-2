@@ -61,6 +61,27 @@ class VacancyFragment : Fragment(){
                 .into(ivEmployerPlaceholder)
 
             tvName.text = vacancy.name
+            tvEmployerName.text = vacancy.employer.name
+            tvAddress.text = vacancy.address?.fullAddress ?: vacancy.area.name
+            tvExperienceName.text = vacancy.experience?.name
+            tvScheduleName.text = vacancy.schedule?.name
+            tvDescription.text = HtmlCompat.fromHtml(
+                vacancy.description,
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+            if (vacancy.skills.isEmpty()) {
+                tvSkillsTitle.isVisible = false
+                tvSkills.isVisible = false
+            } else {
+                tvSkills.text = vacancy.skills.joinToString("\n")
+            }
+        }
+        showSalary(vacancy)
+        showContacts(vacancy)
+    }
+
+    private fun showSalary(vacancy: Vacancy) {
+        binding.apply {
             tvSalary.text = when {
                 vacancy.salary ==  null -> resources.getString(R.string.vacancy_salary_not_specified)
                 vacancy.salary.from != null && vacancy.salary.to == null -> {
@@ -77,17 +98,18 @@ class VacancyFragment : Fragment(){
                 }
                 else -> resources.getString(R.string.vacancy_salary_not_specified)
             }
-            tvEmployerName.text = vacancy.employer.name
-            tvAddress.text = vacancy.address?.fullAddress ?: vacancy.area.name
-            tvContacts.text = vacancy.contacts?.let {
-                "${it.name}, ${it.email}, ${it.phones.joinToString(", ") { child -> child.formatted }}"
+        }
+    }
+    private fun showContacts(vacancy: Vacancy) {
+        binding.apply {
+            if (vacancy.contacts == null) tvContacts.isVisible = false
+            else {
+                tvContacts.text = (if (vacancy.contacts.name.isEmpty()) "" else vacancy.contacts.name + ", ") +
+                    (if (vacancy.contacts.email.isEmpty()) "" else vacancy.contacts.email + ", ") +
+                    vacancy.contacts.phones.joinToString(", ") { child ->
+                        (if (child.comment == null) "" else child.comment + " ") + child.formatted
+                    }
             }
-            tvExperienceName.text = vacancy.experience?.name
-            tvScheduleName.text = vacancy.schedule?.name
-            tvDescription.text = HtmlCompat.fromHtml(
-                vacancy.description,
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
         }
     }
 
