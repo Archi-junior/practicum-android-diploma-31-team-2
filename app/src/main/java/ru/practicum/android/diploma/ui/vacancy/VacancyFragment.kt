@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -59,8 +60,11 @@ class VacancyFragment : Fragment(){
             Glide.with(ivEmployerPlaceholder)
                 .load(vacancy.employer.logo)
                 .placeholder(R.drawable.ic_placeholder_employer)
-                .transform(RoundedCorners(
-                    resources.getDimensionPixelSize(R.dimen.layout_12dp))
+                .transform(
+                    FitCenter(),
+                    RoundedCorners(
+                        resources.getDimensionPixelSize(R.dimen.layout_12dp)
+                    )
                 )
                 .into(ivEmployerPlaceholder)
 

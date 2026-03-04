@@ -208,6 +208,8 @@
     </style>
 
     <style name="VacancyImageView.EmployerPlaceholder">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
         <item name="android:layout_marginStart">@dimen/layout_16dp</item>
     </style>
 
