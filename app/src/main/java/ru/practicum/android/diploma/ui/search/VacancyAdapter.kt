@@ -20,6 +20,9 @@ class VacancyAdapter(
     private val numberFormat = DecimalFormat("#,###").apply {
         isGroupingUsed = true
         groupingSize = NUMBER_GROUPING_SIZE
+        val symbols = decimalFormatSymbols
+        symbols.groupingSeparator = ' '
+        decimalFormatSymbols = symbols
     }
 
     fun submitList(newList: List<Vacancy>) {
