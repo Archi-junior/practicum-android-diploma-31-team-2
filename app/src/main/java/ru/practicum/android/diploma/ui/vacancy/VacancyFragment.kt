@@ -16,6 +16,7 @@ import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyFragmentBinding
 import ru.practicum.android.diploma.domain.models.Vacancy
+import java.text.DecimalFormat
 
 class VacancyFragment : Fragment(){
 
@@ -105,23 +106,38 @@ class VacancyFragment : Fragment(){
     }
 
     private fun showSalary(vacancy: Vacancy) {
-        binding.apply {
-            tvSalary.text = when {
-                vacancy.salary ==  null -> resources.getString(R.string.vacancy_salary_not_specified)
-                vacancy.salary.from != null && vacancy.salary.to == null -> {
-                    resources.getString(R.string.vacancy_salary_from)
-                        .format(vacancy.salary.from, getCurrencySymbol(vacancy.salary.currency))
-                }
-                vacancy.salary.from == null && vacancy.salary.to != null -> {
-                    resources.getString(R.string.vacancy_salary_to)
-                        .format(vacancy.salary.to, getCurrencySymbol(vacancy.salary.currency))
-                }
-                vacancy.salary.from != null && vacancy.salary.to != null -> {
-                    resources.getString(R.string.vacancy_salary_from_to)
-                        .format(vacancy.salary.from, vacancy.salary.to, getCurrencySymbol(vacancy.salary.currency))
-                }
-                else -> resources.getString(R.string.vacancy_salary_not_specified)
+        val numberFormat = DecimalFormat(NUMBER_FORMAT_PATTERN).apply {
+            decimalFormatSymbols = decimalFormatSymbols.apply {
+                groupingSeparator = NUMBER_FORMAT_GROUPING_SEPARATOR
             }
+            isGroupingUsed = true
+            groupingSize = NUMBER_FORMAT_GROUPING_SIZE
+        }
+        binding.tvSalary.text = when {
+            vacancy.salary ==  null -> resources.getString(R.string.vacancy_salary_not_specified)
+            vacancy.salary.from != null && vacancy.salary.to == null -> {
+                resources.getString(R.string.vacancy_salary_from)
+                    .format(
+                        numberFormat.format(vacancy.salary.from),
+                        getCurrencySymbol(vacancy.salary.currency)
+                    )
+            }
+            vacancy.salary.from == null && vacancy.salary.to != null -> {
+                resources.getString(R.string.vacancy_salary_to)
+                    .format(
+                        numberFormat.format(vacancy.salary.to),
+                        getCurrencySymbol(vacancy.salary.currency)
+                    )
+            }
+            vacancy.salary.from != null && vacancy.salary.to != null -> {
+                resources.getString(R.string.vacancy_salary_from_to)
+                    .format(
+                        numberFormat.format(vacancy.salary.from),
+                        numberFormat.format(vacancy.salary.to),
+                        getCurrencySymbol(vacancy.salary.currency)
+                    )
+            }
+            else -> resources.getString(R.string.vacancy_salary_not_specified)
         }
     }
     private fun showContacts(vacancy: Vacancy) {
@@ -179,5 +195,8 @@ class VacancyFragment : Fragment(){
     companion object {
         const val ARGS_VACANCY = "vacancyId"
         fun createArgs(vacancyId: String) = Bundle().apply { putString(ARGS_VACANCY, vacancyId) }
+        private const val NUMBER_FORMAT_PATTERN = "#,###"
+        private const val NUMBER_FORMAT_GROUPING_SIZE = 3
+        private const val NUMBER_FORMAT_GROUPING_SEPARATOR = ' '
     }
 }
