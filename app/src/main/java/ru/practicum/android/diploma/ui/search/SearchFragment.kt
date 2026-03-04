@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.SearchFragmentBinding
+import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 
 class SearchFragment : Fragment() {
 
@@ -21,6 +23,8 @@ class SearchFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: SearchViewModel by viewModel()
+
+    private lateinit var adapter: VacancyAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -32,9 +36,19 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupAdapter()
         setupSearchInput()
         setupRecyclerView()
         observeViewModel()
+    }
+
+    private fun setupAdapter() {
+        adapter = VacancyAdapter { vacancyId ->
+            findNavController().navigate(
+                R.id.action_searchFragment_to_vacancyFragment,
+                VacancyFragment.createArgs(vacancyId)
+            )
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -64,7 +78,7 @@ class SearchFragment : Fragment() {
 
     private fun setupRecyclerView() {
         binding.vacancyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        //Добавить адаптер
+        binding.vacancyRecyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
@@ -74,7 +88,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun renderState(state: SearchState) {
-        // Скрываем все элементы
         binding.progressBar.isVisible = false
         binding.vacancyRecyclerView.isVisible = false
         binding.quantityVacancy.isVisible = false
@@ -96,7 +109,7 @@ class SearchFragment : Fragment() {
                 binding.vacancyRecyclerView.isVisible = true
                 binding.quantityVacancy.isVisible = true
                 binding.quantityVacancy.text = getString(R.string.vacancies_found, state.totalFound)
-                //Обновить адаптер с state.vacancies
+                adapter.submitList(state.vacancies)
             }
 
             is SearchState.Empty -> {
