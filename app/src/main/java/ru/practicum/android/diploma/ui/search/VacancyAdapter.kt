@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.search
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +19,7 @@ class VacancyAdapter(
     private var vacancies: List<Vacancy> = emptyList()
     private val numberFormat = DecimalFormat("#,###").apply {
         isGroupingUsed = true
-        groupingSize = 3
+        groupingSize = NUMBER_GROUPING_SIZE
     }
 
     fun submitList(newList: List<Vacancy>) {
@@ -52,11 +53,14 @@ class VacancyAdapter(
                 Glide.with(ivCompanyLogo)
                     .load(vacancy.employer.logo)
                     .placeholder(R.drawable.ic_placeholder_employer)
-                    .override(48, 48)
+                    .override(
+                        itemView.resources.getDimensionPixelSize(R.dimen.logo_size),
+                        itemView.resources.getDimensionPixelSize(R.dimen.logo_size)
+                    )
                     .transform(
                         CenterCrop(),
                         RoundedCorners(
-                            itemView.resources.getDimensionPixelSize(R.dimen.layout_12dp)
+                            itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
                         )
                     )
                     .into(ivCompanyLogo)
@@ -114,6 +118,7 @@ class VacancyAdapter(
                 val currency = java.util.Currency.getInstance(currencyCode.uppercase())
                 currency.symbol
             } catch (e: IllegalArgumentException) {
+                Log.e("VacancyAdapter", "Unknown currency code: $currencyCode", e)
                 when (currencyCode.uppercase()) {
                     "USD" -> "$"
                     "RUB" -> "₽"
@@ -128,5 +133,9 @@ class VacancyAdapter(
                 }
             }
         }
+    }
+
+    companion object{
+        const val NUMBER_GROUPING_SIZE = 3
     }
 }
