@@ -34,7 +34,7 @@ class SearchViewModel(
 
     init {
         _searchQuery
-            .debounce(2000)
+            .debounce(DEBOUNCE_TIMEOUT)
             .distinctUntilChanged()
             .filter { query ->
                 if (query.isBlank()) {
@@ -103,5 +103,9 @@ class SearchViewModel(
                     isSearching = false
                 }
         }
+    }
+
+    companion object{
+        const val DEBOUNCE_TIMEOUT = 2000L
     }
 }

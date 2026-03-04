@@ -64,7 +64,7 @@ class SearchFragment : Fragment() {
 
     private fun setupRecyclerView() {
         binding.vacancyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        // TODO: Добавить адаптер
+        //Добавить адаптер
     }
 
     private fun observeViewModel() {
@@ -96,7 +96,7 @@ class SearchFragment : Fragment() {
                 binding.vacancyRecyclerView.isVisible = true
                 binding.quantityVacancy.isVisible = true
                 binding.quantityVacancy.text = getString(R.string.vacancies_found, state.totalFound)
-                // TODO: Обновить адаптер с state.vacancies
+                //Обновить адаптер с state.vacancies
             }
 
             is SearchState.Empty -> {
