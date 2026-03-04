@@ -27,6 +27,7 @@
         android:layout_height="@dimen/layout_92dp"
         android:gravity="center_vertical"
         android:text="@string/over_app_worked"
+        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
         app:layout_constraintTop_toTopOf="parent" />
@@ -38,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/layout_24dp"
         android:text="@string/Vladimir_Dahin"
+        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
         app:layout_constraintTop_toBottomOf="@id/app" />
@@ -49,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/layout_16dp"
         android:text="@string/Danil"
+        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
         app:layout_constraintTop_toBottomOf="@id/name1" />
@@ -60,6 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/layout_16dp"
         android:text="@string/Arman_Dosov"
+        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
         app:layout_constraintTop_toBottomOf="@id/name2" />
@@ -71,6 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/layout_16dp"
         android:text="@string/Sergey_Andreev"
+        android:textColor="?attr/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
         app:layout_constraintTop_toBottomOf="@id/name3" />
