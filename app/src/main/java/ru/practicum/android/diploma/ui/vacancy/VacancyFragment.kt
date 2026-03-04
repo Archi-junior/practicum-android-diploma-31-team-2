@@ -88,21 +88,37 @@ class VacancyFragment : Fragment(){
         showContacts(vacancy)
     }
 
+    private fun getCurrencySymbol(currencyCode: String?): String {
+        return when (currencyCode) {
+            "USD" -> "$"
+            "RUB" -> "₽"
+            "EUR" -> "€"
+            "GBP" -> "£"
+            "AUD" -> "A$"
+            "JPY" -> "¥"
+            "NZD" -> "NZ$"
+            "SGD" -> "S$"
+            "KZT" -> "₸"
+            "BYN", "BYR" -> "Br"
+            else -> currencyCode.toString()
+        }
+    }
+
     private fun showSalary(vacancy: Vacancy) {
         binding.apply {
             tvSalary.text = when {
                 vacancy.salary ==  null -> resources.getString(R.string.vacancy_salary_not_specified)
                 vacancy.salary.from != null && vacancy.salary.to == null -> {
                     resources.getString(R.string.vacancy_salary_from)
-                        .format(vacancy.salary.from, vacancy.salary.currency)
+                        .format(vacancy.salary.from, getCurrencySymbol(vacancy.salary.currency))
                 }
                 vacancy.salary.from == null && vacancy.salary.to != null -> {
                     resources.getString(R.string.vacancy_salary_to)
-                        .format(vacancy.salary.to, vacancy.salary.currency)
+                        .format(vacancy.salary.to, getCurrencySymbol(vacancy.salary.currency))
                 }
                 vacancy.salary.from != null && vacancy.salary.to != null -> {
                     resources.getString(R.string.vacancy_salary_from_to)
-                        .format(vacancy.salary.from, vacancy.salary.to, vacancy.salary.currency)
+                        .format(vacancy.salary.from, vacancy.salary.to, getCurrencySymbol(vacancy.salary.currency))
                 }
                 else -> resources.getString(R.string.vacancy_salary_not_specified)
             }
@@ -124,33 +140,6 @@ class VacancyFragment : Fragment(){
         }
     }
 
-    private fun showLoading() {
-        binding.apply {
-            groupMain.isVisible = false
-            groupVacancyNotFound.isVisible = false
-            groupServerError.isVisible = false
-            progressBar.isVisible = true
-        }
-    }
-
-    private fun showNotFound() {
-        binding.apply {
-            groupMain.isVisible = false
-            groupVacancyNotFound.isVisible = true
-            groupServerError.isVisible = false
-            progressBar.isVisible = false
-        }
-    }
-
-    private fun showServerError() {
-        binding.apply {
-            groupMain.isVisible = false
-            groupVacancyNotFound.isVisible = false
-            groupServerError.isVisible = true
-            progressBar.isVisible = false
-        }
-    }
-
     private fun render(state: VacancyState) {
         when (state) {
             is VacancyState.Content -> {
@@ -160,9 +149,30 @@ class VacancyFragment : Fragment(){
                 )
                 if (!state.onlyFavoriteChanged) showContent(state.vacancy)
             }
-            is VacancyState.Loading -> showLoading()
-            is VacancyState.NotFound -> showNotFound()
-            is VacancyState.Error -> showServerError()
+            is VacancyState.Loading -> {
+                binding.apply {
+                    groupMain.isVisible = false
+                    groupVacancyNotFound.isVisible = false
+                    groupServerError.isVisible = false
+                    progressBar.isVisible = true
+                }
+            }
+            is VacancyState.NotFound -> {
+                binding.apply {
+                    groupMain.isVisible = false
+                    groupVacancyNotFound.isVisible = true
+                    groupServerError.isVisible = false
+                    progressBar.isVisible = false
+                }
+            }
+            is VacancyState.Error -> {
+                binding.apply {
+                    groupMain.isVisible = false
+                    groupVacancyNotFound.isVisible = false
+                    groupServerError.isVisible = true
+                    progressBar.isVisible = false
+                }
+            }
         }
     }
 
