@@ -59,11 +59,12 @@
 
     <string name="list_empty">Список пуст</string>
 
-    <string name="over_app_worked">Над приложением работали</string>
-    <string name="Anna_Arkhipovna_Testing">Анна Архиповна Тестирование</string>
-    <string name="Olga_Petrovna_Assessment">Ольга Петровна Оценка</string>
-    <string name="Veniamin_Petrovich_Design">Вениамин Петрович Дизайн</string>
-    <string name="Anton_Androidovich">Антон Андроидович</string>
+    <string name="over_app_worked">Над приложением \nработали</string>
+    <string name="Vladimir_Dahin">Владимир Дахин</string>
+    <string name="Danil">Данил</string>
+    <string name="Arman_Dosov">Арман Досов</string>
+    <string name="Sergey_Andreev">Сергей Андреев</string>
+   
     <string name="error_occurred">Произошла ошибка</string>
     <string name="check_internet_connection">Проверьте подключение к интернету</string>
 
