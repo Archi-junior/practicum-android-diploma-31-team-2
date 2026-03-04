@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity() {
             R.id.favoriteFragment -> R.string.favorites
             R.id.teamFragment -> R.string.team
             R.id.filtersFragment -> R.string.filter_title
-            R.id.vacancyFragment -> R.string.vacancy
             R.id.branchChooseFragment -> R.string.choosing_an_industry
             R.id.workChooseFragment -> R.string.choosing_a_place_of_work
             R.id.countryChooseFragment -> R.string.choosing_country
@@ -71,7 +70,20 @@ class MainActivity : AppCompatActivity() {
                 R.string.app_name
             }
         }
+        when (destinationId) {
+            R.id.vacancyFragment -> hideTitle()
+            R.id.favoriteFragment -> hideTitle()
+            else -> showTitle()
+        }
         binding.titleText.setText(titleResId)
+    }
+
+    private fun hideTitle() {
+        binding.titleText.visibility = android.view.View.GONE
+    }
+
+    private fun showTitle() {
+        binding.titleText.visibility = android.view.View.VISIBLE
     }
 
     private fun updateFilterButtonVisibility(destinationId: Int) {

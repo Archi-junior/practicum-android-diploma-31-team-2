@@ -40,7 +40,7 @@ val networkModule = module {
 
     single {
         Retrofit.Builder()
-            .baseUrl("https://practicum-diploma-8bc38133faba.herokuapp.com/")
+            .baseUrl("http://155.212.163.151/")
             .client(get<OkHttpClient>())
             .addConverterFactory(GsonConverterFactory.create(get<Gson>()))
             .build()
