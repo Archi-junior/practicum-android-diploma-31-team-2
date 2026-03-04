@@ -27,7 +27,7 @@ class VacancyViewModel(
                 is ResultHttp.Success -> {
                     stateLiveData.postValue(
                         VacancyState.Content(
-                            vacancy = resultHttp.data.copy(),
+                            vacancy = resultHttp.data,
                             isFavorite = resultDb is ResultDb.Success && resultDb.data != null,
                             onlyFavoriteChanged = false,
                         )
@@ -38,7 +38,23 @@ class VacancyViewModel(
                     else stateLiveData.postValue(VacancyState.Error(resultHttp.message.toString()))
                 }
                 is ResultHttp.NoConnection -> {
-                    stateLiveData.postValue(VacancyState.Error(""))
+                    when (resultDb) {
+                        is ResultDb.Error -> {
+                            stateLiveData.postValue(VacancyState.Error(resultDb.message.toString()))
+                        }
+                        is ResultDb.Success -> {
+                            if (resultDb.data == null) stateLiveData.postValue(VacancyState.NotFound)
+                            else {
+                                stateLiveData.postValue(
+                                    VacancyState.Content(
+                                        vacancy = resultDb.data,
+                                        isFavorite = true,
+                                        onlyFavoriteChanged = false,
+                                    )
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
