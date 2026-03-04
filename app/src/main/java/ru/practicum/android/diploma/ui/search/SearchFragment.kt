@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -36,19 +37,9 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupAdapter()
         setupSearchInput()
         setupRecyclerView()
         observeViewModel()
-    }
-
-    private fun setupAdapter() {
-        adapter = VacancyAdapter { vacancyId ->
-            findNavController().navigate(
-                R.id.action_searchFragment_to_vacancyFragment,
-                VacancyFragment.createArgs(vacancyId)
-            )
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -77,6 +68,17 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        adapter = VacancyAdapter(
+            onItemClick = { vacancyId ->
+                findNavController().navigate(
+                    R.id.action_searchFragment_to_vacancyFragment,
+                    VacancyFragment.createArgs(vacancyId)
+                )
+            },
+            onLoadNextPage = {
+                viewModel.loadNextPage()
+            }
+        )
         binding.vacancyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.vacancyRecyclerView.adapter = adapter
     }
@@ -109,7 +111,12 @@ class SearchFragment : Fragment() {
                 binding.vacancyRecyclerView.isVisible = true
                 binding.quantityVacancy.isVisible = true
                 binding.quantityVacancy.text = getString(R.string.vacancies_found, state.totalFound)
+
                 adapter.submitList(state.vacancies)
+                adapter.setLoading(state.isLoadingNextPage)
+                adapter.setLastPage(state.currentPage >= state.totalPages)
+
+                binding.footerProgress.isVisible = state.isLoadingNextPage
             }
 
             is SearchState.Empty -> {
@@ -122,6 +129,26 @@ class SearchFragment : Fragment() {
 
             is SearchState.Error -> {
                 binding.serverErrorRoot.root.isVisible = true
+            }
+
+            is SearchState.PaginationError -> {
+                if (state.showToast) {
+                    Toast.makeText(
+                        requireContext(),
+                        state.message ?: getString(R.string.error_occurred),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            is SearchState.PaginationNoConnection -> {
+                if (state.showToast) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.check_internet_connection),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
     }
