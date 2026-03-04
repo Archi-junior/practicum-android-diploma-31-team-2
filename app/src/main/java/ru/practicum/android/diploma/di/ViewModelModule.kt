@@ -13,6 +13,7 @@ val viewModelModule = module {
             vacancyId,
             get(),
             get(),
+            get()
         )
     }
 

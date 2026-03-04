@@ -15,6 +15,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyFragmentBinding
+import ru.practicum.android.diploma.domain.models.Contacts
 import ru.practicum.android.diploma.domain.models.Vacancy
 import java.text.DecimalFormat
 
@@ -40,10 +41,19 @@ class VacancyFragment : Fragment(){
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
-
+        setupClickListeners()
         binding.ivBack.setOnClickListener { findNavController().navigateUp() }
         binding.ivFavorite.setOnClickListener { viewModel.onAddedToFavorites() }
+
+
     }
+
+    private fun setupClickListeners() {
+        binding.ivBack.setOnClickListener { findNavController().navigateUp() }
+        binding.ivFavorite.setOnClickListener { viewModel.onAddedToFavorites() }
+
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -84,9 +94,50 @@ class VacancyFragment : Fragment(){
             } else {
                 tvSkills.text = vacancy.skills.joinToString("\n")
             }
+            if (vacancy.contacts != null) {
+                tvContactInfo.setOnClickListener(null)
+                tvContactInfo.isClickable = false
+
+                setupContactClicks(vacancy.contacts)
+            }
         }
         showSalary(vacancy)
-        showContacts(vacancy)
+        setupContacts(vacancy.contacts)
+    }
+
+    private fun setupContactClicks(contacts: Contacts) {
+        binding.apply {
+            if (contacts.email.isNotEmpty()) {
+                tvEmail.isVisible = true
+                tvEmail.text = contacts.email
+                tvEmail.setOnClickListener {
+                    viewModel.openEmail(contacts.email)
+                }
+            } else {
+                tvEmail.isVisible = false
+            }
+
+            if (contacts.phones.isNotEmpty()) {
+                contacts.phones.forEachIndexed { index, phone ->
+                    val phoneView = when (index) {
+                        0 -> binding.tvPhone1
+                        1 -> binding.tvPhone2
+                        else -> null
+                    }
+                    phoneView?.apply {
+                        isVisible = true
+                        text = if (phone.comment.isNullOrEmpty()) {
+                            phone.formatted
+                        } else {
+                            "${phone.comment}: ${phone.formatted}"
+                        }
+                        setOnClickListener {
+                            viewModel.callPhone(phone.formatted)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun getCurrencySymbol(currencyCode: String?): String {
@@ -140,18 +191,50 @@ class VacancyFragment : Fragment(){
             else -> resources.getString(R.string.vacancy_salary_not_specified)
         }
     }
-    private fun showContacts(vacancy: Vacancy) {
+
+    private fun setupContacts(contacts: Contacts?) {
         binding.apply {
-            if (vacancy.contacts == null) tvContacts.isVisible = false
-            else {
-                tvContacts.text = resources.getString(R.string.vacancy_contacts)
-                    .format(
-                        vacancy.contacts.name.takeIf { it.isNotEmpty() }?.let { "$it, " } ?: "",
-                        vacancy.contacts.email.takeIf { it.isNotEmpty() }?.let { "$it, " } ?: "",
-                        vacancy.contacts.phones.joinToString(", ") {
-                            (it.comment?.let { child -> "$child " } ?: "") + it.formatted
-                        }
-                    )
+            if (contacts == null) {
+                tvContactInfo.isVisible = false
+                return
+            }
+
+            tvContactInfo.isVisible = true
+            tvContactInfo.setOnClickListener(null)
+            tvContactInfo.isClickable = false
+
+            // Email
+            if (contacts.email.isNotEmpty()) {
+                tvEmail.isVisible = true
+                tvEmail.text = contacts.email
+                tvEmail.setOnClickListener {
+                    viewModel.openEmail(contacts.email)
+                }
+            } else {
+                tvEmail.isVisible = false
+            }
+
+            val visiblePhones = contacts.phones.take(MAX_VISIBLE_PHONES)
+            val phoneViews = listOf(tvPhone1, tvPhone2, tvPhone3)
+
+            phoneViews.forEach { it.isVisible = false }
+
+            visiblePhones.forEachIndexed { index, phone ->
+                val phoneView = phoneViews.getOrNull(index)
+                phoneView?.apply {
+                    isVisible = true
+                    text = if (phone.comment.isNullOrEmpty()) {
+                        phone.formatted
+                    } else {
+                        "${phone.comment}: ${phone.formatted}"
+                    }
+                    setOnClickListener {
+                        viewModel.callPhone(phone.formatted)
+                    }
+                }
+            }
+            if (contacts.email.isEmpty() && visiblePhones.isEmpty()) {
+                tvContactInfo.isVisible = false
             }
         }
     }
@@ -164,6 +247,10 @@ class VacancyFragment : Fragment(){
                     else R.drawable.ic_vacancy_add_favourites
                 )
                 if (!state.onlyFavoriteChanged) showContent(state.vacancy)
+
+                binding.ivShare.setOnClickListener {
+                    viewModel.shareVacancy(state.vacancy.url)
+                }
             }
             is VacancyState.Loading -> {
                 binding.apply {
@@ -198,5 +285,6 @@ class VacancyFragment : Fragment(){
         private const val NUMBER_FORMAT_PATTERN = "#,###"
         private const val NUMBER_FORMAT_GROUPING_SIZE = 3
         private const val NUMBER_FORMAT_GROUPING_SEPARATOR = ' '
+        private const val MAX_VISIBLE_PHONES = 3
     }
 }
