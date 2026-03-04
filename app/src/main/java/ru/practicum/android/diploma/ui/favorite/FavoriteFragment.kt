@@ -35,12 +35,15 @@ class FavoriteFragment : Fragment() {
             render(it)
         }
 
-        adapter = VacancyAdapter { vacancyId ->
-            findNavController().navigate(
-                R.id.action_favoriteFragment_to_vacancyFragment,
-                VacancyFragment.createArgs(vacancyId)
-            )
-        }
+        adapter = VacancyAdapter(
+            onItemClick = { vacancyId ->
+                findNavController().navigate(
+                    R.id.action_favoriteFragment_to_vacancyFragment,
+                    VacancyFragment.createArgs(vacancyId)
+                )
+            },
+            onLoadNextPage = null
+        )
         binding.rvVacancies.adapter = adapter
     }
 
