@@ -275,7 +275,6 @@
     <style name="FavoriteRvVacancies">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0dp</item>
-        <item name="android:layout_marginHorizontal">@dimen/layout_16dp</item>
         <item name="android:layout_marginTop">35dp</item>
     </style>
 
