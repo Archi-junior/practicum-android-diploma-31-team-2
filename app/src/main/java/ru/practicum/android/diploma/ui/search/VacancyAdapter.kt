@@ -49,8 +49,16 @@ class VacancyAdapter(
 
     override fun onBindViewHolder(holder: VacancyViewHolder, position: Int) {
         holder.bind(getItem(position))
+        checkAndLoadNextPage(position)
+    }
 
-        if (hasPagination && !isLoading && !isLastPage && position == itemCount - 1) {
+    private fun checkAndLoadNextPage(position: Int) {
+        val shouldLoadNextPage = hasPagination &&
+                !isLoading &&
+                !isLastPage &&
+                position == itemCount - 1
+
+        if (shouldLoadNextPage) {
             onLoadNextPage?.invoke()
         }
     }

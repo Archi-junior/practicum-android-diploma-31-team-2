@@ -66,13 +66,16 @@ class SearchViewModel(
 
     fun loadNextPage() {
         val currentState = _state.value
-        if (currentState is SearchState.Content &&
+        if (canLoadNextPage(currentState)) {
+            performSearch(currentQuery, reset = false)
+        }
+    }
+
+    private fun canLoadNextPage(currentState: SearchState?): Boolean {
+        return currentState is SearchState.Content &&
             !currentState.isLoadingNextPage &&
             currentPage < totalPages &&
             !isLoadingNextPage
-        ) {
-            performSearch(currentQuery, reset = false)
-        }
     }
 
     private fun resetSearch() {
