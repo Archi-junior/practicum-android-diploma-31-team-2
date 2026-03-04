@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.repository.ShareDataRepository
@@ -24,6 +25,7 @@ class ShareDataRepositoryImpl(
             }
             context.startActivity(chooserIntent)
         } catch (e: ActivityNotFoundException) {
+            Log.e("ShareDataRepository", "No app found to share", e)
             showToast(R.string.error_no_app_to_share)
         }
     }
@@ -36,6 +38,7 @@ class ShareDataRepositoryImpl(
             }
             context.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
+            Log.e("ShareDataRepository", "No email app found", e)
             showToast(R.string.error_no_email_app)
         }
     }
@@ -48,8 +51,10 @@ class ShareDataRepositoryImpl(
             }
             context.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
+            Log.e("ShareDataRepository", "No dialer app found", e)
             showToast(R.string.error_no_dial_app)
         } catch (e: SecurityException) {
+            Log.e("ShareDataRepository", "No permission to call", e)
             showToast(R.string.error_call_permission)
         }
     }

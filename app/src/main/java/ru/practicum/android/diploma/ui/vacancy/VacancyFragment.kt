@@ -214,7 +214,7 @@ class VacancyFragment : Fragment(){
                 tvEmail.isVisible = false
             }
 
-            val visiblePhones = contacts.phones.take(3)
+            val visiblePhones = contacts.phones.take(MAX_VISIBLE_PHONES)
             val phoneViews = listOf(tvPhone1, tvPhone2, tvPhone3)
 
             phoneViews.forEach { it.isVisible = false }
@@ -285,5 +285,6 @@ class VacancyFragment : Fragment(){
         private const val NUMBER_FORMAT_PATTERN = "#,###"
         private const val NUMBER_FORMAT_GROUPING_SIZE = 3
         private const val NUMBER_FORMAT_GROUPING_SEPARATOR = ' '
+        private const val MAX_VISIBLE_PHONES = 3
     }
 }
