@@ -10,6 +10,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FavoriteFragmentBinding
 import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.ui.search.VacancyAdapter
 import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 
 class FavoriteFragment : Fragment() {
@@ -17,7 +18,7 @@ class FavoriteFragment : Fragment() {
     private val viewModel by viewModel<FavoriteViewModel>()
     private var _binding: FavoriteFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: FakeVacanciesAdapter //нужно будет поменять на адаптер из SearchFragment
+    private lateinit var adapter: VacancyAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,11 +35,10 @@ class FavoriteFragment : Fragment() {
             render(it)
         }
 
-        //нужно будет поменять на адаптер из SearchFragment
-        adapter = FakeVacanciesAdapter { position ->
+        adapter = VacancyAdapter { vacancyId ->
             findNavController().navigate(
                 R.id.action_favoriteFragment_to_vacancyFragment,
-                VacancyFragment.createArgs(adapter.vacancies[position].id)
+                VacancyFragment.createArgs(vacancyId)
             )
         }
         binding.rvVacancies.adapter = adapter
@@ -57,12 +57,8 @@ class FavoriteFragment : Fragment() {
     private fun showContent(vacancies: List<Vacancy>) {
         if (vacancies.isEmpty()) showEmptyList()
         else {
+            adapter.submitList(vacancies)
             binding.apply {
-
-                adapter.vacancies.clear()
-                adapter.vacancies.addAll(vacancies)
-                adapter.notifyDataSetChanged()
-
                 rvVacancies.isVisible = true
                 groupEmpty.isVisible = false
                 groupCouldntGetList.isVisible = false
