@@ -5,15 +5,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FavoriteFragmentBinding
 import ru.practicum.android.diploma.domain.models.Vacancy
+import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 
 class FavoriteFragment : Fragment() {
 
     private val viewModel by viewModel<FavoriteViewModel>()
     private var _binding: FavoriteFragmentBinding? = null
     private val binding get() = _binding!!
+    private lateinit var adapter: FakeVacanciesAdapter //нужно будет поменять на адаптер из SearchFragment
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,6 +33,15 @@ class FavoriteFragment : Fragment() {
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
+
+        //нужно будет поменять на адаптер из SearchFragment
+        adapter = FakeVacanciesAdapter { position ->
+            findNavController().navigate(
+                R.id.action_favoriteFragment_to_vacancyFragment,
+                VacancyFragment.createArgs(adapter.vacancies[position].id)
+            )
+        }
+        binding.rvVacancies.adapter = adapter
     }
 
     override fun onResume() {
@@ -45,6 +58,11 @@ class FavoriteFragment : Fragment() {
         if (vacancies.isEmpty()) showEmptyList()
         else {
             binding.apply {
+
+                adapter.vacancies.clear()
+                adapter.vacancies.addAll(vacancies)
+                adapter.notifyDataSetChanged()
+
                 rvVacancies.isVisible = true
                 groupEmpty.isVisible = false
                 groupCouldntGetList.isVisible = false
