@@ -9,12 +9,14 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyFragmentBinding
 import ru.practicum.android.diploma.domain.models.Vacancy
+import java.text.DecimalFormat
 
 class VacancyFragment : Fragment(){
 
@@ -59,8 +61,11 @@ class VacancyFragment : Fragment(){
             Glide.with(ivEmployerPlaceholder)
                 .load(vacancy.employer.logo)
                 .placeholder(R.drawable.ic_placeholder_employer)
-                .transform(RoundedCorners(
-                    resources.getDimensionPixelSize(R.dimen.layout_12dp))
+                .transform(
+                    FitCenter(),
+                    RoundedCorners(
+                        resources.getDimensionPixelSize(R.dimen.layout_12dp)
+                    )
                 )
                 .into(ivEmployerPlaceholder)
 
@@ -84,24 +89,55 @@ class VacancyFragment : Fragment(){
         showContacts(vacancy)
     }
 
+    private fun getCurrencySymbol(currencyCode: String?): String {
+        return when (currencyCode) {
+            "USD" -> "$"
+            "RUB" -> "₽"
+            "EUR" -> "€"
+            "GBP" -> "£"
+            "AUD" -> "A$"
+            "JPY" -> "¥"
+            "NZD" -> "NZ$"
+            "SGD" -> "S$"
+            "KZT" -> "₸"
+            "BYN", "BYR" -> "Br"
+            else -> currencyCode.toString()
+        }
+    }
+
     private fun showSalary(vacancy: Vacancy) {
-        binding.apply {
-            tvSalary.text = when {
-                vacancy.salary ==  null -> resources.getString(R.string.vacancy_salary_not_specified)
-                vacancy.salary.from != null && vacancy.salary.to == null -> {
-                    resources.getString(R.string.vacancy_salary_from)
-                        .format(vacancy.salary.from, vacancy.salary.currency)
-                }
-                vacancy.salary.from == null && vacancy.salary.to != null -> {
-                    resources.getString(R.string.vacancy_salary_to)
-                        .format(vacancy.salary.to, vacancy.salary.currency)
-                }
-                vacancy.salary.from != null && vacancy.salary.to != null -> {
-                    resources.getString(R.string.vacancy_salary_from_to)
-                        .format(vacancy.salary.from, vacancy.salary.to, vacancy.salary.currency)
-                }
-                else -> resources.getString(R.string.vacancy_salary_not_specified)
+        val numberFormat = DecimalFormat(NUMBER_FORMAT_PATTERN).apply {
+            decimalFormatSymbols = decimalFormatSymbols.apply {
+                groupingSeparator = NUMBER_FORMAT_GROUPING_SEPARATOR
             }
+            isGroupingUsed = true
+            groupingSize = NUMBER_FORMAT_GROUPING_SIZE
+        }
+        binding.tvSalary.text = when {
+            vacancy.salary ==  null -> resources.getString(R.string.vacancy_salary_not_specified)
+            vacancy.salary.from != null && vacancy.salary.to == null -> {
+                resources.getString(R.string.vacancy_salary_from)
+                    .format(
+                        numberFormat.format(vacancy.salary.from),
+                        getCurrencySymbol(vacancy.salary.currency)
+                    )
+            }
+            vacancy.salary.from == null && vacancy.salary.to != null -> {
+                resources.getString(R.string.vacancy_salary_to)
+                    .format(
+                        numberFormat.format(vacancy.salary.to),
+                        getCurrencySymbol(vacancy.salary.currency)
+                    )
+            }
+            vacancy.salary.from != null && vacancy.salary.to != null -> {
+                resources.getString(R.string.vacancy_salary_from_to)
+                    .format(
+                        numberFormat.format(vacancy.salary.from),
+                        numberFormat.format(vacancy.salary.to),
+                        getCurrencySymbol(vacancy.salary.currency)
+                    )
+            }
+            else -> resources.getString(R.string.vacancy_salary_not_specified)
         }
     }
     private fun showContacts(vacancy: Vacancy) {
@@ -120,33 +156,6 @@ class VacancyFragment : Fragment(){
         }
     }
 
-    private fun showLoading() {
-        binding.apply {
-            groupMain.isVisible = false
-            groupVacancyNotFound.isVisible = false
-            groupServerError.isVisible = false
-            progressBar.isVisible = true
-        }
-    }
-
-    private fun showNotFound() {
-        binding.apply {
-            groupMain.isVisible = false
-            groupVacancyNotFound.isVisible = true
-            groupServerError.isVisible = false
-            progressBar.isVisible = false
-        }
-    }
-
-    private fun showServerError() {
-        binding.apply {
-            groupMain.isVisible = false
-            groupVacancyNotFound.isVisible = false
-            groupServerError.isVisible = true
-            progressBar.isVisible = false
-        }
-    }
-
     private fun render(state: VacancyState) {
         when (state) {
             is VacancyState.Content -> {
@@ -156,14 +165,38 @@ class VacancyFragment : Fragment(){
                 )
                 if (!state.onlyFavoriteChanged) showContent(state.vacancy)
             }
-            is VacancyState.Loading -> showLoading()
-            is VacancyState.NotFound -> showNotFound()
-            is VacancyState.Error -> showServerError()
+            is VacancyState.Loading -> {
+                binding.apply {
+                    groupMain.isVisible = false
+                    groupVacancyNotFound.isVisible = false
+                    groupServerError.isVisible = false
+                    progressBar.isVisible = true
+                }
+            }
+            is VacancyState.NotFound -> {
+                binding.apply {
+                    groupMain.isVisible = false
+                    groupVacancyNotFound.isVisible = true
+                    groupServerError.isVisible = false
+                    progressBar.isVisible = false
+                }
+            }
+            is VacancyState.Error -> {
+                binding.apply {
+                    groupMain.isVisible = false
+                    groupVacancyNotFound.isVisible = false
+                    groupServerError.isVisible = true
+                    progressBar.isVisible = false
+                }
+            }
         }
     }
 
     companion object {
         const val ARGS_VACANCY = "vacancyId"
         fun createArgs(vacancyId: String) = Bundle().apply { putString(ARGS_VACANCY, vacancyId) }
+        private const val NUMBER_FORMAT_PATTERN = "#,###"
+        private const val NUMBER_FORMAT_GROUPING_SIZE = 3
+        private const val NUMBER_FORMAT_GROUPING_SEPARATOR = ' '
     }
 }

@@ -208,6 +208,8 @@
     </style>
 
     <style name="VacancyImageView.EmployerPlaceholder">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
         <item name="android:layout_marginStart">@dimen/layout_16dp</item>
     </style>
 
@@ -275,6 +277,14 @@
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_marginHorizontal">@dimen/layout_16dp</item>
         <item name="android:layout_marginTop">35dp</item>
+    </style>
+
+    <style name="FavoriteProgressBar">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:indeterminate">true</item>
+        <item name="indicatorColor">@color/blue</item>
     </style>
 
 </resources>
