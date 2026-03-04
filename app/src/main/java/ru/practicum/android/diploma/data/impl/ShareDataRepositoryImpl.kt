@@ -5,36 +5,56 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.repository.ShareDataRepository
 
 class ShareDataRepositoryImpl(
     private val context: Context
 ) : ShareDataRepository {
 
-    override suspend fun shareUrl(url: String, title: String) {
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, url)
+    override suspend fun shareUrl(url: String, titleResId: Int) {
+        val title = context.getString(titleResId)
+        try {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, url)
+            }
+            val chooserIntent = Intent.createChooser(shareIntent, title).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(chooserIntent)
+        } catch (e: ActivityNotFoundException) {
+            showToast(R.string.error_no_app_to_share)
         }
-        val chooserIntent = Intent.createChooser(shareIntent, title).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        context.startActivity(chooserIntent)
     }
 
     override suspend fun openEmail(email: String) {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "message/rfc822"
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:$email")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            showToast(R.string.error_no_email_app)
         }
-        context.startActivity(intent)
     }
 
     override suspend fun call(number: String) {
-        val intent = Intent(Intent.ACTION_DIAL, Uri.parse(number)).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val telNumber = if (number.startsWith("tel:")) number else "tel:$number"
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse(telNumber)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            showToast(R.string.error_no_dial_app)
+        } catch (e: SecurityException) {
+            showToast(R.string.error_call_permission)
         }
-        context.startActivity(intent)
+    }
+
+    private fun showToast(messageResId: Int) {
+        Toast.makeText(context, messageResId, Toast.LENGTH_SHORT).show()
     }
 }

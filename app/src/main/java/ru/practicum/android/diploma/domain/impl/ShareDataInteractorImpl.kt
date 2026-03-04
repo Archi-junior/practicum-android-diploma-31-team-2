@@ -3,10 +3,11 @@ package ru.practicum.android.diploma.domain.impl
 import ru.practicum.android.diploma.domain.repository.ShareDataRepository
 
 class ShareDataInteractorImpl(
-    val repository: ShareDataRepository
-) : ShareDataInteractor{
-    override suspend fun shareUrl(url: String, title: String) {
-        repository.shareUrl(url, title)
+    private val repository: ShareDataRepository
+) : ShareDataInteractor {
+
+    override suspend fun shareUrl(url: String, titleResId: Int) {
+        repository.shareUrl(url, titleResId)
     }
 
     override suspend fun openEmail(email: String) {

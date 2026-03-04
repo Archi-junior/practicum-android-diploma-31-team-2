@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.ItemVacancyBinding
@@ -71,15 +71,13 @@ class VacancyAdapter(
 
         fun bind(vacancy: Vacancy) {
             binding.apply {
-                val logoSize = itemView.resources.getDimensionPixelSize(R.dimen.logo_size)
                 val cornerRadius = itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
 
                 Glide.with(ivCompanyLogo)
                     .load(vacancy.employer.logo)
                     .placeholder(R.drawable.ic_placeholder_employer)
-                    .override(logoSize, logoSize)
                     .transform(
-                        CenterCrop(),
+                        FitCenter(),
                         RoundedCorners(cornerRadius)
                     )
                     .into(ivCompanyLogo)

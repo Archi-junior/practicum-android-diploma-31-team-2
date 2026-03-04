@@ -6,15 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.FavoritesVacancyInteractor
 import ru.practicum.android.diploma.domain.ResultDb
 import ru.practicum.android.diploma.domain.ResultHttp
 import ru.practicum.android.diploma.domain.VacanciesInteractor
+import ru.practicum.android.diploma.domain.impl.ShareDataInteractor
 
 class VacancyViewModel(
     private val vacancyId: String,
     private val vacanciesInteractor: VacanciesInteractor,
-    private val favoritesVacancyInteractor: FavoritesVacancyInteractor
+    private val favoritesVacancyInteractor: FavoritesVacancyInteractor,
+    private val shareDataInteractor: ShareDataInteractor
 ) : ViewModel() {
 
     private var stateLiveData = MutableLiveData<VacancyState>(VacancyState.Loading)
@@ -57,6 +60,24 @@ class VacancyViewModel(
                     }
                 }
             }
+        }
+    }
+
+    fun shareVacancy(url: String) {
+        viewModelScope.launch {
+            shareDataInteractor.shareUrl(url, R.string.share_url_title)
+        }
+    }
+
+    fun openEmail(email: String) {
+        viewModelScope.launch {
+            shareDataInteractor.openEmail(email)
+        }
+    }
+
+    fun callPhone(phone: String) {
+        viewModelScope.launch {
+            shareDataInteractor.call(phone)
         }
     }
 

@@ -53,11 +53,24 @@
     <string name="conditions">Условия</string>
     <string name="key_skills">Ключевые навыки</string>
 
+    <string name="back_button">Назад</string>
+    <string name="share_button">Поделиться</string>
+    <string name="favorite_button">Избранное</string>
+    <string name="company_logo">Логотип компании</string>
+    <string name="contacts">Контакты</string>
+
     <string name="vacancy_was_not_found_or_deleted">Вакансия не найдена или \nудалена</string>
 
     <string name="server_error">Ошибка сервера</string>
 
     <string name="list_empty">Список пуст</string>
+
+    <string name="share_url_title">Поделиться вакансией</string>
+
+    <string name="error_no_app_to_share">Приложение отсутствует</string>
+    <string name="error_no_email_app">Приложение email отсутствует</string>
+    <string name="error_no_dial_app">Приложение для звонков отсутствует</string>
+    <string name="error_call_permission">Разрешение на звонки отсутствуют</string>
 
     <string name="over_app_worked">Над приложением \nработали</string>
     <string name="Vladimir_Dahin">Владимир Дахин</string>

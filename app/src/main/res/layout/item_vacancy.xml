@@ -14,7 +14,6 @@
         android:id="@+id/ivCompanyLogo"
         android:layout_width="@dimen/layout_48dp"
         android:layout_height="@dimen/layout_48dp"
-        android:scaleType="centerCrop"
         android:src="@drawable/ic_placeholder_employer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
