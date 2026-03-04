@@ -225,4 +225,56 @@
         <item name="indicatorColor">@color/blue</item>
     </style>
 
+    <style name="FavoriteTextGeneral">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">@dimen/layout_16dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="FavoriteText" parent="FavoriteTextGeneral">
+    </style>
+
+    <style name="FavoriteText.Title">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:layout_marginTop">19dp</item>
+    </style>
+
+    <style name="FavoriteText.Empty">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:layout_marginTop">@dimen/layout_16dp</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="FavoriteText.CouldntGetList">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:layout_marginTop">@dimen/layout_16dp</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:maxLines">@null</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="FavoriteImageView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="FavoriteImageView.Empty">
+    </style>
+
+    <style name="FavoriteImageView.CouldntGetList">
+    </style>
+
+    <style name="FavoriteRvVacancies">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_marginHorizontal">@dimen/layout_16dp</item>
+        <item name="android:layout_marginTop">35dp</item>
+    </style>
+
 </resources>

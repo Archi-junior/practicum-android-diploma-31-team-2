@@ -108,11 +108,14 @@ class VacancyFragment : Fragment(){
         binding.apply {
             if (vacancy.contacts == null) tvContacts.isVisible = false
             else {
-                tvContacts.text = (if (vacancy.contacts.name.isEmpty()) "" else vacancy.contacts.name + ", ") +
-                    (if (vacancy.contacts.email.isEmpty()) "" else vacancy.contacts.email + ", ") +
-                    vacancy.contacts.phones.joinToString(", ") { child ->
-                        (if (child.comment == null) "" else child.comment + " ") + child.formatted
-                    }
+                tvContacts.text = resources.getString(R.string.vacancy_contacts)
+                    .format(
+                        vacancy.contacts.name.takeIf { it.isNotEmpty() }?.let { "$it, " } ?: "",
+                        vacancy.contacts.email.takeIf { it.isNotEmpty() }?.let { "$it, " } ?: "",
+                        vacancy.contacts.phones.joinToString(", ") {
+                            (it.comment?.let { child -> "$child " } ?: "") + it.formatted
+                        }
+                    )
             }
         }
     }
