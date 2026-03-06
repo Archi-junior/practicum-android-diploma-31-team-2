@@ -1,11 +1,14 @@
 package ru.practicum.android.diploma.ui.region
 
+import ru.practicum.android.diploma.domain.models.Area
+
 sealed interface RegionChooseState {
 
     data object Loading : RegionChooseState
 
     data class Content(
-        val isLoadingNextPage: Boolean = false
+        val searchText: String,
+        val areas: List<Area>
     ) : RegionChooseState
 
     data object Empty : RegionChooseState

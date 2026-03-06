@@ -1,14 +1,15 @@
 package ru.practicum.android.diploma.ui.branch
 
+import ru.practicum.android.diploma.domain.models.Industry
+
 sealed interface IndustryChooseState {
 
     data object Loading : IndustryChooseState
 
     data class Content(
-        val isLoadingNextPage: Boolean = false
+        val searchText: String,
+        val industries: List<Industry>,
     ) : IndustryChooseState
-
-    data object Empty : IndustryChooseState
 
     data object NoConnection : IndustryChooseState
 

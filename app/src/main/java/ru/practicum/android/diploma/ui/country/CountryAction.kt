@@ -1,5 +1,11 @@
 package ru.practicum.android.diploma.ui.country
 
+import ru.practicum.android.diploma.domain.models.Area
+
 sealed interface CountryAction {
-    data object CountrySelectItem: CountryAction
+
+    data class CountrySelectItem(
+        val country: Area
+    ): CountryAction
+
 }

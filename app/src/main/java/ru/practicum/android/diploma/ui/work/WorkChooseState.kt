@@ -1,14 +1,15 @@
 package ru.practicum.android.diploma.ui.work
 
+import ru.practicum.android.diploma.domain.models.Area
+
 sealed interface WorkChooseState {
 
     data object Loading : WorkChooseState
 
     data class Content(
-        val isLoadingNextPage: Boolean = false
+        val country: Area? = null,
+        val region: Area? = null,
     ) : WorkChooseState
-
-    data object Empty : WorkChooseState
 
     data object NoConnection : WorkChooseState
 
