@@ -5,7 +5,8 @@ import ru.practicum.android.diploma.domain.models.Area
 sealed interface RegionAction {
 
     data class RegionSearchTextChange(
-        val searchText: String
+        val searchText: String,
+        val filteredItems: List<Area>,
     ): RegionAction
 
     data object RegionSearchTextClear: RegionAction

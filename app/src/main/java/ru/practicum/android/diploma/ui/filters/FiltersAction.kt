@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.filters
 
 sealed interface FiltersAction {
+
     data object FiltersWorkChange: FiltersAction
 
     data object FiltersWorkClear: FiltersAction

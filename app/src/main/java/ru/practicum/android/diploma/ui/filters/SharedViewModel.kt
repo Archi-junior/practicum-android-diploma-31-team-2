@@ -56,7 +56,8 @@ class SharedViewModel(
             is IndustryAction.IndustrySearchTextChange -> {
                 _industryChooseStateLiveData.postValue(
                     (industryChooseStateLiveData.value as IndustryChooseState.Content).copy(
-                        searchText = action.searchText
+                        searchText = action.searchText,
+                        industries = action.filteredItems,
                     )
                 )
             }
@@ -94,7 +95,8 @@ class SharedViewModel(
             is RegionAction.RegionSearchTextChange -> {
                 _regionChooseStateLiveData.postValue(
                     (regionChooseStateLiveData.value as RegionChooseState.Content).copy(
-                        searchText = action.searchText
+                        searchText = action.searchText,
+                        areas = action.filteredItems,
                     )
                 )
             }
