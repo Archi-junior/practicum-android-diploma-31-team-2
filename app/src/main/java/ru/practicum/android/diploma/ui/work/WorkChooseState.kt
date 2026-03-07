@@ -4,7 +4,7 @@ import ru.practicum.android.diploma.domain.models.Area
 
 sealed interface WorkChooseState {
 
-    data object Loading : WorkChooseState
+    data object Initial : WorkChooseState
 
     data class Content(
         val country: Area? = null,

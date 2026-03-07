@@ -32,13 +32,13 @@ class SharedViewModel(
     private var areas = mutableListOf<Area>()
     private var industries = mutableListOf<Industry>()
 
-    private val _industryChooseStateLiveData = MutableLiveData<IndustryChooseState>(IndustryChooseState.Loading)
+    private val _industryChooseStateLiveData = MutableLiveData<IndustryChooseState>(IndustryChooseState.Initial)
     val industryChooseStateLiveData: LiveData<IndustryChooseState> = _industryChooseStateLiveData
-    private val _countryChooseStateLiveData = MutableLiveData<CountryChooseState>(CountryChooseState.Loading)
+    private val _countryChooseStateLiveData = MutableLiveData<CountryChooseState>(CountryChooseState.Initial)
     val countryChooseStateLiveData: LiveData<CountryChooseState> = _countryChooseStateLiveData
-    private val _regionChooseStateLiveData = MutableLiveData<RegionChooseState>(RegionChooseState.Loading)
+    private val _regionChooseStateLiveData = MutableLiveData<RegionChooseState>(RegionChooseState.Initial)
     val regionChooseStateLiveData: LiveData<RegionChooseState> = _regionChooseStateLiveData
-    private val _workChooseStateLiveData = MutableLiveData<WorkChooseState>(WorkChooseState.Loading)
+    private val _workChooseStateLiveData = MutableLiveData<WorkChooseState>(WorkChooseState.Initial)
     val workChooseStateLiveData: LiveData<WorkChooseState> = _workChooseStateLiveData
     private val _filtersStateLiveData = MutableLiveData<FiltersState>(
         FiltersState.Content(

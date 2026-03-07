@@ -4,7 +4,7 @@ import ru.practicum.android.diploma.domain.models.Area
 
 sealed interface RegionChooseState {
 
-    data object Loading : RegionChooseState
+    data object Initial : RegionChooseState
 
     data class Content(
         val searchText: String,

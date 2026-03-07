@@ -4,6 +4,8 @@ import ru.practicum.android.diploma.domain.models.Area
 
 sealed interface CountryChooseState {
 
+    data object Initial : CountryChooseState
+
     data object Loading : CountryChooseState
 
     data class Content(

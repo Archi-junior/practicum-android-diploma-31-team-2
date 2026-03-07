@@ -4,6 +4,8 @@ import ru.practicum.android.diploma.domain.models.Industry
 
 sealed interface IndustryChooseState {
 
+    data object Initial : IndustryChooseState
+
     data object Loading : IndustryChooseState
 
     data class Content(
