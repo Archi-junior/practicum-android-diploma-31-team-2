@@ -6,7 +6,6 @@ sealed interface IndustryAction {
 
     data class IndustrySearchTextChange(
         val searchText: String,
-        val filteredItems: List<Industry>,
     ): IndustryAction
 
     data object IndustrySearchTextClear: IndustryAction

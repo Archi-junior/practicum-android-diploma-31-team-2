@@ -6,7 +6,6 @@ sealed interface RegionAction {
 
     data class RegionSearchTextChange(
         val searchText: String,
-        val filteredItems: List<Area>,
     ): RegionAction
 
     data object RegionSearchTextClear: RegionAction
