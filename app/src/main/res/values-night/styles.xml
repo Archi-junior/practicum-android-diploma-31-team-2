@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="VacancyText" parent="VacancyTextGeneral">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="FavoriteText" parent="FavoriteTextGeneral">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+</resources>

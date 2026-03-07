@@ -2,6 +2,86 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimary">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/colorPrimary"
+    android:id="@+id/clFavorite">
+
+    <TextView
+        style="@style/FavoriteText.Title"
+        android:id="@+id/tvTitle"
+        android:text="@string/favorites"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvVacancies"
+        style="@style/FavoriteRvVacancies"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <ImageView
+        android:id="@+id/ivEmpty"
+        style="@style/FavoriteImageView.Empty"
+        android:src="@drawable/favorite_list_empty"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintBottom_toTopOf="@id/tvEmpty"/>
+
+    <TextView
+        style="@style/FavoriteText.Empty"
+        android:id="@+id/tvEmpty"
+        android:text="@string/list_empty"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivEmpty"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="ivEmpty,tvEmpty" />
+
+    <ImageView
+        android:id="@+id/ivCouldntGetList"
+        style="@style/FavoriteImageView.CouldntGetList"
+        android:src="@drawable/favorite_couldnt_get_list"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintBottom_toTopOf="@id/tvCouldntGetList"/>
+
+    <TextView
+        style="@style/FavoriteText.CouldntGetList"
+        android:id="@+id/tvCouldntGetList"
+        android:text="@string/couldnt_get_list_of_vacancies"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivCouldntGetList"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupCouldntGetList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="ivCouldntGetList,tvCouldntGetList" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        style="@style/FavoriteProgressBar"
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

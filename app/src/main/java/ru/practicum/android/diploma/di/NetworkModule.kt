@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.di
 
+import com.google.gson.Gson
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -39,9 +40,9 @@ val networkModule = module {
 
     single {
         Retrofit.Builder()
-            .baseUrl("https://practicum-diploma-8bc38133faba.herokuapp.com/")
+            .baseUrl("http://155.212.163.151/")
             .client(get<OkHttpClient>())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(get<Gson>()))
             .build()
     }
 

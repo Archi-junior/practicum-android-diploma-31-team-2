@@ -1,6 +1,6 @@
 package ru.practicum.android.diploma.data.network
 
-fun ApiRequest.Vacancies.toQueryMap(): Map<String, String> =
+fun ApiRequest.VacanciesFilter.toQueryMap(): Map<String, String> =
     buildMap {
         areaId?.let { put("area", it.toString()) }
         industryId?.let { put("industry", it.toString()) }

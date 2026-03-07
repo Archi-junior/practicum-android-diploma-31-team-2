@@ -15,7 +15,7 @@
     <string name="no_internet">Нет интернета</string>
 
     <string name="there_are_no_such_vacancies">Таких вакансий нет</string>
-    <string name="couldnt_et_list_of_vacancies">Не удалось получить список вакансий</string>
+    <string name="couldnt_get_list_of_vacancies">Не удалось получить \nсписок вакансий</string>
 
     <string name="vacancies_found">Найдено %d вакансий</string>
 
@@ -53,15 +53,37 @@
     <string name="conditions">Условия</string>
     <string name="key_skills">Ключевые навыки</string>
 
-    <string name="vacancy_was_not_found_or_deleted">Вакансия не найдина или удалена</string>
+    <string name="back_button">Назад</string>
+    <string name="share_button">Поделиться</string>
+    <string name="favorite_button">Избранное</string>
+    <string name="company_logo">Логотип компании</string>
+    <string name="contacts">Контакты</string>
+
+    <string name="vacancy_was_not_found_or_deleted">Вакансия не найдена или \nудалена</string>
 
     <string name="server_error">Ошибка сервера</string>
 
     <string name="list_empty">Список пуст</string>
 
-    <string name="over_app_worked">Над приложением работали</string>
-    <string name="Anna_Arkhipovna_Testing">Анна Архиповна Тестирование</string>
-    <string name="Olga_Petrovna_Assessment">Ольга Петровна Оценка</string>
-    <string name="Veniamin_Petrovich_Design">Вениамин Петрович Дизайн</string>
-    <string name="Anton_Androidovich">Антон Андроидович</string>
+    <string name="share_url_title">Поделиться вакансией</string>
+
+    <string name="error_no_app_to_share">Приложение отсутствует</string>
+    <string name="error_no_email_app">Приложение email отсутствует</string>
+    <string name="error_no_dial_app">Приложение для звонков отсутствует</string>
+    <string name="error_call_permission">Разрешение на звонки отсутствуют</string>
+
+    <string name="over_app_worked">Над приложением \nработали</string>
+    <string name="Vladimir_Dahin">Владимир Дахин</string>
+    <string name="Danil">Данил</string>
+    <string name="Arman_Dosov">Арман Досов</string>
+    <string name="Sergey_Andreev">Сергей Андреев</string>
+   
+    <string name="error_occurred">Произошла ошибка</string>
+    <string name="check_internet_connection">Проверьте подключение к интернету</string>
+
+    <string name="vacancy_salary_not_specified">Зарплата не указана</string>
+    <string name="vacancy_salary_from">от %s %s</string>
+    <string name="vacancy_salary_to">до %s %s</string>
+    <string name="vacancy_salary_from_to">от %s до %s %s</string>
+    <string name="vacancy_contacts">%s %s %s</string>
 </resources>
