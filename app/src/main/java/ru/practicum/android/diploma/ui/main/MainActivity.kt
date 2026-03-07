@@ -1,16 +1,24 @@
 package ru.practicum.android.diploma.ui.main
 
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import org.koin.android.ext.android.inject
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.ActivityMainBinding
+import ru.practicum.android.diploma.domain.SettingsInteractor
+import ru.practicum.android.diploma.domain.models.FilterSettings
+import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private val settingsInteractor by inject<SettingsInteractor>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateUiForDestination(destinationId: Int) {
         updateTitle(destinationId)
         updateFilterButtonVisibility(destinationId)
+        updateFilterButtonColor(destinationId)
     }
 
     private fun setupFilterButton() {
@@ -91,6 +100,31 @@ class MainActivity : AppCompatActivity() {
             android.view.View.VISIBLE
         } else {
             android.view.View.GONE
+        }
+    }
+
+    fun updateFilterButtonColor(destinationId: Int) {
+
+        if (destinationId != R.id.searchFragment) return
+
+        val emptyFilter = FilterSettings(
+            country = null,
+            region = null,
+            industry = null,
+            salary = 0,
+            onlyWithSalary = false,
+        )
+        val filterSettings = settingsInteractor.getFilterSettings()
+        if (filterSettings == null || filterSettings == emptyFilter) {
+            val typedValue = TypedValue()
+            theme.resolveAttribute(
+                com.google.android.material.R.attr.colorOnPrimary,
+                typedValue,
+                true
+            )
+            binding.filterButton.imageTintList = ColorStateList.valueOf(typedValue.data)
+        } else {
+            binding.filterButton.imageTintList = ContextCompat.getColorStateList(this, R.color.blue)
         }
     }
 }
