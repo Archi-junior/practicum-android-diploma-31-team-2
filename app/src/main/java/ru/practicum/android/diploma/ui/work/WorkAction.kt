@@ -12,7 +12,7 @@ sealed interface WorkAction {
 
     data object WorkCountryClear: WorkAction
 
-    data class WorkCountryChoose(
+    data class WorkChoose(
         val country: Area?,
         val region: Area?,
     ): WorkAction

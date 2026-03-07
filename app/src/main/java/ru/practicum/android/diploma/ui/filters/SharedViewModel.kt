@@ -145,7 +145,7 @@ class SharedViewModel(
                     )
                 )
             }
-            is WorkAction.WorkCountryChoose -> {
+            is WorkAction.WorkChoose -> {
                 _filtersStateLiveData.postValue(
                     (filtersStateLiveData.value as FiltersState.Content).copy(
                         country = action.country,
