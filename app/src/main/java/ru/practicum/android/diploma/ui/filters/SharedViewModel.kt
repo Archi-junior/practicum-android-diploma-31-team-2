@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.FakeAreaInteractor
 import ru.practicum.android.diploma.domain.FakeIndustryInteractor
-import ru.practicum.android.diploma.domain.FakeSettingsInteractor
 import ru.practicum.android.diploma.domain.ResultHttp
+import ru.practicum.android.diploma.domain.SettingsInteractor
 import ru.practicum.android.diploma.domain.models.Area
-import ru.practicum.android.diploma.domain.models.FakeFilterSettings
+import ru.practicum.android.diploma.domain.models.FilterSettings
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.branch.IndustryAction
 import ru.practicum.android.diploma.ui.branch.IndustryChooseState
@@ -25,7 +25,7 @@ import ru.practicum.android.diploma.ui.work.WorkChooseState
 class SharedViewModel(
     private val areaInteractor: FakeAreaInteractor,
     private val industryInteractor: FakeIndustryInteractor,
-    private val settingsInteractor: FakeSettingsInteractor,
+    private val settingsInteractor: SettingsInteractor,
 ) : ViewModel() {
 
     private val filterSettings = settingsInteractor.getFilterSettings()
@@ -191,7 +191,7 @@ class SharedViewModel(
             is FiltersAction.FiltersApply -> {
                 val filterData = filtersStateLiveData.value as FiltersState.Content
                 settingsInteractor.storeFilterSettings(
-                    FakeFilterSettings(
+                    FilterSettings(
                         country = filterData.country,
                         region = filterData.region,
                         industry = filterData.industry,
