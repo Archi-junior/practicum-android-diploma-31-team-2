@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.ResultHttp
+import ru.practicum.android.diploma.domain.SettingsInteractor
 import ru.practicum.android.diploma.domain.VacanciesInteractor
 import ru.practicum.android.diploma.domain.models.VacanciesFilter
 import ru.practicum.android.diploma.domain.models.VacanciesResult
@@ -21,7 +22,8 @@ import ru.practicum.android.diploma.domain.models.Vacancy
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
-    private val vacanciesInteractor: VacanciesInteractor
+    private val vacanciesInteractor: VacanciesInteractor,
+    private val settingsInteractor: SettingsInteractor,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<SearchState>(SearchState.Start)
@@ -90,6 +92,7 @@ class SearchViewModel(
     private fun performSearch(query: String, reset: Boolean) {
         if (isSearching || (isLoadingNextPage && !reset)) return
 
+        val filterSettings = settingsInteractor.getFilterSettings()
         viewModelScope.launch {
             if (reset) {
                 isSearching = true
@@ -112,8 +115,12 @@ class SearchViewModel(
             }
 
             currentFilter = VacanciesFilter(
+                areaId = filterSettings?.region?.id,
+                industryId = filterSettings?.industry?.id,
                 text = query,
-                page = if (reset) 1 else currentPage
+                salaryVal = filterSettings?.salary,
+                page = if (reset) 1 else currentPage,
+                onlyWithSalary = filterSettings?.onlyWithSalary
             )
 
             vacanciesInteractor.search(currentFilter)
