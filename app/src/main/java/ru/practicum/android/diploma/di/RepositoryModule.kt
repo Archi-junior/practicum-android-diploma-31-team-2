@@ -4,9 +4,11 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import ru.practicum.android.diploma.data.FavoritesVacancyRepositoryImpl
 import ru.practicum.android.diploma.data.VacanciesRepositoryImpl
+import ru.practicum.android.diploma.data.impl.PrefsStorageRepositoryImpl
 import ru.practicum.android.diploma.data.impl.ShareDataRepositoryImpl
 import ru.practicum.android.diploma.domain.FavoritesVacancyRepository
 import ru.practicum.android.diploma.domain.VacanciesRepository
+import ru.practicum.android.diploma.domain.repository.PrefsStorageRepository
 import ru.practicum.android.diploma.domain.repository.ShareDataRepository
 
 val repositoryModule = module {
@@ -21,6 +23,13 @@ val repositoryModule = module {
 
     single<FavoritesVacancyRepository> {
         FavoritesVacancyRepositoryImpl(
+            get(),
+            get()
+        )
+    }
+
+    single<PrefsStorageRepository> {
+        PrefsStorageRepositoryImpl(
             get(),
             get()
         )

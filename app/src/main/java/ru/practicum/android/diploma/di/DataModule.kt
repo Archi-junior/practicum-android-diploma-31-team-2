@@ -1,5 +1,7 @@
 package ru.practicum.android.diploma.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -26,5 +28,12 @@ val dataModule = module {
 
     factory<FavoriteVacanciesDao> {
         get<AppDatabase>().favoriteVacanciesDao()
+    }
+
+    single<SharedPreferences> {
+        androidContext().getSharedPreferences(
+            "diploma_preferences",
+            Context.MODE_PRIVATE
+        )
     }
 }
