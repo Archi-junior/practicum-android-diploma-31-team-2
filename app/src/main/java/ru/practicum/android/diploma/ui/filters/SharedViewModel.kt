@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
-import ru.practicum.android.diploma.domain.FakeAreaInteractor
+import ru.practicum.android.diploma.domain.AreaInteractor
 import ru.practicum.android.diploma.domain.FakeIndustryInteractor
 import ru.practicum.android.diploma.domain.ResultHttp
 import ru.practicum.android.diploma.domain.SettingsInteractor
@@ -23,7 +23,7 @@ import ru.practicum.android.diploma.ui.work.WorkAction
 import ru.practicum.android.diploma.ui.work.WorkChooseState
 
 class SharedViewModel(
-    private val areaInteractor: FakeAreaInteractor,
+    private val areaInteractor: AreaInteractor,
     private val industryInteractor: FakeIndustryInteractor,
     private val settingsInteractor: SettingsInteractor,
 ) : ViewModel() {
@@ -218,7 +218,7 @@ class SharedViewModel(
         if (areas.isEmpty()) {
             viewModelScope.launch {
                 _countryChooseStateLiveData.postValue(CountryChooseState.Loading)
-                when (val resultHttp = areaInteractor.getAll().single()) {
+                when (val resultHttp = areaInteractor.getCountries().single()) {
                     is ResultHttp.Success -> {
                         areas.addAll(resultHttp.data)
                         _countryChooseStateLiveData.postValue(
@@ -280,4 +280,54 @@ class SharedViewModel(
         }
     }
 
+    private fun loadCountries() {
+        viewModelScope.launch {
+            _countryChooseStateLiveData.postValue(CountryChooseState.Loading)
+
+            areaInteractor.getCountries().collect { result ->
+                when (result) {
+                    is ResultHttp.Success -> {
+                        _countryChooseStateLiveData.postValue(
+                            CountryChooseState.Content(areas = result.data)
+                        )
+                    }
+                    is ResultHttp.Error -> {
+                        _countryChooseStateLiveData.postValue(
+                            CountryChooseState.Error(result.message.toString())
+                        )
+                    }
+                    is ResultHttp.NoConnection -> {
+                        _countryChooseStateLiveData.postValue(CountryChooseState.NoConnection)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadRegions(countryId: Int) {
+        viewModelScope.launch {
+            _regionChooseStateLiveData.postValue(RegionChooseState.Loading)
+
+            areaInteractor.getRegionsByCountry(countryId).collect { result ->
+                when (result) {
+                    is ResultHttp.Success -> {
+                        _regionChooseStateLiveData.postValue(
+                            RegionChooseState.Content(
+                                searchText = "",
+                                areas = result.data
+                            )
+                        )
+                    }
+                    is ResultHttp.Error -> {
+                        _regionChooseStateLiveData.postValue(
+                            RegionChooseState.Error(result.message.toString())
+                        )
+                    }
+                    is ResultHttp.NoConnection -> {
+                        _regionChooseStateLiveData.postValue(RegionChooseState.NoConnection)
+                    }
+                }
+            }
+        }
+    }
 }
