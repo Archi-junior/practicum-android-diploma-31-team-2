@@ -2,11 +2,13 @@ package ru.practicum.android.diploma.di
 
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
+import ru.practicum.android.diploma.data.AreaRepositoryImpl
 import ru.practicum.android.diploma.data.FavoritesVacancyRepositoryImpl
 import ru.practicum.android.diploma.data.VacanciesRepositoryImpl
 import ru.practicum.android.diploma.data.impl.PrefsStorageRepositoryImpl
 import ru.practicum.android.diploma.data.impl.ShareDataRepositoryImpl
 import ru.practicum.android.diploma.data.IndustriesRepositoryImpl
+import ru.practicum.android.diploma.domain.AreaRepository
 import ru.practicum.android.diploma.domain.FavoritesVacancyRepository
 import ru.practicum.android.diploma.domain.VacanciesRepository
 import ru.practicum.android.diploma.domain.IndustriesRepository
@@ -37,6 +39,12 @@ val repositoryModule = module {
         PrefsStorageRepositoryImpl(
             get(),
             get()
+        )
+    }
+
+    single<AreaRepository> {
+        AreaRepositoryImpl(
+            networkClient = get()
         )
     }
 }

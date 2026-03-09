@@ -6,6 +6,8 @@ sealed interface RegionChooseState {
 
     data object Initial : RegionChooseState
 
+    data object Loading : RegionChooseState
+
     data class Content(
         val searchText: String,
         val areas: List<Area>
