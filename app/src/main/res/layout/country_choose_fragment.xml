@@ -2,6 +2,34 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorPrimary">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCountries"
+        style="@style/CountryChooseRvCountries"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressBar"
+        style="@style/CountryChooseProgressBar"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <include
+        android:id="@+id/inclNoInternet"
+        layout="@layout/placeholder_no_internet"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/inclServerError"
+        layout="@layout/placeholder_server_error"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
