@@ -36,6 +36,7 @@ class CountryChooseFragment : Fragment() {
             viewModel.countryOnAction(CountryAction.CountrySelectItem(country))
             findNavController().navigateUp()
         }
+        binding.rvCountries.adapter = adapter
 
     }
 
