@@ -37,7 +37,6 @@ class CountryChooseFragment : Fragment() {
             findNavController().navigateUp()
         }
         binding.rvCountries.adapter = adapter
-
     }
 
     override fun onDestroy() {
