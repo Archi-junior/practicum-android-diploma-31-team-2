@@ -86,4 +86,10 @@
     <string name="vacancy_salary_to">до %s %s</string>
     <string name="vacancy_salary_from_to">от %s до %s %s</string>
     <string name="vacancy_contacts">%s %s %s</string>
+    <string name="filter_settings">Настройки фильтрации</string>
+    <string name="work_place">Место работы</string>
+    <string name="branch">Отрасль</string>
+    <string name="summ_input">Введите сумму</string>
+    <string name="salary">Ожидаемая зарплата</string>
+    <string name="dont_show_without_salary">Не показывать без зарплаты</string>
 </resources>

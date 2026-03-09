@@ -70,7 +70,6 @@ class MainActivity : AppCompatActivity() {
             R.id.searchFragment -> R.string.job_search
             R.id.favoriteFragment -> R.string.favorites
             R.id.teamFragment -> R.string.team
-            R.id.filtersFragment -> R.string.filter_title
             R.id.branchChooseFragment -> R.string.choosing_an_industry
             R.id.workChooseFragment -> R.string.choosing_a_place_of_work
             R.id.countryChooseFragment -> R.string.choosing_country
@@ -82,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         when (destinationId) {
             R.id.vacancyFragment -> hideTitle()
             R.id.favoriteFragment -> hideTitle()
+            R.id.filtersFragment -> hideTitle()
             else -> showTitle()
         }
         binding.titleText.setText(titleResId)
