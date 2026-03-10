@@ -48,6 +48,13 @@ class WorkChooseFragment : Fragment() {
             if (currentState is WorkChooseState.Content && currentState.country != null) {
                 sharedViewModel.workOnAction(WorkAction.WorkRegionClick)
 
+                val bundle = Bundle().apply {
+                    putInt("countryId", currentState.country.id)
+                }
+                findNavController().navigate(
+                    R.id.action_workChooseFragment_to_regionChooseFragment,
+                    bundle
+                )
             }
         }
 
