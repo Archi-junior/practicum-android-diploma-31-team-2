@@ -7,14 +7,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.AreaInteractor
-import ru.practicum.android.diploma.domain.FakeIndustryInteractor
+import ru.practicum.android.diploma.domain.IndustriesInteractor
 import ru.practicum.android.diploma.domain.ResultHttp
 import ru.practicum.android.diploma.domain.SettingsInteractor
 import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.domain.models.FilterSettings
 import ru.practicum.android.diploma.domain.models.Industry
-import ru.practicum.android.diploma.ui.branch.IndustryAction
-import ru.practicum.android.diploma.ui.branch.IndustryChooseState
+import ru.practicum.android.diploma.ui.industry.IndustryAction
+import ru.practicum.android.diploma.ui.industry.IndustryChooseState
 import ru.practicum.android.diploma.ui.country.CountryAction
 import ru.practicum.android.diploma.ui.country.CountryChooseState
 import ru.practicum.android.diploma.ui.region.RegionAction
@@ -24,7 +24,7 @@ import ru.practicum.android.diploma.ui.work.WorkChooseState
 
 class SharedViewModel(
     private val areaInteractor: AreaInteractor,
-    private val industryInteractor: FakeIndustryInteractor,
+    private val industryInteractor: IndustriesInteractor,
     private val settingsInteractor: SettingsInteractor,
 ) : ViewModel() {
 
@@ -80,11 +80,17 @@ class SharedViewModel(
     fun countryOnAction(action: CountryAction) {
         when (action) {
             is CountryAction.CountrySelectItem -> {
-                _workChooseStateLiveData.postValue(
-                    (workChooseStateLiveData.value as WorkChooseState.Content).copy(
-                        country = action.country
+                val updatedState = when (val currentState = workChooseStateLiveData.value) {
+                    is WorkChooseState.Content -> currentState.copy(country = action.country)
+                    else -> WorkChooseState.Content(
+                        country = action.country,
+                        region = null,
+                        isCountrySelected = true,
+                        isRegionSelected = false
                     )
-                )
+                }
+
+                _workChooseStateLiveData.postValue(updatedState)
             }
         }
     }
@@ -117,71 +123,73 @@ class SharedViewModel(
 
     fun workOnAction(action: WorkAction) {
         when (action) {
-            is WorkAction.WorkCountryClick -> {
-            }
-
-            is WorkAction.WorkRegionClick -> {
-                val currentState = workChooseStateLiveData.value
-                if (currentState is WorkChooseState.Content && currentState.country != null) {
-                    // Ничего не делаем, просто открываем экран
-                }
-            }
-
-            is WorkAction.WorkCountrySelect -> {
-                _workChooseStateLiveData.postValue(
-                    WorkChooseState.Content(
-                        country = action.country,
-                        region = null,
-                        isCountrySelected = true,
-                        isRegionSelected = false
-                    )
-                )
-            }
-
-            is WorkAction.WorkRegionSelect -> {
-                val currentState = workChooseStateLiveData.value as? WorkChooseState.Content
-                _workChooseStateLiveData.postValue(
-                    WorkChooseState.Content(
-                        country = currentState?.country,
-                        region = action.region,
-                        isCountrySelected = currentState?.country != null,
-                        isRegionSelected = true
-                    )
-                )
-            }
-
-            is WorkAction.WorkCountryClear -> {
-                _workChooseStateLiveData.postValue(
-                    WorkChooseState.Content(
-                        country = null,
-                        region = null,
-                        isCountrySelected = false,
-                        isRegionSelected = false
-                    )
-                )
-            }
-
-            is WorkAction.WorkRegionClear -> {
-                val currentState = workChooseStateLiveData.value as? WorkChooseState.Content
-                _workChooseStateLiveData.postValue(
-                    WorkChooseState.Content(
-                        country = currentState?.country,
-                        region = null,
-                        isCountrySelected = currentState?.country != null,
-                        isRegionSelected = false
-                    )
-                )
-            }
-
-            is WorkAction.WorkChoose -> {
-                _filtersStateLiveData.postValue(
-                    (filtersStateLiveData.value as FiltersState.Content).copy(
-                        country = action.country,
-                        region = action.region
-                    )
-                )
-            }
+            is WorkAction.WorkCountryClick -> handleWorkCountryClick()
+            is WorkAction.WorkRegionClick -> handleWorkRegionClick()
+            is WorkAction.WorkCountrySelect -> handleWorkCountrySelect(action)
+            is WorkAction.WorkRegionSelect -> handleWorkRegionSelect(action)
+            is WorkAction.WorkCountryClear -> handleWorkCountryClear()
+            is WorkAction.WorkRegionClear -> handleWorkRegionClear()
+            is WorkAction.WorkChoose -> handleWorkChoose(action)
         }
+    }
+
+    private fun handleWorkCountryClick() {}
+
+    private fun handleWorkRegionClick() {}
+
+    private fun handleWorkCountrySelect(action: WorkAction.WorkCountrySelect) {
+        _workChooseStateLiveData.postValue(
+            WorkChooseState.Content(
+                country = action.country,
+                region = null,
+                isCountrySelected = true,
+                isRegionSelected = false
+            )
+        )
+    }
+
+    private fun handleWorkRegionSelect(action: WorkAction.WorkRegionSelect) {
+        val currentState = workChooseStateLiveData.value as? WorkChooseState.Content
+        _workChooseStateLiveData.postValue(
+            WorkChooseState.Content(
+                country = currentState?.country,
+                region = action.region,
+                isCountrySelected = currentState?.country != null,
+                isRegionSelected = true
+            )
+        )
+    }
+
+    private fun handleWorkCountryClear() {
+        _workChooseStateLiveData.postValue(
+            WorkChooseState.Content(
+                country = null,
+                region = null,
+                isCountrySelected = false,
+                isRegionSelected = false
+            )
+        )
+    }
+
+    private fun handleWorkRegionClear() {
+        val currentState = workChooseStateLiveData.value as? WorkChooseState.Content
+        _workChooseStateLiveData.postValue(
+            WorkChooseState.Content(
+                country = currentState?.country,
+                region = null,
+                isCountrySelected = currentState?.country != null,
+                isRegionSelected = false
+            )
+        )
+    }
+
+    private fun handleWorkChoose(action: WorkAction.WorkChoose) {
+        _filtersStateLiveData.postValue(
+            (filtersStateLiveData.value as FiltersState.Content).copy(
+                country = action.country,
+                region = action.region
+            )
+        )
     }
 
     fun filtersOnAction(action: FiltersAction) {
@@ -278,7 +286,7 @@ class SharedViewModel(
         if (industries.isEmpty()) {
             viewModelScope.launch {
                 _industryChooseStateLiveData.postValue(IndustryChooseState.Loading)
-                when (val resultHttp = industryInteractor.getAll().single()) {
+                when (val resultHttp = industryInteractor.getIndustries().single()) {
                     is ResultHttp.Success -> {
                         industries.addAll(resultHttp.data)
                         _industryChooseStateLiveData.postValue(
@@ -308,7 +316,7 @@ class SharedViewModel(
         }
     }
 
-    private fun loadCountries() {
+    fun loadCountries() {
         viewModelScope.launch {
             _countryChooseStateLiveData.postValue(CountryChooseState.Loading)
 
@@ -332,7 +340,7 @@ class SharedViewModel(
         }
     }
 
-    private fun loadRegions(countryId: Int) {
+    fun loadRegions(countryId: Int) {
         viewModelScope.launch {
             _regionChooseStateLiveData.postValue(RegionChooseState.Loading)
 

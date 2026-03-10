@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.ui.branch
+package ru.practicum.android.diploma.ui.industry
 
 import android.os.Bundle
 import android.view.View

@@ -86,24 +86,16 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
             }.collect { filteredRegions ->
                 adapter.updateRegions(filteredRegions)
                 updatePlaceholders(filteredRegions)
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.error.collect { error ->
-                if (error != null) {
-                    binding.noListPlaceholder.isVisible = true
-                    binding.noRegionPlaceholder.isVisible = false
-                    binding.listRegionRecyclerView.isVisible = false
-                } else {
-                    binding.noListPlaceholder.isVisible = false
-                }
+                binding.listRegionRecyclerView.isVisible = filteredRegions.isNotEmpty()
+                binding.listRegionRecyclerView.visibility = View.VISIBLE
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
-                binding.listRegionRecyclerView.isVisible = !isLoading && viewModel.regions.value.isNotEmpty()
+                if (!isLoading && viewModel.regions.value.isNotEmpty()) {
+                    binding.listRegionRecyclerView.isVisible = true
+                }
             }
         }
     }

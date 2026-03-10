@@ -18,7 +18,7 @@
     </fragment>
     <fragment
         android:id="@+id/branchChooseFragment"
-        android:name="ru.practicum.android.diploma.ui.branch.IndustryChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.industry.IndustryChooseFragment"
         android:label="branch_choose_fragment"
         tools:layout="@layout/industry_choose_fragment" >
         <action
@@ -73,6 +73,9 @@
         <action
             android:id="@+id/action_filtersFragment_to_searchFragment"
             app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_filtersFragment_to_industryChooseFragment"
+            app:destination="@id/industryChooseFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
@@ -91,5 +94,11 @@
         <action
             android:id="@+id/action_countryChooseFragment_to_workChooseFragment"
             app:destination="@id/workChooseFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/industryChooseFragment"
+        android:name="ru.practicum.android.diploma.ui.industry.IndustryChooseFragment"
+        android:label="IndustryChooseFragment"
+        tools:layout="@layout/industry_choose_fragment">
     </fragment>
 </navigation>

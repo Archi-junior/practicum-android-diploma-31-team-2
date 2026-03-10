@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity() {
             R.id.favoriteFragment -> R.string.favorites
             R.id.teamFragment -> R.string.team
             R.id.branchChooseFragment -> R.string.choosing_an_industry
-            R.id.workChooseFragment -> R.string.choosing_a_place_of_work
             R.id.countryChooseFragment -> R.string.choosing_country
             R.id.regionChooseFragment -> R.string.choosing_region
             else -> {
@@ -82,6 +81,9 @@ class MainActivity : AppCompatActivity() {
             R.id.vacancyFragment -> hideTitle()
             R.id.favoriteFragment -> hideTitle()
             R.id.filtersFragment -> hideTitle()
+            R.id.workChooseFragment -> hideTitle()
+            R.id.countryChooseFragment -> hideTitle()
+            R.id.regionChooseFragment -> hideTitle()
             else -> showTitle()
         }
         binding.titleText.setText(titleResId)

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.WorkChooseFragmentBinding
+import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.ui.filters.SharedViewModel
 
 class WorkChooseFragment : Fragment() {
@@ -85,94 +86,100 @@ class WorkChooseFragment : Fragment() {
     }
 
     private fun render(state: WorkChooseState) {
-        when (state) {
-            is WorkChooseState.Content -> showContent(state)
-            is WorkChooseState.Loading -> showLoading()
-            is WorkChooseState.Error -> showError()
-            is WorkChooseState.NoConnection -> showNoConnection()
-            is WorkChooseState.Empty, is WorkChooseState.Initial -> showInitial()
-        }
-    }
-
-    private fun showInitial() {
         binding.apply {
             progressBar.isVisible = false
             inclNoInternet.root.isVisible = false
             inclServerError.root.isVisible = false
-            llContent.isVisible = true
-            btnChoose.isVisible = false
 
-            tvCountryValue.isVisible = false
-            ivCountryClear.isVisible = false
-            tvRegionValue.isVisible = false
-            ivRegionClear.isVisible = false
+            when (state) {
+                is WorkChooseState.Content -> {
+                    llContent.isVisible = true
+                    renderCountry(state.country)
+                    renderRegion(state.region)
+                    btnChoose.isVisible = state.country != null || state.region != null
+                }
+                is WorkChooseState.Loading -> {
+                    llContent.isVisible = false
+                    progressBar.isVisible = true
+                    btnChoose.isVisible = false
+                }
+                is WorkChooseState.Error -> {
+                    llContent.isVisible = false
+                    inclServerError.root.isVisible = true
+                    btnChoose.isVisible = false
+                }
+                is WorkChooseState.NoConnection -> {
+                    llContent.isVisible = false
+                    inclNoInternet.root.isVisible = true
+                    btnChoose.isVisible = false
+                }
+                is WorkChooseState.Empty, is WorkChooseState.Initial -> {
+                    llContent.isVisible = true
+                    tvCountryValue.isVisible = false
+                    ivCountryClear.isVisible = false
+                    tvRegionValue.isVisible = false
+                    ivRegionClear.isVisible = false
+                    btnChoose.isVisible = false
+                }
+            }
         }
     }
 
-    private fun showLoading() {
+    private fun renderCountry(country: Area?) {
         binding.apply {
-            progressBar.isVisible = true
-            inclNoInternet.root.isVisible = false
-            inclServerError.root.isVisible = false
-            llContent.isVisible = false
-            btnChoose.isVisible = false
-        }
-    }
-
-    private fun showContent(state: WorkChooseState.Content) {
-        binding.apply {
-            progressBar.isVisible = false
-            inclNoInternet.root.isVisible = false
-            inclServerError.root.isVisible = false
-            llContent.isVisible = true
-
-            if (state.country != null) {
-                tvCountryValue.text = state.country.name
+            if (country != null) {
+                tvCountryValue.text = country.name
                 tvCountryValue.isVisible = true
                 ivCountryClear.isVisible = true
+                tvCountryTitle.textSize = TITLE_SELECTED_TEXT_SIZE
             } else {
-                tvCountryValue.isVisible = false
-                ivCountryClear.isVisible = false
+               resetCountryView()
             }
+        }
+    }
 
-            if (state.region != null) {
-                tvRegionValue.text = state.region.name
+    private fun renderRegion(region: Area?) {
+        binding.apply {
+            if (region != null) {
+                tvRegionValue.text = region.name
                 tvRegionValue.isVisible = true
                 ivRegionClear.isVisible = true
+                tvRegionTitle.textSize = TITLE_SELECTED_TEXT_SIZE
             } else {
-                tvRegionValue.isVisible = false
-                ivRegionClear.isVisible = false
+                resetRegionView()
             }
 
-            clRegion.isEnabled = state.country != null
-            clRegion.alpha = if (state.country != null) 1.0f else 0.5f
-
-            btnChoose.isVisible = state.country != null || state.region != null
+            val hasCountry = (sharedViewModel.workChooseStateLiveData.value as? WorkChooseState.Content)?.country != null
+            clRegion.isEnabled = hasCountry
+            clRegion.alpha = if (hasCountry) VISUAL_ALPHA_VALUE else HALF_VISUAL_ALPHA_VALUE
         }
     }
 
-    private fun showError() {
+    private fun resetCountryView() {
         binding.apply {
-            progressBar.isVisible = false
-            inclNoInternet.root.isVisible = false
-            inclServerError.root.isVisible = true
-            llContent.isVisible = false
-            btnChoose.isVisible = false
+            tvCountryValue.isVisible = false
+            ivCountryClear.isVisible = false
+            tvCountryTitle.textSize = TITLE_DEFAULT_TEXT_SIZE
         }
     }
 
-    private fun showNoConnection() {
+    private fun resetRegionView() {
         binding.apply {
-            progressBar.isVisible = false
-            inclNoInternet.root.isVisible = true
-            inclServerError.root.isVisible = false
-            llContent.isVisible = false
-            btnChoose.isVisible = false
+            tvRegionValue.isVisible = false
+            ivRegionClear.isVisible = false
+            tvRegionTitle.textSize = TITLE_DEFAULT_TEXT_SIZE
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object{
+        const val VISUAL_ALPHA_VALUE = 1.0f
+        const val HALF_VISUAL_ALPHA_VALUE = 1.0f
+        private const val TITLE_SELECTED_TEXT_SIZE = 12f
+        private const val TITLE_DEFAULT_TEXT_SIZE = 16f
     }
 }
