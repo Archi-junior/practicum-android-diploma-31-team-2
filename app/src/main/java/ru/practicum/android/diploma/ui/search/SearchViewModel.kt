@@ -75,9 +75,9 @@ class SearchViewModel(
 
     private fun canLoadNextPage(currentState: SearchState?): Boolean {
         return currentState is SearchState.Content &&
-            !currentState.isLoadingNextPage &&
-            currentPage < totalPages &&
-            !isLoadingNextPage
+                !currentState.isLoadingNextPage &&
+                currentPage < totalPages &&
+                !isLoadingNextPage
     }
 
     private fun resetSearch() {
@@ -199,7 +199,7 @@ class SearchViewModel(
         }
     }
 
-    companion object{
+    companion object {
         const val DEBOUNCE_TIMEOUT = 2000L
     }
 }
