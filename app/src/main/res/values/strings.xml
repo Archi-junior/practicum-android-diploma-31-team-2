@@ -46,6 +46,7 @@
     <string name="choosing_an_industry">Выбор отрасли</string>
     <string name="choosing_region">Выбор региона</string>
     <string name="enter_industry">Введите отрасль</string>
+    <string name="enter_region">Введите регион</string>
 
     <string name="vacancy">Вакансия</string>
     <string name="required_experience">Требуемый опыт</string>

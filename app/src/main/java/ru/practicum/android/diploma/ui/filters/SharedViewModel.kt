@@ -117,48 +117,67 @@ class SharedViewModel(
 
     fun workOnAction(action: WorkAction) {
         when (action) {
-            is WorkAction.WorkRegionChange -> {
-                val country = (workChooseStateLiveData.value as WorkChooseState.Content).country
-                _regionChooseStateLiveData.postValue(
-                    if (country == null) {
-                        RegionChooseState.Empty
-                    } else {
-                        RegionChooseState.Content(
-                            searchText = "",
-                            areas = country.areas,
-                        )
-                    }
+            is WorkAction.WorkCountryClick -> {
+            }
+
+            is WorkAction.WorkRegionClick -> {
+                val currentState = workChooseStateLiveData.value
+                if (currentState is WorkChooseState.Content && currentState.country != null) {
+                    // Ничего не делаем, просто открываем экран
+                }
+            }
+
+            is WorkAction.WorkCountrySelect -> {
+                _workChooseStateLiveData.postValue(
+                    WorkChooseState.Content(
+                        country = action.country,
+                        region = null,
+                        isCountrySelected = true,
+                        isRegionSelected = false
+                    )
                 )
             }
 
             is WorkAction.WorkRegionSelect -> {
+                val currentState = workChooseStateLiveData.value as? WorkChooseState.Content
                 _workChooseStateLiveData.postValue(
-                    (workChooseStateLiveData.value as? WorkChooseState.Content)?.copy(
-                        region = action.region
-                    ) ?: WorkChooseState.Content(region = action.region)
+                    WorkChooseState.Content(
+                        country = currentState?.country,
+                        region = action.region,
+                        isCountrySelected = currentState?.country != null,
+                        isRegionSelected = true
+                    )
+                )
+            }
+
+            is WorkAction.WorkCountryClear -> {
+                _workChooseStateLiveData.postValue(
+                    WorkChooseState.Content(
+                        country = null,
+                        region = null,
+                        isCountrySelected = false,
+                        isRegionSelected = false
+                    )
                 )
             }
 
             is WorkAction.WorkRegionClear -> {
+                val currentState = workChooseStateLiveData.value as? WorkChooseState.Content
                 _workChooseStateLiveData.postValue(
-                    (workChooseStateLiveData.value as WorkChooseState.Content).copy(
-                        region = null
+                    WorkChooseState.Content(
+                        country = currentState?.country,
+                        region = null,
+                        isCountrySelected = currentState?.country != null,
+                        isRegionSelected = false
                     )
                 )
             }
-            is WorkAction.WorkCountryChange -> onWorkCountryChange()
-            is WorkAction.WorkCountryClear -> {
-                _workChooseStateLiveData.postValue(
-                    (workChooseStateLiveData.value as WorkChooseState.Content).copy(
-                        country = null
-                    )
-                )
-            }
+
             is WorkAction.WorkChoose -> {
                 _filtersStateLiveData.postValue(
                     (filtersStateLiveData.value as FiltersState.Content).copy(
                         country = action.country,
-                        region = action.region,
+                        region = action.region
                     )
                 )
             }
