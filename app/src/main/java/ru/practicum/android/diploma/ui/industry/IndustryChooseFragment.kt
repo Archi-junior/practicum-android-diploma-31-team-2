@@ -117,7 +117,7 @@ class IndustryChooseFragment : Fragment(R.layout.industry_choose_fragment) {
         when (state) {
             is IndustryChooseState.Loading -> showLoading()
             is IndustryChooseState.Content -> showContent(state)
-            is IndustryChooseState.Error -> showError(state.message)
+            is IndustryChooseState.Error -> showError()
             is IndustryChooseState.NoConnection -> showNoConnection()
             is IndustryChooseState.Initial -> showLoading()
         }
@@ -146,7 +146,7 @@ class IndustryChooseFragment : Fragment(R.layout.industry_choose_fragment) {
         }
     }
 
-    private fun showError(message: String?) {
+    private fun showError() {
         binding.apply {
             progressBar.isVisible = false
             rvIndustries.isVisible = false

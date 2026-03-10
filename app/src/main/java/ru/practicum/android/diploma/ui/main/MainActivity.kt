@@ -66,27 +66,44 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTitle(destinationId: Int) {
-        val titleResId = when (destinationId) {
+        updateTitleText(destinationId)
+        updateTitleVisibility(destinationId)
+    }
+
+    private fun updateTitleText(destinationId: Int) {
+        val titleResId = getTitleResource(destinationId)
+        binding.titleText.setText(titleResId)
+    }
+
+    private fun getTitleResource(destinationId: Int): Int {
+        return when (destinationId) {
             R.id.searchFragment -> R.string.job_search
             R.id.favoriteFragment -> R.string.favorites
             R.id.teamFragment -> R.string.team
             R.id.countryChooseFragment -> R.string.choosing_country
             R.id.regionChooseFragment -> R.string.choosing_region
-            else -> {
-                R.string.app_name
-            }
+            else -> R.string.app_name
         }
-        when (destinationId) {
-            R.id.vacancyFragment -> hideTitle()
-            R.id.favoriteFragment -> hideTitle()
-            R.id.filtersFragment -> hideTitle()
-            R.id.workChooseFragment -> hideTitle()
-            R.id.countryChooseFragment -> hideTitle()
-            R.id.regionChooseFragment -> hideTitle()
-            R.id.industryChooseFragment -> hideTitle()
-            else -> showTitle()
+    }
+
+    private fun updateTitleVisibility(destinationId: Int) {
+        if (shouldHideTitle(destinationId)) {
+            hideTitle()
+        } else {
+            showTitle()
         }
-        binding.titleText.setText(titleResId)
+    }
+
+    private fun shouldHideTitle(destinationId: Int): Boolean {
+        return destinationId in listOf(
+            R.id.vacancyFragment,
+            R.id.favoriteFragment,
+            R.id.filtersFragment,
+            R.id.workChooseFragment,
+            R.id.countryChooseFragment,
+            R.id.regionChooseFragment,
+            R.id.industryChooseFragment
+        )
     }
 
     private fun hideTitle() {

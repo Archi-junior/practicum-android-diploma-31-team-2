@@ -158,7 +158,7 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
                 val workplaceText = when {
                     country != null && region != null -> "${country.name}, ${region.name}"
                     country != null -> country.name
-                    else -> ""
+                    else -> getString(R.string.not_selected)
                 }
                 text = workplaceText
                 visibility = View.VISIBLE

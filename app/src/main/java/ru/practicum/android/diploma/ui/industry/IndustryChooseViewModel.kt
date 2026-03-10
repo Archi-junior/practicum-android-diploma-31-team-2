@@ -43,7 +43,7 @@ class IndustryChooseViewModel(
         viewModelScope.launch {
             combine(
                 _allIndustries,
-                _searchQuery.debounce(300).distinctUntilChanged()
+                _searchQuery.debounce(SEARCH_DEBOUNCE_MS).distinctUntilChanged()
             ) { industries, query ->
                 if (query.isBlank()) {
                     industries
@@ -118,5 +118,9 @@ class IndustryChooseViewModel(
                 industries = _filteredIndustries.value
             )
         }
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_MS = 300L
     }
 }
