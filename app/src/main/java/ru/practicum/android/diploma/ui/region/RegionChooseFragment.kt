@@ -26,8 +26,7 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
     private var _binding: RegionChooseFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private val sharedViewModel: SharedViewModel by activityViewModel()
-    private val viewModel: RegionChooseViewModel by viewModel()
+    private val viewModel: SharedViewModel by activityViewModel()
 
     private val countryId: Int by lazy {
         arguments?.getInt("countryId") ?: throw IllegalArgumentException("countryId required")
@@ -55,7 +54,7 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
 
     private fun setupRecyclerView() {
         adapter = RegionChooseAdapter(emptyList()) { region ->
-            sharedViewModel.workOnAction(WorkAction.WorkRegionSelect(region.toDomainArea()))
+            viewModel.regionOnAction(RegionAction.RegionSelectItem(region.toDomainArea()))
             findNavController().popBackStack()
         }
         binding.listRegionRecyclerView.apply {

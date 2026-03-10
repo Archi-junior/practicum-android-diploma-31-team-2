@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.AreaInteractor
@@ -13,6 +15,8 @@ import ru.practicum.android.diploma.domain.SettingsInteractor
 import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.domain.models.FilterSettings
 import ru.practicum.android.diploma.domain.models.Industry
+import ru.practicum.android.diploma.presentation.mapper.AreaUi
+import ru.practicum.android.diploma.presentation.mapper.toAreaUiModel
 import ru.practicum.android.diploma.ui.industry.IndustryAction
 import ru.practicum.android.diploma.ui.industry.IndustryChooseState
 import ru.practicum.android.diploma.ui.country.CountryAction
@@ -50,6 +54,22 @@ class SharedViewModel(
         )
     )
     val filtersStateLiveData: LiveData<FiltersState> = _filtersStateLiveData
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
+    private val _regions = MutableStateFlow<List<AreaUi>>(emptyList())
+    val regions: StateFlow<List<AreaUi>> = _regions
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
 
     fun industryOnAction(action: IndustryAction) {
         when (action) {
@@ -130,6 +150,7 @@ class SharedViewModel(
             is WorkAction.WorkCountryClear -> handleWorkCountryClear()
             is WorkAction.WorkRegionClear -> handleWorkRegionClear()
             is WorkAction.WorkChoose -> handleWorkChoose(action)
+            is WorkAction.WorkRegionChange -> onWorkCountryChange()
         }
     }
 
@@ -342,27 +363,17 @@ class SharedViewModel(
 
     fun loadRegions(countryId: Int) {
         viewModelScope.launch {
-            _regionChooseStateLiveData.postValue(RegionChooseState.Loading)
-
+            _isLoading.value = true
             areaInteractor.getRegionsByCountry(countryId).collect { result ->
                 when (result) {
                     is ResultHttp.Success -> {
-                        _regionChooseStateLiveData.postValue(
-                            RegionChooseState.Content(
-                                searchText = "",
-                                areas = result.data
-                            )
-                        )
+                        _regions.value = result.data.map { it.toAreaUiModel() }
+                        _error.value = null
                     }
-                    is ResultHttp.Error -> {
-                        _regionChooseStateLiveData.postValue(
-                            RegionChooseState.Error(result.message.toString())
-                        )
-                    }
-                    is ResultHttp.NoConnection -> {
-                        _regionChooseStateLiveData.postValue(RegionChooseState.NoConnection)
-                    }
+                    is ResultHttp.Error -> {}
+                    is ResultHttp.NoConnection -> {}
                 }
+                _isLoading.value = false
             }
         }
     }

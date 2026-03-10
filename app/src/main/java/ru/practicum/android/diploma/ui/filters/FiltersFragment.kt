@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FiltersFragmentBinding
 import ru.practicum.android.diploma.domain.models.Area
+import ru.practicum.android.diploma.domain.models.Industry
 
 class FiltersFragment : Fragment(R.layout.filters_fragment) {
 
@@ -100,18 +102,46 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
 
     private fun updateUI(state: FiltersState.Content) {
         updateWorkplaceDisplay(state.country, state.region)
-
-        if (state.salary > 0) {
-            binding.etExpectedSalary.setText(state.salary.toString())
-            binding.ivClearSalary.visibility = View.VISIBLE
-        } else {
-            binding.etExpectedSalary.setText("")
-            binding.ivClearSalary.visibility = View.GONE
-        }
+        updateIndustryDisplay(state.industry)
+        val currentText = binding.etExpectedSalary.text.toString()
+        binding.ivClearSalary.visibility = if (currentText.isNotEmpty()) View.VISIBLE else View.GONE
 
         binding.cbHideWithoutSalary.isChecked = state.onlyWithSalary
 
         binding.bottomButtons.visibility = if (hasChanges(state)) View.VISIBLE else View.GONE
+    }
+
+    private fun updateIndustryDisplay(industry: Industry?) {
+        val hasSelection = industry != null
+
+        val industryTitle = binding.itemIndustry.findViewById<TextView>(R.id.tvIndustryTitle)
+
+        val industryValue = binding.itemIndustry.findViewById<TextView>(R.id.tvIndustryValue)
+
+        if (industryTitle != null && industryValue != null) {
+            industryTitle.textSize = if (hasSelection) TITLE_SELECTED_TEXT_SIZE else TITLE_DEFAULT_TEXT_SIZE
+            industryTitle.setTextColor(ContextCompat.getColorStateList(requireContext(), R.color.color_on_primary_selector))
+
+            if (hasSelection) {
+                industryValue.text = industry?.name ?: ""
+                industryValue.visibility = View.VISIBLE
+            } else {
+                industryValue.visibility = View.GONE
+                industryValue.text = getString(R.string.not_selected)
+            }
+
+            val params = industryTitle.layoutParams as? LinearLayout.LayoutParams
+            params?.let {
+                if (hasSelection) {
+                    it.topMargin = MARGIN_DEFAULT
+                    it.gravity = android.view.Gravity.TOP
+                } else {
+                    it.topMargin = MARGIN_UPDATED
+                    it.gravity = android.view.Gravity.CENTER_VERTICAL
+                }
+                industryTitle.layoutParams = it
+            }
+        }
     }
 
     private fun updateWorkplaceDisplay(country: Area?, region: Area?) {
@@ -157,6 +187,7 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
         binding.cbHideWithoutSalary.isChecked = false
         binding.ivClearSalary.visibility = View.GONE
         updateWorkplaceDisplay(null, null)
+        updateIndustryDisplay(null)
     }
 
     private fun hasChanges(state: FiltersState.Content): Boolean {

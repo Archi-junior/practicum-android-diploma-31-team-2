@@ -93,6 +93,8 @@ class SearchViewModel(
         if (isSearching || (isLoadingNextPage && !reset)) return
 
         val filterSettings = settingsInteractor.getFilterSettings()
+        val areaId = filterSettings?.region?.id ?: filterSettings?.country?.id
+
         viewModelScope.launch {
             if (reset) {
                 isSearching = true
@@ -115,7 +117,7 @@ class SearchViewModel(
             }
 
             currentFilter = VacanciesFilter(
-                areaId = filterSettings?.region?.id,
+                areaId = areaId,
                 industryId = filterSettings?.industry?.id,
                 text = query,
                 salaryVal = filterSettings?.salary,
@@ -130,13 +132,19 @@ class SearchViewModel(
                         is ResultHttp.Error -> handleError(result.message, reset)
                         is ResultHttp.NoConnection -> handleNoConnection(reset)
                     }
-
                     if (reset) {
                         isSearching = false
                     } else {
                         isLoadingNextPage = false
                     }
                 }
+        }
+    }
+
+    fun applyFilters() {
+        val currentQuery = _searchQuery.value
+        if (currentQuery.isNotBlank()) {
+            performSearch(currentQuery, reset = true)
         }
     }
 
