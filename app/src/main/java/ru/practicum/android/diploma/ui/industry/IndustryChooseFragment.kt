@@ -32,10 +32,10 @@ class IndustryChooseFragment : Fragment(R.layout.industry_choose_fragment) {
         _binding = IndustryChooseFragmentBinding.bind(view)
 
         setupToolbar()
-        setupRecyclerView()
-        setupSearch()
-        setupObservers()
-        setupButtons()
+        initRecyclerView()
+        initSearch()
+        initObservers()
+        initButtons()
     }
 
     private fun setupToolbar() {
@@ -44,46 +44,48 @@ class IndustryChooseFragment : Fragment(R.layout.industry_choose_fragment) {
         }
     }
 
-    private fun setupRecyclerView() {
+    private fun initRecyclerView() {
         adapter = IndustryAdapter { industry ->
             viewModel.onIndustrySelected(industry)
         }
-        binding.rvIndustries.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvIndustries.adapter = adapter
+        binding.rvIndustries.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@IndustryChooseFragment.adapter
+        }
     }
 
-    private fun setupSearch() {
-        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                viewModel.onSearchQueryChanged(binding.etSearch.text.toString())
-                true
-            } else false
-        }
-
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.onSearchQueryChanged(s?.toString() ?: "")
+    private fun initSearch() {
+        binding.etSearch.apply {
+            setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    viewModel.onSearchQueryChanged(text.toString())
+                    true
+                } else false
             }
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        binding.etSearch.setOnTouchListener { _, event ->
-            if (event.action == android.view.MotionEvent.ACTION_UP) {
-                val drawableEnd = binding.etSearch.compoundDrawables[2]
-                if (drawableEnd != null &&
-                    event.rawX >= binding.etSearch.right - drawableEnd.bounds.width()) {
-                    binding.etSearch.text?.clear()
-                    return@setOnTouchListener true
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    viewModel.onSearchQueryChanged(s?.toString() ?: "")
                 }
+                override fun afterTextChanged(s: Editable?) = Unit
+            })
+
+            setOnTouchListener { _, event ->
+                if (event.action == android.view.MotionEvent.ACTION_UP) {
+                    val drawableEnd = compoundDrawables[2]
+                    if (drawableEnd != null &&
+                        event.rawX >= right - drawableEnd.bounds.width()) {
+                        text?.clear()
+                        return@setOnTouchListener true
+                    }
+                }
+                false
             }
-            false
         }
     }
 
-    private fun setupButtons() {
+    private fun initButtons() {
         binding.btnChoose.setOnClickListener {
             viewModel.selectedIndustry.value?.let { selectedIndustry ->
                 sharedViewModel.industryOnAction(IndustryAction.IndustryChoose(selectedIndustry))
@@ -92,11 +94,9 @@ class IndustryChooseFragment : Fragment(R.layout.industry_choose_fragment) {
         }
     }
 
-    private fun setupObservers() {
+    private fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.state.collect { state ->
-                render(state)
-            }
+            viewModel.state.collect { state -> updateUI(state) }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -113,60 +113,32 @@ class IndustryChooseFragment : Fragment(R.layout.industry_choose_fragment) {
         }
     }
 
-    private fun render(state: IndustryChooseState) {
-        when (state) {
-            is IndustryChooseState.Loading -> showLoading()
-            is IndustryChooseState.Content -> showContent(state)
-            is IndustryChooseState.Error -> showError()
-            is IndustryChooseState.NoConnection -> showNoConnection()
-            is IndustryChooseState.Initial -> showLoading()
-        }
-    }
-
-    private fun showLoading() {
+    private fun updateUI(state: IndustryChooseState) {
         binding.apply {
-            progressBar.isVisible = true
+            progressBar.isVisible = false
             rvIndustries.isVisible = false
             etSearch.isVisible = false
             inclNoInternet.root.isVisible = false
             inclServerError.root.isVisible = false
             inclEmpty.root.isVisible = false
             btnChoose.isVisible = false
-        }
-    }
 
-    private fun showContent(state: IndustryChooseState.Content) {
-        binding.apply {
-            progressBar.isVisible = false
-            rvIndustries.isVisible = true
-            etSearch.isVisible = true
-            inclNoInternet.root.isVisible = false
-            inclServerError.root.isVisible = false
-            inclEmpty.root.isVisible = state.industries.isEmpty()
-        }
-    }
-
-    private fun showError() {
-        binding.apply {
-            progressBar.isVisible = false
-            rvIndustries.isVisible = false
-            etSearch.isVisible = false
-            inclNoInternet.root.isVisible = false
-            inclServerError.root.isVisible = true
-            inclEmpty.root.isVisible = false
-            btnChoose.isVisible = false
-        }
-    }
-
-    private fun showNoConnection() {
-        binding.apply {
-            progressBar.isVisible = false
-            rvIndustries.isVisible = false
-            etSearch.isVisible = false
-            inclNoInternet.root.isVisible = true
-            inclServerError.root.isVisible = false
-            inclEmpty.root.isVisible = false
-            btnChoose.isVisible = false
+            when (state) {
+                is IndustryChooseState.Loading, is IndustryChooseState.Initial -> {
+                    progressBar.isVisible = true
+                }
+                is IndustryChooseState.Content -> {
+                    rvIndustries.isVisible = true
+                    etSearch.isVisible = true
+                    inclEmpty.root.isVisible = state.industries.isEmpty()
+                }
+                is IndustryChooseState.Error -> {
+                    inclServerError.root.isVisible = true
+                }
+                is IndustryChooseState.NoConnection -> {
+                    inclNoInternet.root.isVisible = true
+                }
+            }
         }
     }
 

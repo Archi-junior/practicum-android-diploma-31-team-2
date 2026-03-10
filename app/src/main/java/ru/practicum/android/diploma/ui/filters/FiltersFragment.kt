@@ -33,20 +33,13 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
-        setupNavigation()
-        setupObservers()
+        initUI()
     }
 
-    private fun setupViews() {
-        setupSearchInput()
+    private fun initUI() {
+        // Навигация
+        binding.ivBack.setOnClickListener { findNavController().navigateUp() }
 
-        binding.ivBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
-    }
-
-    private fun setupNavigation() {
         binding.itemWorkplace.setOnClickListener {
             sharedViewModel.filtersOnAction(FiltersAction.FiltersWorkChange)
             findNavController().navigate(R.id.action_filtersFragment_to_workChooseFragment)
@@ -56,18 +49,19 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             sharedViewModel.filtersOnAction(FiltersAction.FiltersIndustryChange)
             findNavController().navigate(R.id.action_filtersFragment_to_industryChooseFragment)
         }
-    }
 
-    private fun setupSearchInput() {
-        binding.etExpectedSalary.setOnFocusChangeListener { _, hasFocus ->
-            updateSalaryHintColor(hasFocus, binding.etExpectedSalary.text.toString())
-        }
+        // Поле зарплаты
+        with(binding.etExpectedSalary) {
+            setOnFocusChangeListener { _, hasFocus ->
+                updateSalaryHintColor(hasFocus, text.toString())
+            }
 
-        binding.etExpectedSalary.addTextChangedListener { s: Editable? ->
-            val text = s?.toString() ?: ""
-            updateSalaryHintColor(binding.etExpectedSalary.hasFocus(), text)
-            binding.ivClearSalary.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
-            sharedViewModel.filtersOnAction(FiltersAction.FiltersSalaryChange(text.toIntOrNull() ?: 0))
+            addTextChangedListener { s: Editable? ->
+                val text = s?.toString() ?: ""
+                updateSalaryHintColor(hasFocus(), text)
+                binding.ivClearSalary.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
+                sharedViewModel.filtersOnAction(FiltersAction.FiltersSalaryChange(text.toIntOrNull() ?: 0))
+            }
         }
 
         binding.ivClearSalary.setOnClickListener {
@@ -90,96 +84,79 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             sharedViewModel.filtersOnAction(FiltersAction.FiltersReset)
             resetUI()
         }
-    }
 
-    private fun setupObservers() {
+        // Наблюдатель
         sharedViewModel.filtersStateLiveData.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is FiltersState.Content -> updateUI(state)
-            }
+            if (state is FiltersState.Content) updateUI(state)
         }
     }
 
     private fun updateUI(state: FiltersState.Content) {
         updateWorkplaceDisplay(state.country, state.region)
         updateIndustryDisplay(state.industry)
-        val currentText = binding.etExpectedSalary.text.toString()
-        binding.ivClearSalary.visibility = if (currentText.isNotEmpty()) View.VISIBLE else View.GONE
 
+        binding.ivClearSalary.visibility = if (binding.etExpectedSalary.text.isNotEmpty()) View.VISIBLE else View.GONE
         binding.cbHideWithoutSalary.isChecked = state.onlyWithSalary
-
         binding.bottomButtons.visibility = if (hasChanges(state)) View.VISIBLE else View.GONE
     }
 
     private fun updateIndustryDisplay(industry: Industry?) {
         val hasSelection = industry != null
+        val industryTitle = binding.itemIndustry.findViewById<TextView>(R.id.tvIndustryTitle) ?: return
+        val industryValue = binding.itemIndustry.findViewById<TextView>(R.id.tvIndustryValue) ?: return
 
-        val industryTitle = binding.itemIndustry.findViewById<TextView>(R.id.tvIndustryTitle)
+        industryTitle.apply {
+            textSize = if (hasSelection) TITLE_SELECTED_TEXT_SIZE else TITLE_DEFAULT_TEXT_SIZE
+            setTextColor(ContextCompat.getColorStateList(requireContext(), R.color.color_on_primary_selector))
+        }
 
-        val industryValue = binding.itemIndustry.findViewById<TextView>(R.id.tvIndustryValue)
-
-        if (industryTitle != null && industryValue != null) {
-            industryTitle.textSize = if (hasSelection) TITLE_SELECTED_TEXT_SIZE else TITLE_DEFAULT_TEXT_SIZE
-            industryTitle.setTextColor(ContextCompat.getColorStateList(requireContext(), R.color.color_on_primary_selector))
-
+        industryValue.apply {
             if (hasSelection) {
-                industryValue.text = industry?.name ?: ""
-                industryValue.visibility = View.VISIBLE
+                text = industry?.name ?: ""
+                visibility = View.VISIBLE
             } else {
-                industryValue.visibility = View.GONE
-                industryValue.text = getString(R.string.not_selected)
+                visibility = View.GONE
             }
+        }
 
-            val params = industryTitle.layoutParams as? LinearLayout.LayoutParams
-            params?.let {
-                if (hasSelection) {
-                    it.topMargin = MARGIN_DEFAULT
-                    it.gravity = android.view.Gravity.TOP
-                } else {
-                    it.topMargin = MARGIN_UPDATED
-                    it.gravity = android.view.Gravity.CENTER_VERTICAL
-                }
-                industryTitle.layoutParams = it
-            }
+        val params = industryTitle.layoutParams as? LinearLayout.LayoutParams
+        params?.let {
+            it.topMargin = if (hasSelection) MARGIN_DEFAULT else MARGIN_UPDATED
+            it.gravity = if (hasSelection) android.view.Gravity.TOP else android.view.Gravity.CENTER_VERTICAL
+            industryTitle.layoutParams = it
         }
     }
 
     private fun updateWorkplaceDisplay(country: Area?, region: Area?) {
         val hasSelection = country != null
 
-        binding.tvWorkplaceTitle.apply {
+        with(binding.tvWorkplaceTitle) {
             textSize = if (hasSelection) TITLE_SELECTED_TEXT_SIZE else TITLE_DEFAULT_TEXT_SIZE
-
             setTextColor(ContextCompat.getColorStateList(requireContext(), R.color.color_on_primary_selector))
         }
 
-        binding.tvWorkplaceValue.apply {
+        with(binding.tvWorkplaceValue) {
             if (hasSelection) {
-                val workplaceText = when {
+                text = when {
                     country != null && region != null -> "${country.name}, ${region.name}"
                     country != null -> country.name
                     else -> getString(R.string.not_selected)
                 }
-                text = workplaceText
                 visibility = View.VISIBLE
             } else {
                 visibility = View.GONE
-                text = getString(R.string.not_selected)
             }
         }
+
         val containerLayout = binding.itemWorkplace.getChildAt(0) as LinearLayout
         val params = binding.tvWorkplaceTitle.layoutParams as LinearLayout.LayoutParams
 
-        if (hasSelection) {
-            params.topMargin = MARGIN_DEFAULT
-            params.gravity = android.view.Gravity.TOP
-            containerLayout.gravity = android.view.Gravity.TOP
-        } else {
-            params.topMargin = MARGIN_UPDATED
-            params.gravity = android.view.Gravity.CENTER_VERTICAL
-            containerLayout.gravity = android.view.Gravity.CENTER_VERTICAL
+        params.apply {
+            topMargin = if (hasSelection) MARGIN_DEFAULT else MARGIN_UPDATED
+            gravity = if (hasSelection) android.view.Gravity.TOP else android.view.Gravity.CENTER_VERTICAL
         }
         binding.tvWorkplaceTitle.layoutParams = params
+        containerLayout.gravity = params.gravity
     }
 
     private fun resetUI() {
@@ -191,11 +168,8 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
     }
 
     private fun hasChanges(state: FiltersState.Content): Boolean {
-        return state.country != null ||
-            state.region != null ||
-            state.industry != null ||
-            state.salary > 0 ||
-            state.onlyWithSalary
+        return state.country != null || state.region != null ||
+            state.industry != null || state.salary > 0 || state.onlyWithSalary
     }
 
     private fun updateSalaryHintColor(hasFocus: Boolean, text: String) {
@@ -204,9 +178,7 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             text.isNotEmpty() -> R.color.black
             else -> R.color.white
         }
-        binding.tvSalaryHint.setTextColor(
-            ContextCompat.getColor(requireContext(), colorRes)
-        )
+        binding.tvSalaryHint.setTextColor(ContextCompat.getColor(requireContext(), colorRes))
     }
 
     override fun onDestroyView() {
@@ -214,10 +186,9 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
         _binding = null
     }
 
-    companion object{
+    companion object {
         private const val TITLE_SELECTED_TEXT_SIZE = 12f
         private const val TITLE_DEFAULT_TEXT_SIZE = 16f
-
         private const val MARGIN_DEFAULT = 0
         private const val MARGIN_UPDATED = 12
     }

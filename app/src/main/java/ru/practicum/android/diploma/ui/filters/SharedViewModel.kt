@@ -71,15 +71,16 @@ class SharedViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private var workActionHandler: WorkActionHandler = WorkActionHandler(_workChooseStateLiveData, _filtersStateLiveData)
+    private var workActionHandler: WorkActionHandler = WorkActionHandler(
+        _workChooseStateLiveData, _filtersStateLiveData
+    )
     private var filtersActionHandler: FiltersActionHandler
 
     init {
         filtersActionHandler = FiltersActionHandler(
             _filtersStateLiveData,
             _workChooseStateLiveData,
-            settingsInteractor,
-            ::onFiltersIndustryChange
+            settingsInteractor
         )
     }
 

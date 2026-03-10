@@ -149,7 +149,9 @@ class WorkChooseFragment : Fragment() {
                 resetRegionView()
             }
 
-            val hasCountry = (sharedViewModel.workChooseStateLiveData.value as? WorkChooseState.Content)?.country != null
+            val hasCountry = (
+                sharedViewModel.workChooseStateLiveData.value as? WorkChooseState.Content
+            )?.country != null
             clRegion.isEnabled = hasCountry
             clRegion.alpha = if (hasCountry) VISUAL_ALPHA_VALUE else HALF_VISUAL_ALPHA_VALUE
         }

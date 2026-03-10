@@ -9,7 +9,6 @@ class FiltersActionHandler(
     private val filtersStateLiveData: MutableLiveData<FiltersState>,
     private val workChooseStateLiveData: MutableLiveData<WorkChooseState>,
     private val settingsInteractor: SettingsInteractor,
-    private val onIndustryChange: () -> Unit
 ) {
     fun handleFiltersWorkChange() {
         val filterData = filtersStateLiveData.value as FiltersState.Content
