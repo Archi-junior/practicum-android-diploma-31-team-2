@@ -130,6 +130,15 @@ class SharedViewModel(
                     }
                 )
             }
+
+            is WorkAction.WorkRegionSelect -> {
+                _workChooseStateLiveData.postValue(
+                    (workChooseStateLiveData.value as? WorkChooseState.Content)?.copy(
+                        region = action.region
+                    ) ?: WorkChooseState.Content(region = action.region)
+                )
+            }
+
             is WorkAction.WorkRegionClear -> {
                 _workChooseStateLiveData.postValue(
                     (workChooseStateLiveData.value as WorkChooseState.Content).copy(

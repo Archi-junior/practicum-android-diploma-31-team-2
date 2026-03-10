@@ -21,6 +21,13 @@ class AreaInteractorImpl(
     override fun getAllRegions(): Flow<ResultHttp<List<Area>>> =
         repository.getAllRegions()
 
+
+    override fun getAllAreas(): Flow<ResultHttp<List<Area>>> =
+        repository.getAllAreas()
+
+    override fun searchRegions(query: String, countryId: Int?): Flow<ResultHttp<List<Area>>> =
+        repository.searchRegions(query, countryId)
+
     override suspend fun findCountryByRegion(regionId: Int): Area? {
         val result = getAllRegions().first()
         return if (result is ResultHttp.Success) {

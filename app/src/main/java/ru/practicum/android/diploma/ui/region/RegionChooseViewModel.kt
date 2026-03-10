@@ -6,10 +6,15 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.domain.AreaInteractor
+import ru.practicum.android.diploma.domain.ResultHttp
 import ru.practicum.android.diploma.presentation.mapper.AreaUi
+import ru.practicum.android.diploma.presentation.mapper.toAreaUiModel
 
 @OptIn(FlowPreview::class)
-class RegionChooseViewModel(val fakeAreaInteractor: FakeAreaInteractor) : ViewModel() {
+class RegionChooseViewModel(
+    private val areaInteractor: AreaInteractor
+) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
@@ -26,29 +31,36 @@ class RegionChooseViewModel(val fakeAreaInteractor: FakeAreaInteractor) : ViewMo
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    init {
-        loadRegions()
+    fun loadRegions(countryId: Int) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            areaInteractor.getRegionsByCountry(countryId).collect { result ->
+                when (result) {
+                    is ResultHttp.Success -> {
+                        _regions.value = result.data.map { it.toAreaUiModel() }
+                        _error.value = null
+                    }
+                    is ResultHttp.Error -> {
+                        _error.value = result.message ?: "Ошибка загрузки регионов"
+                    }
+                    is ResultHttp.NoConnection -> {
+                        _error.value = "Нет подключения к интернету"
+                    }
+                }
+                _isLoading.value = false
+            }
+        }
     }
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
     }
 
-    private fun loadRegions() {
-        viewModelScope.launch {
-            try {
-                val regions = fakeAreaInteractor.getAll()
-                _regions.value = regions
-                _error.value = null
-            } catch (e: Exception) {
-                _error.value = e.message ?: "Ошибка загрузки регионов"
-            }
-        }
-    }
-
     fun selectRegion(region: AreaUi) {
         _selectedRegion.value = region
     }
 
-    fun getSelectedRegion(): AreaUi? = _selectedRegion.value
+    fun clearSelection() {
+        _selectedRegion.value = null
+    }
 }
