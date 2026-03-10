@@ -76,4 +76,25 @@ class AreaRepositoryImpl(
             is ApiResponse.NoConnection -> ResultHttp.NoConnection
         }
     }
+
+    override fun getAllAreas(): Flow<ResultHttp<List<Area>>> = flow {
+        val allAreas = getAllAreasFromNetwork()
+        emit(allAreas)
+    }
+
+    override fun searchRegions(query: String, countryId: Int?): Flow<ResultHttp<List<Area>>> = flow {
+        val allAreas = getAllAreasFromNetwork()
+
+        when (allAreas) {
+            is ResultHttp.Success -> {
+                val regions = allAreas.data
+                    .filter { it.isRegion() }
+                    .filter { countryId == null || it.parentId == countryId }
+                    .filter { it.name.contains(query, ignoreCase = true) }
+                emit(ResultHttp.Success(regions))
+            }
+            is ResultHttp.Error -> emit(allAreas)
+            is ResultHttp.NoConnection -> emit(allAreas)
+        }
+    }
 }

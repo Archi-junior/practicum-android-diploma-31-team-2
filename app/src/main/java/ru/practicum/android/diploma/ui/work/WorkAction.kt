@@ -8,6 +8,8 @@ sealed interface WorkAction {
 
     data object WorkRegionClear: WorkAction
 
+    data class WorkRegionSelect(val region: Area) : WorkAction
+
     data object WorkCountryChange: WorkAction
 
     data object WorkCountryClear: WorkAction

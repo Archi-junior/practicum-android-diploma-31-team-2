@@ -11,5 +11,9 @@ interface AreaInteractor {
 
     fun getAllRegions(): Flow<ResultHttp<List<Area>>>
 
+    fun getAllAreas(): Flow<ResultHttp<List<Area>>>
+
     suspend fun findCountryByRegion(regionId: Int): Area?
+
+    fun searchRegions(query: String, countryId: Int? = null): Flow<ResultHttp<List<Area>>>
 }

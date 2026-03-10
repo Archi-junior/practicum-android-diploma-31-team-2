@@ -32,9 +32,11 @@
 
     <string name="choosing_country">Выбор страны</string>
 
+    <string name="enter_region">Введите регион</string>
+
     <string name="no_such_region">Такого региона нет</string>
 
-    <string name="couldnt_get_list">Не удалось получить список</string>
+    <string name="couldnt_get_list">Не удалось получить \nсписок</string>
 
     <string name="choose">Выбрать</string>
 

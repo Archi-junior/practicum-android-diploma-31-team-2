@@ -10,4 +10,8 @@ interface AreaRepository {
     fun getRegionsByCountry(countryId: Int): Flow<ResultHttp<List<Area>>>
 
     fun getAllRegions(): Flow<ResultHttp<List<Area>>>
+
+    fun getAllAreas(): Flow<ResultHttp<List<Area>>>
+
+    fun searchRegions(query: String, countryId: Int?): Flow<ResultHttp<List<Area>>>
 }
