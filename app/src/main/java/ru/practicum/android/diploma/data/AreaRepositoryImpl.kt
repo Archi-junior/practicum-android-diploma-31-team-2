@@ -40,7 +40,8 @@ class AreaRepositoryImpl(
         emit(
             when (allAreas) {
                 is ResultHttp.Success -> {
-                    ResultHttp.Success(allAreas.data.getRegionsForCountry(countryId))
+                    val regions = allAreas.data.getRegionsForCountry(countryId)
+                    ResultHttp.Success(regions)
                 }
                 is ResultHttp.Error -> allAreas
                 is ResultHttp.NoConnection -> allAreas
@@ -54,7 +55,8 @@ class AreaRepositoryImpl(
         emit(
             when (allAreas) {
                 is ResultHttp.Success -> {
-                    ResultHttp.Success(allAreas.data.filter { it.isRegion() })
+                    val allRegions = allAreas.data.flatMap { it.areas }
+                    ResultHttp.Success(allRegions)
                 }
                 is ResultHttp.Error -> allAreas
                 is ResultHttp.NoConnection -> allAreas

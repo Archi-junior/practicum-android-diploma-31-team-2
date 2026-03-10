@@ -42,6 +42,11 @@ class SearchFragment : Fragment() {
         observeViewModel()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.applyFilters()
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private fun setupSearchInput() {
         binding.searchEditText.addTextChangedListener { s: Editable? ->

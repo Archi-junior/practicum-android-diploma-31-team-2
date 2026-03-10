@@ -20,6 +20,8 @@ val interactorModule = module {
         ShareDataInteractorImpl(get())
     }
 
+    factory<IndustriesInteractor> { IndustriesInteractorImpl(get()) }
+
     factory<VacanciesInteractor> {
         VacanciesInteractorImpl(get())
     }

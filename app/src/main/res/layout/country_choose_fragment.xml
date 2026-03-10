@@ -5,13 +5,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorPrimary">
 
+    <ImageView
+        android:id="@+id/ivBack"
+        style="@style/WorkChooseImageView.Back"
+        android:src="@drawable/ic_back"
+        android:contentDescription="@string/back_button"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/WorkChooseText.Title"
+        android:text="@string/choosing_country"
+        app:layout_constraintBottom_toBottomOf="@id/ivBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivBack"
+        app:layout_constraintTop_toTopOf="@id/ivBack" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCountries"
         style="@style/CountryChooseRvCountries"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"

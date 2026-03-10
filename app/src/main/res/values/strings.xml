@@ -26,13 +26,13 @@
     <string name="enter_the_amount">Введите сумму</string>
     <string name="do_not_show_without_salary">Не показывать без зарплаты</string>
 
-    <string name="choosing_a_place_of_work">Выбор место работы</string>
+    <string name="choosing_a_place_of_work">Выбор места работы</string>
     <string name="country">Страна</string>
     <string name="region">Регион</string>
 
-    <string name="choosing_country">Выбор страны</string>
+    <string name="not_selected">не выбрано</string>
 
-    <string name="enter_region">Введите регион</string>
+    <string name="choosing_country">Выбор страны</string>
 
     <string name="no_such_region">Такого региона нет</string>
 
@@ -46,6 +46,7 @@
     <string name="choosing_an_industry">Выбор отрасли</string>
     <string name="choosing_region">Выбор региона</string>
     <string name="enter_industry">Введите отрасль</string>
+    <string name="enter_region">Введите регион</string>
 
     <string name="vacancy">Вакансия</string>
     <string name="required_experience">Требуемый опыт</string>

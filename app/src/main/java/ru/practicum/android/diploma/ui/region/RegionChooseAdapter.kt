@@ -9,8 +9,7 @@ import ru.practicum.android.diploma.presentation.mapper.AreaUi
 class RegionChooseAdapter(
     private var regions: List<AreaUi>,
     private val onRegionClick: (region: AreaUi) -> Unit,
-) :
-    RecyclerView.Adapter<RegionChooseAdapter.RegionViewHolder>() {
+) : RecyclerView.Adapter<RegionChooseAdapter.RegionViewHolder>() {
 
     fun updateRegions(newRegion: List<AreaUi>) {
         regions = newRegion
@@ -28,7 +27,9 @@ class RegionChooseAdapter(
         holder.itemView.setOnClickListener { onRegionClick(region) }
     }
 
-    override fun getItemCount(): Int = regions.size
+    override fun getItemCount(): Int {
+        return regions.size
+    }
 
     class RegionViewHolder(private val binding: ItemRegionBinding) :
         RecyclerView.ViewHolder(binding.root) {

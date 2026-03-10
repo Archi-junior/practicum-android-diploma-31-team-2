@@ -10,7 +10,6 @@ import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import ru.practicum.android.diploma.databinding.CountryChooseFragmentBinding
 import ru.practicum.android.diploma.ui.filters.SharedViewModel
-import kotlin.getValue
 
 class CountryChooseFragment : Fragment() {
 
@@ -30,8 +29,19 @@ class CountryChooseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.countryChooseStateLiveData.observe(viewLifecycleOwner) { state -> render(state) }
+        setupAdapter()
+        setupToolbar()
+        loadCountries()
+        observeViewModel()
+    }
 
+    private fun setupToolbar() {
+        binding.ivBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun setupAdapter() {
         adapter = CountryAdapter { country ->
             viewModel.countryOnAction(CountryAction.CountrySelectItem(country))
             findNavController().navigateUp()
@@ -39,14 +49,21 @@ class CountryChooseFragment : Fragment() {
         binding.rvCountries.adapter = adapter
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
+    private fun loadCountries() {
+        viewModel.loadCountries()
+    }
+
+    private fun observeViewModel() {
+        viewModel.countryChooseStateLiveData.observe(viewLifecycleOwner) { state ->
+            render(state)
+        }
     }
 
     private fun render(state: CountryChooseState) {
         when (state) {
-            is CountryChooseState.Initial -> Unit
+            is CountryChooseState.Initial -> {
+                showLoading()
+            }
             is CountryChooseState.NoConnection -> {
                 binding.apply {
                     rvCountries.isVisible = false
@@ -64,12 +81,7 @@ class CountryChooseFragment : Fragment() {
                 }
             }
             is CountryChooseState.Loading -> {
-                binding.apply {
-                    rvCountries.isVisible = false
-                    progressBar.isVisible = true
-                    inclNoInternet.root.isVisible = false
-                    inclServerError.root.isVisible = false
-                }
+                showLoading()
             }
             is CountryChooseState.Content -> {
                 adapter.submitList(state.areas)
@@ -81,5 +93,19 @@ class CountryChooseFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showLoading() {
+        binding.apply {
+            rvCountries.isVisible = false
+            progressBar.isVisible = true
+            inclNoInternet.root.isVisible = false
+            inclServerError.root.isVisible = false
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

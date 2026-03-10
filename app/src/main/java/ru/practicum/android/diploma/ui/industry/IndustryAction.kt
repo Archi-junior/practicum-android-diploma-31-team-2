@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.ui.branch
+package ru.practicum.android.diploma.ui.industry
 
 import ru.practicum.android.diploma.domain.models.Industry
 

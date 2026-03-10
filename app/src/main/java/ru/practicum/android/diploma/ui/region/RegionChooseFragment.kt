@@ -26,8 +26,7 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
     private var _binding: RegionChooseFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private val sharedViewModel: SharedViewModel by activityViewModel()
-    private val viewModel: RegionChooseViewModel by viewModel()
+    private val viewModel: SharedViewModel by activityViewModel()
 
     private val countryId: Int by lazy {
         arguments?.getInt("countryId") ?: throw IllegalArgumentException("countryId required")
@@ -55,7 +54,7 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
 
     private fun setupRecyclerView() {
         adapter = RegionChooseAdapter(emptyList()) { region ->
-            sharedViewModel.workOnAction(WorkAction.WorkRegionSelect(region.toDomainArea()))
+            viewModel.regionOnAction(RegionAction.RegionSelectItem(region.toDomainArea()))
             findNavController().popBackStack()
         }
         binding.listRegionRecyclerView.apply {
@@ -86,24 +85,16 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
             }.collect { filteredRegions ->
                 adapter.updateRegions(filteredRegions)
                 updatePlaceholders(filteredRegions)
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.error.collect { error ->
-                if (error != null) {
-                    binding.noListPlaceholder.isVisible = true
-                    binding.noRegionPlaceholder.isVisible = false
-                    binding.listRegionRecyclerView.isVisible = false
-                } else {
-                    binding.noListPlaceholder.isVisible = false
-                }
+                binding.listRegionRecyclerView.isVisible = filteredRegions.isNotEmpty()
+                binding.listRegionRecyclerView.visibility = View.VISIBLE
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
-                binding.listRegionRecyclerView.isVisible = !isLoading && viewModel.regions.value.isNotEmpty()
+                if (!isLoading && viewModel.regions.value.isNotEmpty()) {
+                    binding.listRegionRecyclerView.isVisible = true
+                }
             }
         }
     }
