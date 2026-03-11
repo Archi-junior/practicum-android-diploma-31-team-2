@@ -15,6 +15,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyFragmentBinding
+import ru.practicum.android.diploma.domain.models.Contacts
 import ru.practicum.android.diploma.domain.models.Vacancy
 import java.text.DecimalFormat
 
@@ -92,6 +93,10 @@ class VacancyFragment : Fragment(){
                 tvSkills.isVisible = false
             } else {
                 tvSkills.text = vacancy.skills.joinToString("\n")
+            }
+            if (vacancy.contacts != null) {
+
+
             }
         }
         showSalary(vacancy)
@@ -196,5 +201,6 @@ class VacancyFragment : Fragment(){
         private const val NUMBER_FORMAT_PATTERN = "#,###"
         private const val NUMBER_FORMAT_GROUPING_SIZE = 3
         private const val NUMBER_FORMAT_GROUPING_SEPARATOR = ' '
+        private const val MAX_VISIBLE_PHONES = 3
     }
 }
