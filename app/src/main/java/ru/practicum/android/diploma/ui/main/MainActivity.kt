@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import org.koin.android.ext.android.inject
@@ -30,7 +31,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
         navController = navHostFragment.navController
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -80,9 +82,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
         when (destinationId) {
-            R.id.vacancyFragment -> hideTitle()
-            R.id.favoriteFragment -> hideTitle()
-            else -> showTitle()
+            R.id.vacancyFragment -> {
+                binding.bottomNavigationView.isVisible = false
+                hideTitle()
+            }
+
+            R.id.favoriteFragment -> {
+                binding.bottomNavigationView.isVisible = true
+                hideTitle()
+
+            }
+
+            else -> {
+                showTitle()
+                binding.bottomNavigationView.isVisible = true
+            }
         }
         binding.titleText.setText(titleResId)
     }
