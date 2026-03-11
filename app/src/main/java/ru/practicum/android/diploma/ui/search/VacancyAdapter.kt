@@ -82,7 +82,16 @@ class VacancyAdapter(
                     )
                     .into(ivCompanyLogo)
 
-                tvVacancyName.text = vacancy.name
+                val jobTitle = vacancy.name
+                val city = vacancy.address?.city
+
+                val displayText = if (city.isNullOrBlank()) {
+                    jobTitle
+                } else {
+                    "$jobTitle, $city"
+                }
+
+                tvVacancyName.text = displayText
                 tvCompanyName.text = vacancy.employer.name
                 tvSalary.text = formatSalary(vacancy)
 
@@ -100,6 +109,7 @@ class VacancyAdapter(
                 vacancy.salary == null -> {
                     context.getString(R.string.vacancy_salary_not_specified)
                 }
+
                 vacancy.salary.from != null && vacancy.salary.to == null -> {
                     context.getString(
                         R.string.vacancy_salary_from,
@@ -107,6 +117,7 @@ class VacancyAdapter(
                         currencySymbol
                     )
                 }
+
                 vacancy.salary.from == null && vacancy.salary.to != null -> {
                     context.getString(
                         R.string.vacancy_salary_to,
@@ -114,6 +125,7 @@ class VacancyAdapter(
                         currencySymbol
                     )
                 }
+
                 vacancy.salary.from != null && vacancy.salary.to != null -> {
                     context.getString(
                         R.string.vacancy_salary_from_to,
@@ -122,6 +134,7 @@ class VacancyAdapter(
                         currencySymbol
                     )
                 }
+
                 else -> {
                     context.getString(R.string.vacancy_salary_not_specified)
                 }

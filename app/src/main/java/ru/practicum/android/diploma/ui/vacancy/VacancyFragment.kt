@@ -81,7 +81,7 @@ class VacancyFragment : Fragment(){
 
             tvName.text = vacancy.name
             tvEmployerName.text = vacancy.employer.name
-            tvAddress.text = vacancy.address?.fullAddress ?: vacancy.area.name
+            tvAddress.text = vacancy.address?.city
             tvExperienceName.text = vacancy.experience?.name
             tvScheduleName.text = vacancy.schedule?.name
             tvDescription.text = HtmlCompat.fromHtml(
@@ -95,49 +95,11 @@ class VacancyFragment : Fragment(){
                 tvSkills.text = vacancy.skills.joinToString("\n")
             }
             if (vacancy.contacts != null) {
-                tvContactInfo.setOnClickListener(null)
-                tvContactInfo.isClickable = false
 
-                setupContactClicks(vacancy.contacts)
+
             }
         }
         showSalary(vacancy)
-        setupContacts(vacancy.contacts)
-    }
-
-    private fun setupContactClicks(contacts: Contacts) {
-        binding.apply {
-            if (contacts.email.isNotEmpty()) {
-                tvEmail.isVisible = true
-                tvEmail.text = contacts.email
-                tvEmail.setOnClickListener {
-                    viewModel.openEmail(contacts.email)
-                }
-            } else {
-                tvEmail.isVisible = false
-            }
-
-            if (contacts.phones.isNotEmpty()) {
-                contacts.phones.forEachIndexed { index, phone ->
-                    val phoneView = when (index) {
-                        0 -> binding.tvPhone1
-                        1 -> binding.tvPhone2
-                        else -> null
-                    }
-                    phoneView?.apply {
-                        isVisible = true
-                        text = if (phone.comment.isNullOrEmpty()) {
-                            phone.formatted
-                        } else {
-                            "${phone.comment}: ${phone.formatted}"
-                        }
-                        setOnClickListener {
-                            viewModel.callPhone(phone.formatted)
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun getCurrencySymbol(currencyCode: String?): String {
@@ -192,52 +154,6 @@ class VacancyFragment : Fragment(){
         }
     }
 
-    private fun setupContacts(contacts: Contacts?) {
-        binding.apply {
-            if (contacts == null) {
-                tvContactInfo.isVisible = false
-                return
-            }
-
-            tvContactInfo.isVisible = true
-            tvContactInfo.setOnClickListener(null)
-            tvContactInfo.isClickable = false
-
-            // Email
-            if (contacts.email.isNotEmpty()) {
-                tvEmail.isVisible = true
-                tvEmail.text = contacts.email
-                tvEmail.setOnClickListener {
-                    viewModel.openEmail(contacts.email)
-                }
-            } else {
-                tvEmail.isVisible = false
-            }
-
-            val visiblePhones = contacts.phones.take(MAX_VISIBLE_PHONES)
-            val phoneViews = listOf(tvPhone1, tvPhone2, tvPhone3)
-
-            phoneViews.forEach { it.isVisible = false }
-
-            visiblePhones.forEachIndexed { index, phone ->
-                val phoneView = phoneViews.getOrNull(index)
-                phoneView?.apply {
-                    isVisible = true
-                    text = if (phone.comment.isNullOrEmpty()) {
-                        phone.formatted
-                    } else {
-                        "${phone.comment}: ${phone.formatted}"
-                    }
-                    setOnClickListener {
-                        viewModel.callPhone(phone.formatted)
-                    }
-                }
-            }
-            if (contacts.email.isEmpty() && visiblePhones.isEmpty()) {
-                tvContactInfo.isVisible = false
-            }
-        }
-    }
 
     private fun render(state: VacancyState) {
         when (state) {
