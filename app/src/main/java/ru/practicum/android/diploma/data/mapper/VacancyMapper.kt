@@ -35,21 +35,6 @@ fun VacancyDto.toDomain(): Vacancy =
         industry = industry.toDomain(),
     )
 
-private fun cleanJobTitle(rawName: String, employer: EmployerDto?): String {
-    var result = rawName
-    val employerName = employer?.name?.trim() ?: ""
-    if (employerName.isNotEmpty()) {
-        val suffix = " в $employerName"
-        if (result.endsWith(suffix, ignoreCase = true)) {
-            result = result.substringBeforeLast(suffix).trim()
-        }
-    }
-    if (result.endsWith(" в ")) {
-        result = result.substring(0, result.length - 3) + ", "
-    }
-    return result.trim()
-}
-
 fun Vacancy.toEntity(gson: Gson): FavoriteVacancyEntity =
     FavoriteVacancyEntity(
         id = id,
