@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.ResultHttp
+import ru.practicum.android.diploma.domain.SettingsInteractor
 import ru.practicum.android.diploma.domain.VacanciesInteractor
 import ru.practicum.android.diploma.domain.models.VacanciesFilter
 import ru.practicum.android.diploma.domain.models.VacanciesResult
@@ -21,7 +22,8 @@ import ru.practicum.android.diploma.domain.models.Vacancy
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
-    private val vacanciesInteractor: VacanciesInteractor
+    private val vacanciesInteractor: VacanciesInteractor,
+    private val settingsInteractor: SettingsInteractor,
 ) : ViewModel() {
 
     private val _state = MutableLiveData<SearchState>(SearchState.Start)
@@ -73,9 +75,9 @@ class SearchViewModel(
 
     private fun canLoadNextPage(currentState: SearchState?): Boolean {
         return currentState is SearchState.Content &&
-            !currentState.isLoadingNextPage &&
-            currentPage < totalPages &&
-            !isLoadingNextPage
+                !currentState.isLoadingNextPage &&
+                currentPage < totalPages &&
+                !isLoadingNextPage
     }
 
     private fun resetSearch() {
@@ -89,6 +91,9 @@ class SearchViewModel(
 
     private fun performSearch(query: String, reset: Boolean) {
         if (isSearching || (isLoadingNextPage && !reset)) return
+
+        val filterSettings = settingsInteractor.getFilterSettings()
+        val areaId = filterSettings?.region?.id ?: filterSettings?.country?.id
 
         viewModelScope.launch {
             if (reset) {
@@ -112,8 +117,12 @@ class SearchViewModel(
             }
 
             currentFilter = VacanciesFilter(
+                areaId = areaId,
+                industryId = filterSettings?.industry?.id,
                 text = query,
-                page = if (reset) 1 else currentPage
+                salaryVal = filterSettings?.salary,
+                page = if (reset) 1 else currentPage,
+                onlyWithSalary = filterSettings?.onlyWithSalary
             )
 
             vacanciesInteractor.search(currentFilter)
@@ -123,13 +132,19 @@ class SearchViewModel(
                         is ResultHttp.Error -> handleError(result.message, reset)
                         is ResultHttp.NoConnection -> handleNoConnection(reset)
                     }
-
                     if (reset) {
                         isSearching = false
                     } else {
                         isLoadingNextPage = false
                     }
                 }
+        }
+    }
+
+    fun applyFilters() {
+        val currentQuery = _searchQuery.value
+        if (currentQuery.isNotBlank()) {
+            performSearch(currentQuery, reset = true)
         }
     }
 
@@ -192,7 +207,7 @@ class SearchViewModel(
         }
     }
 
-    companion object{
+    companion object {
         const val DEBOUNCE_TIMEOUT = 2000L
     }
 }
