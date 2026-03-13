@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.data.mapper
 
+import android.os.Bundle
 import com.google.gson.Gson
 import ru.practicum.android.diploma.data.db.FavoriteVacancyEntity
 import ru.practicum.android.diploma.data.dto.EmployerDto
@@ -33,21 +34,6 @@ fun VacancyDto.toDomain(): Vacancy =
         url = url,
         industry = industry.toDomain(),
     )
-
-private fun cleanJobTitle(rawName: String, employer: EmployerDto?): String {
-    var result = rawName
-    val employerName = employer?.name?.trim() ?: ""
-    if (employerName.isNotEmpty()) {
-        val suffix = " в $employerName"
-        if (result.endsWith(suffix, ignoreCase = true)) {
-            result = result.substringBeforeLast(suffix).trim()
-        }
-    }
-    if (result.endsWith(" в ")) {
-        result = result.substring(0, result.length - 3) + ", "
-    }
-    return result.trim()
-}
 
 fun Vacancy.toEntity(gson: Gson): FavoriteVacancyEntity =
     FavoriteVacancyEntity(
@@ -153,3 +139,21 @@ fun FavoriteVacancyEntity.toDomain(gson: Gson): Vacancy =
         url = url,
         industry = Industry(id = industryId, name = industryName),
     )
+
+private fun cleanJobTitle(rawName: String, employer: EmployerDto?): String {
+    var result = rawName
+    val employerName = employer?.name?.trim() ?: ""
+    if (employerName.isNotEmpty()) {
+        val suffix = " в $employerName"
+        if (result.endsWith(suffix, ignoreCase = true)) {
+            result = result.substringBeforeLast(suffix).trim()
+        }
+    }
+    if (result.endsWith(" в ")) {
+        result = result.dropLast(DELETE_NAME_COMPANY) + ", "
+    }
+    return result.trim()
+
+}
+private const val DELETE_NAME_COMPANY = 3
+
