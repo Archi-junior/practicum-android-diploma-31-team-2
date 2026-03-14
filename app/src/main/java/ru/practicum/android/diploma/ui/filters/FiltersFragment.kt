@@ -90,15 +90,22 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             if (state is FiltersState.Content) updateUI(state)
         }
     }
-
     private fun updateUI(state: FiltersState.Content) {
         updateWorkplaceDisplay(state.country, state.region)
         updateIndustryDisplay(state.industry)
+        if (!binding.etExpectedSalary.hasFocus()) {
+            if (state.salary > 0) {
+                binding.etExpectedSalary.setText(state.salary.toString())
+            } else {
+                binding.etExpectedSalary.text?.clear()
+            }
+        }
 
-        binding.ivClearSalary.visibility = if (binding.etExpectedSalary.text.isNotEmpty()) View.VISIBLE else View.GONE
+        binding.ivClearSalary.visibility = if (state.salary > 0) View.VISIBLE else View.GONE
         binding.cbHideWithoutSalary.isChecked = state.onlyWithSalary
         binding.bottomButtons.visibility = if (hasChanges(state)) View.VISIBLE else View.GONE
     }
+
 
     private fun updateIndustryDisplay(industry: Industry?) {
         val hasSelection = industry != null
@@ -109,7 +116,6 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             textSize = if (hasSelection) TITLE_SELECTED_TEXT_SIZE else TITLE_DEFAULT_TEXT_SIZE
             setTextColor(ContextCompat.getColorStateList(requireContext(), R.color.color_on_primary_selector))
         }
-
         industryValue.apply {
             if (hasSelection) {
                 text = industry?.name ?: ""
@@ -165,6 +171,7 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
         binding.ivClearSalary.visibility = View.GONE
         updateWorkplaceDisplay(null, null)
         updateIndustryDisplay(null)
+        sharedViewModel.filtersOnAction(FiltersAction.FiltersReset)
     }
 
     private fun hasChanges(state: FiltersState.Content): Boolean {

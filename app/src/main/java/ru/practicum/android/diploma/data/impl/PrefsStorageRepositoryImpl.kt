@@ -21,6 +21,12 @@ class PrefsStorageRepositoryImpl(
         return getData(object : TypeToken<FilterSettings>() {}.type, FILTER_SETTINGS_DATA_KEY)
     }
 
+    override fun clearFilterSettings() {
+        prefs.edit {
+            remove(FILTER_SETTINGS_DATA_KEY)
+        }
+    }
+
     fun <T> storeData(data: T, dataKey: String) {
         prefs.edit {
             putString(

@@ -13,6 +13,7 @@ import ru.practicum.android.diploma.domain.IndustriesInteractor
 import ru.practicum.android.diploma.domain.ResultHttp
 import ru.practicum.android.diploma.domain.SettingsInteractor
 import ru.practicum.android.diploma.domain.models.Area
+import ru.practicum.android.diploma.domain.models.FilterSettings
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.presentation.mapper.AreaUi
 import ru.practicum.android.diploma.presentation.mapper.toAreaUiModel
@@ -175,10 +176,18 @@ class SharedViewModel(
             is FiltersAction.FiltersWorkClear -> filtersActionHandler.handleFiltersWorkClear()
             is FiltersAction.FiltersIndustryChange -> onFiltersIndustryChange()
             is FiltersAction.FiltersIndustryClear -> filtersActionHandler.handleFiltersIndustryClear()
-            is FiltersAction.FiltersSalaryChange -> filtersActionHandler.handleFiltersSalaryChange(action.salary)
-            is FiltersAction.FiltersSalaryClear -> filtersActionHandler.handleFiltersSalaryClear()
-            is FiltersAction.FiltersOnlyWithSalaryChange ->
+            is FiltersAction.FiltersSalaryChange -> {
+                filtersActionHandler.handleFiltersSalaryChange(action.salary)
+
+            }
+            is FiltersAction.FiltersSalaryClear -> {
+                filtersActionHandler.handleFiltersSalaryClear()
+
+            }
+            is FiltersAction.FiltersOnlyWithSalaryChange -> {
                 filtersActionHandler.handleFiltersOnlyWithSalaryChange(action.onlyWithSalary)
+
+            }
             is FiltersAction.FiltersApply -> filtersActionHandler.handleFiltersApply()
             is FiltersAction.FiltersReset -> filtersActionHandler.handleFiltersReset()
         }
