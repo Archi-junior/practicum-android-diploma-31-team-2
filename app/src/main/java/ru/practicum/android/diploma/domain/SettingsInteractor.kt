@@ -7,4 +7,5 @@ interface SettingsInteractor {
     fun storeFilterSettings(data: FilterSettings)
 
     fun getFilterSettings(): FilterSettings?
+    fun clearFilterSettings()
 }

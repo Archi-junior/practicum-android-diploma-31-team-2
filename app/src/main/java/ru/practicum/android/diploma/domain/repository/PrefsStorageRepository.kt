@@ -7,4 +7,5 @@ interface PrefsStorageRepository {
     fun storeFilterSettings(data: FilterSettings)
 
     fun getFilterSettings(): FilterSettings?
+    fun clearFilterSettings()
 }
