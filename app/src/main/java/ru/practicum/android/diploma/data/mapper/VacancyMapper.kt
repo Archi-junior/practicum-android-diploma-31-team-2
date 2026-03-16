@@ -1,7 +1,9 @@
 package ru.practicum.android.diploma.data.mapper
 
+import android.os.Bundle
 import com.google.gson.Gson
 import ru.practicum.android.diploma.data.db.FavoriteVacancyEntity
+import ru.practicum.android.diploma.data.dto.EmployerDto
 import ru.practicum.android.diploma.data.dto.VacancyDto
 import ru.practicum.android.diploma.domain.models.Address
 import ru.practicum.android.diploma.domain.models.Area
@@ -18,7 +20,7 @@ import ru.practicum.android.diploma.domain.models.Vacancy
 fun VacancyDto.toDomain(): Vacancy =
     Vacancy(
         id = id,
-        name = name,
+        name = cleanJobTitle(name, employer),
         description = description,
         salary = salary?.toDomain(),
         address = address?.toDomain(),
@@ -137,3 +139,21 @@ fun FavoriteVacancyEntity.toDomain(gson: Gson): Vacancy =
         url = url,
         industry = Industry(id = industryId, name = industryName),
     )
+
+private fun cleanJobTitle(rawName: String, employer: EmployerDto?): String {
+    var result = rawName
+    val employerName = employer?.name?.trim() ?: ""
+    if (employerName.isNotEmpty()) {
+        val suffix = " в $employerName"
+        if (result.endsWith(suffix, ignoreCase = true)) {
+            result = result.substringBeforeLast(suffix).trim()
+        }
+    }
+    if (result.endsWith(" в ")) {
+        result = result.dropLast(DELETE_NAME_COMPANY) + ", "
+    }
+    return result.trim()
+
+}
+private const val DELETE_NAME_COMPANY = 3
+
