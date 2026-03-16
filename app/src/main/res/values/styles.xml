@@ -155,8 +155,8 @@
 
     <style name="NavigationButtonStyle">
         <item name="android:fontFamily">@font/ys_text_regular</item>
-        <item name="itemTextColor">@color/gray</item>
-        <item name="itemIconTint">@color/gray</item>
+        <item name="itemTextColor">@color/bottom_nav_text_selector</item>
+        <item name="itemIconTint">@color/bottom_nav_icon_selector</item>
         <item name="android:textSize">12sp</item>
         <item name="android:background">?attr/colorPrimary</item>
         <item name="backgroundTint">?attr/colorPrimary</item>

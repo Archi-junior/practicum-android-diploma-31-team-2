@@ -132,6 +132,7 @@ class WorkChooseFragment : Fragment() {
                 tvCountryValue.isVisible = true
                 ivCountryClear.isVisible = true
                 tvCountryTitle.textSize = TITLE_SELECTED_TEXT_SIZE
+                binding.ivCountryArrow.isVisible = false
             } else {
                resetCountryView()
             }
@@ -145,6 +146,7 @@ class WorkChooseFragment : Fragment() {
                 tvRegionValue.isVisible = true
                 ivRegionClear.isVisible = true
                 tvRegionTitle.textSize = TITLE_SELECTED_TEXT_SIZE
+                binding.ivRegionArrow.isVisible = false
             } else {
                 resetRegionView()
             }
@@ -155,6 +157,7 @@ class WorkChooseFragment : Fragment() {
 
     private fun resetCountryView() {
         binding.apply {
+            ivCountryArrow.isVisible = true
             tvCountryValue.isVisible = false
             ivCountryClear.isVisible = false
             tvCountryTitle.textSize = TITLE_DEFAULT_TEXT_SIZE
@@ -163,6 +166,7 @@ class WorkChooseFragment : Fragment() {
 
     private fun resetRegionView() {
         binding.apply {
+            ivRegionArrow.isVisible = true
             tvRegionValue.isVisible = false
             ivRegionClear.isVisible = false
             tvRegionTitle.textSize = TITLE_DEFAULT_TEXT_SIZE
@@ -176,7 +180,6 @@ class WorkChooseFragment : Fragment() {
 
     companion object{
         const val VISUAL_ALPHA_VALUE = 1.0f
-        const val HALF_VISUAL_ALPHA_VALUE = 1.0f
         private const val TITLE_SELECTED_TEXT_SIZE = 12f
         private const val TITLE_DEFAULT_TEXT_SIZE = 16f
     }

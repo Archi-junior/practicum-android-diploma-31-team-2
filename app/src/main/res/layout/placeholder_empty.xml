@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/layout_16dp"
             android:text="@string/couldnt_get_list_of_vacancies"
+            android:textColor="?attr/colorOnPrimary"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="@+id/imageView3"
             app:layout_constraintStart_toStartOf="@+id/imageView3"
