@@ -99,7 +99,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.filtersFragment,
                 R.id.workChooseFragment,
                 R.id.countryChooseFragment,
-                R.id.regionChooseFragment
+                R.id.regionChooseFragment,
+                R.id.industryChooseFragment
             )
         }
 
