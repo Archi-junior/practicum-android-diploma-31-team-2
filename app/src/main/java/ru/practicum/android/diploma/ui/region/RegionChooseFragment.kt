@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel  // Добавить этот импорт
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.RegionChooseFragmentBinding
 import ru.practicum.android.diploma.presentation.mapper.AreaUi
@@ -25,13 +27,14 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
     private val binding get() = _binding!!
 
     private val sharedViewModel: SharedViewModel by activityViewModel()
+    private val viewModel: RegionViewModel by viewModel()
+    private val searchQuery = MutableStateFlow("")
 
     private val countryId: Int by lazy {
         arguments?.getInt("countryId") ?: 0
     }
 
     private lateinit var adapter: RegionChooseAdapter
-    private var allRegions: List<AreaUi> = emptyList()
     private var isFirstLoad = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,9 +49,9 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
         showLoading()
 
         if (countryId > 0) {
-            sharedViewModel.loadRegions(countryId)
+            viewModel.loadRegions(countryId)
         } else {
-            sharedViewModel.loadAllRegions()
+            viewModel.loadAllRegions()
         }
     }
 
@@ -77,17 +80,16 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
 
     private fun setupSearch() {
         binding.searchRegionEditText.addTextChangedListener { text ->
-            sharedViewModel.updateSearchQuery(text.toString())
+            searchQuery.value = text.toString()
         }
     }
 
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             combine(
-                sharedViewModel.regions,
-                sharedViewModel.searchQuery.debounce(DEBOUNCE_TIME).distinctUntilChanged()
+                viewModel.regions,
+                searchQuery.debounce(DEBOUNCE_TIME).distinctUntilChanged()
             ) { regions, query ->
-                allRegions = regions
                 if (query.isBlank()) {
                     regions
                 } else {
@@ -97,14 +99,14 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
                 }
             }.collect { filteredRegions ->
                 adapter.updateRegions(filteredRegions)
-                if (!sharedViewModel.isLoading.value) {
+                if (!viewModel.isLoading.value) {
                     updateUI(filteredRegions)
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            sharedViewModel.isLoading.collect { isLoading ->
+            viewModel.isLoading.collect { isLoading ->
                 if (isLoading) {
                     showLoading()
                 } else {
@@ -116,8 +118,8 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
     }
 
     private fun updateUI(filteredRegions: List<AreaUi>) {
-        val hasError = sharedViewModel.error.value != null
-        val hasSearchQuery = sharedViewModel.searchQuery.value.isNotBlank()
+        val hasError = viewModel.error.value != null
+        val hasSearchQuery = searchQuery.value.isNotBlank()
         val hasRegions = filteredRegions.isNotEmpty()
 
         binding.apply {

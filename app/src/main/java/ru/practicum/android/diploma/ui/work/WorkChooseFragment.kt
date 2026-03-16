@@ -48,7 +48,9 @@ class WorkChooseFragment : Fragment() {
             sharedViewModel.workOnAction(WorkAction.WorkRegionClick)
 
             val bundle = Bundle().apply {
-                val countryId = (sharedViewModel.workChooseStateLiveData.value as? WorkChooseState.Content)?.country?.id ?: 0
+                val countryId = (
+                    sharedViewModel.workChooseStateLiveData.value as? WorkChooseState.Content
+                    )?.country?.id ?: 0
                 putInt("countryId", countryId)
             }
             findNavController().navigate(
