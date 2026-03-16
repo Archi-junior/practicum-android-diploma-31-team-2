@@ -51,6 +51,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="MissingConstraints" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="@color/blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchRegionEditText" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listRegionRecyclerView"
         android:layout_width="@dimen/layout_0dp"
@@ -66,21 +77,22 @@
         android:layout_width="@dimen/layout_0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/searchEditText"
+        app:layout_constraintTop_toBottomOf="@id/searchRegionEditText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
         app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
-        tools:ignore="MissingConstraints">
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/noRegionImageView"
             style="@style/Medium_22"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/image_empty_result"
-            app:layout_constraintBottom_toTopOf="@id/text"
+            android:src="@drawable/image_error_couldnt_get_list"
+            app:layout_constraintBottom_toTopOf="@id/noRegionTextView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
 
         <TextView
@@ -90,9 +102,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/layout_16dp"
             android:text="@string/no_such_region"
-            app:layout_constraintTop_toBottomOf="@+id/imageView4"
+            android:textColor="?attr/colorOnPrimary"
+            app:layout_constraintTop_toBottomOf="@id/noRegionImageView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="MissingConstraints" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -101,7 +115,7 @@
         android:layout_width="@dimen/layout_0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/searchEditText"
+        app:layout_constraintTop_toBottomOf="@id/searchRegionEditText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/leftBorder16dp"
         app:layout_constraintEnd_toEndOf="@id/rightBorder16dp"
@@ -113,7 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/layout_8dp"
-            android:src="@drawable/couldnt_get_list"
+            android:src="@drawable/image_error_result"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/noListTextView"
             app:layout_constraintStart_toStartOf="parent"
@@ -128,7 +142,7 @@
             android:layout_marginTop="@dimen/layout_16dp"
             android:text="@string/couldnt_get_list"
             android:textAlignment="center"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/noListImageView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:ignore="MissingConstraints" />

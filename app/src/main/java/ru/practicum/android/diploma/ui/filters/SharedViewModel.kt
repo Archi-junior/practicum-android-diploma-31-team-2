@@ -77,6 +77,8 @@ class SharedViewModel(
     )
     private var filtersActionHandler: FiltersActionHandler
 
+    private val _allAreas = MutableStateFlow<List<Area>>(emptyList())
+
     init {
         filtersActionHandler = FiltersActionHandler(
             _filtersStateLiveData,
@@ -149,11 +151,16 @@ class SharedViewModel(
                 )
             }
             is RegionAction.RegionSelectItem -> {
-                _workChooseStateLiveData.postValue(
-                    (workChooseStateLiveData.value as WorkChooseState.Content).copy(
-                        region = action.region
+                val updatedWorkState = when (val currentWorkState = workChooseStateLiveData.value) {
+                    is WorkChooseState.Content -> currentWorkState.copy(region = action.region)
+                    else -> WorkChooseState.Content(
+                        country = null,
+                        region = action.region,
+                        isCountrySelected = false,
+                        isRegionSelected = true
                     )
-                )
+                }
+                _workChooseStateLiveData.postValue(updatedWorkState)
             }
         }
     }
@@ -296,6 +303,58 @@ class SharedViewModel(
                     is ResultHttp.NoConnection -> {}
                 }
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun loadAllRegions() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            areaInteractor.getAllRegions().collect { result ->
+                when (result) {
+                    is ResultHttp.Success -> {
+                        _allAreas.value = result.data
+                        _regions.value = result.data.map { it.toAreaUiModel() }
+                        _error.value = null
+                    }
+                    is ResultHttp.Error -> {
+                        _error.value = result.message ?: "Ошибка загрузки"
+                    }
+                    is ResultHttp.NoConnection -> {
+                        _error.value = "Нет подключения к интернету"
+                    }
+                }
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun findAndSetCountryByRegion(region: Area) {
+        viewModelScope.launch {
+            val country = areaInteractor.findCountryByRegion(region.id)
+            if (country != null) {
+                val currentState = workChooseStateLiveData.value
+
+                val updatedState = when (currentState) {
+                    is WorkChooseState.Content -> {
+                        WorkChooseState.Content(
+                            country = country,
+                            region = region,
+                            isCountrySelected = true,
+                            isRegionSelected = true
+                        )
+                    }
+
+                    else -> WorkChooseState.Content(
+                        country = country,
+                        region = region,
+                        isCountrySelected = true,
+                        isRegionSelected = true
+                    )
+                }
+                _workChooseStateLiveData.postValue(updatedState)
+            } else {
+                android.util.Log.d("SharedViewModel", "Country not found for region: ${region.name}")
             }
         }
     }
