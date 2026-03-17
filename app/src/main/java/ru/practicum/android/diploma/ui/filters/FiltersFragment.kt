@@ -80,7 +80,7 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             addTextChangedListener { s: Editable? ->
                 val text = s?.toString() ?: ""
                 updateSalaryHintColor(hasFocus(), text)
-                binding.ivClearSalary.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
+                binding.ivClearSalary.visibility = if (text.isNotEmpty() && hasFocus()) View.VISIBLE else View.GONE
                 salaryInputFlow.value = text
             }
         }
@@ -127,7 +127,7 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             }
         }
 
-        binding.ivClearSalary.visibility = if (state.salary > 0) View.VISIBLE else View.GONE
+
         binding.cbHideWithoutSalary.isChecked = state.onlyWithSalary
         binding.bottomButtons.visibility = if (hasChanges(state)) View.VISIBLE else View.GONE
     }
@@ -209,7 +209,7 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
         val colorRes = when {
             hasFocus -> R.color.blue
             text.isNotEmpty() -> R.color.black
-            else -> R.color.white
+            else -> R.color.gray
         }
         binding.tvSalaryHint.setTextColor(ContextCompat.getColor(requireContext(), colorRes))
     }
