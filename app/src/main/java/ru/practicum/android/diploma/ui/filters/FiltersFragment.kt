@@ -10,19 +10,30 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FiltersFragmentBinding
 import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.domain.models.Industry
 
+@OptIn(FlowPreview::class)
 class FiltersFragment : Fragment(R.layout.filters_fragment) {
 
     private var _binding: FiltersFragmentBinding? = null
     private val binding get() = _binding!!
 
     private val sharedViewModel: SharedViewModel by activityViewModel()
+
+    private val salaryInputFlow = MutableStateFlow("")
+    private var isInitialLoad = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -34,10 +45,21 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUI()
+
+        salaryInputFlow
+            .debounce(DEBOUNCE_TIMEOUT)
+            .distinctUntilChanged()
+            .onEach { text ->
+                val salary = text.toIntOrNull() ?: 0
+                sharedViewModel.filtersOnAction(FiltersAction.FiltersSalaryChange(salary))
+                if (!isInitialLoad) {
+                    sharedViewModel.filtersOnAction(FiltersAction.FiltersApply)
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun initUI() {
-        // Навигация
         binding.ivBack.setOnClickListener { findNavController().navigateUp() }
 
         binding.itemWorkplace.setOnClickListener {
@@ -50,7 +72,6 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             findNavController().navigate(R.id.action_filtersFragment_to_industryChooseFragment)
         }
 
-        // Поле зарплаты
         with(binding.etExpectedSalary) {
             setOnFocusChangeListener { _, hasFocus ->
                 updateSalaryHintColor(hasFocus, text.toString())
@@ -60,7 +81,7 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
                 val text = s?.toString() ?: ""
                 updateSalaryHintColor(hasFocus(), text)
                 binding.ivClearSalary.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
-                sharedViewModel.filtersOnAction(FiltersAction.FiltersSalaryChange(text.toIntOrNull() ?: 0))
+                salaryInputFlow.value = text
             }
         }
 
@@ -68,11 +89,12 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             binding.etExpectedSalary.text?.clear()
             binding.etExpectedSalary.clearFocus()
             updateSalaryHintColor(false, "")
-            sharedViewModel.filtersOnAction(FiltersAction.FiltersSalaryClear)
+            salaryInputFlow.value = ""
         }
 
         binding.cbHideWithoutSalary.setOnCheckedChangeListener { _, isChecked ->
             sharedViewModel.filtersOnAction(FiltersAction.FiltersOnlyWithSalaryChange(isChecked))
+            sharedViewModel.filtersOnAction(FiltersAction.FiltersApply)
         }
 
         binding.btnApply.setOnClickListener {
@@ -85,14 +107,18 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
             resetUI()
         }
 
-        // Наблюдатель
         sharedViewModel.filtersStateLiveData.observe(viewLifecycleOwner) { state ->
-            if (state is FiltersState.Content) updateUI(state)
+            if (state is FiltersState.Content){
+                updateUI(state)
+                isInitialLoad = false
+            }
         }
     }
+
     private fun updateUI(state: FiltersState.Content) {
         updateWorkplaceDisplay(state.country, state.region)
         updateIndustryDisplay(state.industry)
+
         if (!binding.etExpectedSalary.hasFocus()) {
             if (state.salary > 0) {
                 binding.etExpectedSalary.setText(state.salary.toString())
@@ -105,7 +131,6 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
         binding.cbHideWithoutSalary.isChecked = state.onlyWithSalary
         binding.bottomButtons.visibility = if (hasChanges(state)) View.VISIBLE else View.GONE
     }
-
 
     private fun updateIndustryDisplay(industry: Industry?) {
         val hasSelection = industry != null
@@ -172,6 +197,7 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
         updateWorkplaceDisplay(null, null)
         updateIndustryDisplay(null)
         sharedViewModel.filtersOnAction(FiltersAction.FiltersReset)
+        sharedViewModel.filtersOnAction(FiltersAction.FiltersApply)
     }
 
     private fun hasChanges(state: FiltersState.Content): Boolean {
@@ -198,5 +224,6 @@ class FiltersFragment : Fragment(R.layout.filters_fragment) {
         private const val TITLE_DEFAULT_TEXT_SIZE = 16f
         private const val MARGIN_DEFAULT = 0
         private const val MARGIN_UPDATED = 12
+        private const val DEBOUNCE_TIMEOUT = 1000L
     }
 }

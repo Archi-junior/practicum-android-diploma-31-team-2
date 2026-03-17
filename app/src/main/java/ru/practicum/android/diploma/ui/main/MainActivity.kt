@@ -1,11 +1,13 @@
 package ru.practicum.android.diploma.ui.main
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -14,7 +16,6 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.ActivityMainBinding
 import ru.practicum.android.diploma.domain.SettingsInteractor
 import ru.practicum.android.diploma.domain.models.FilterSettings
-import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             updateTitle(destination.id)
             updateFilterButtonVisibility(destination.id)
-            updateFilterButtonColor(destination.id)
+            updateFilterButtonState(destination.id)
         }
     }
 
@@ -79,52 +80,71 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-        private fun getTitleText(destinationId: Int): String {
-            return getString(
-                when (destinationId) {
-                    R.id.searchFragment -> R.string.job_search
-                    R.id.favoriteFragment -> R.string.favorites
-                    R.id.teamFragment -> R.string.team
-                    R.id.countryChooseFragment -> R.string.choosing_country
-                    R.id.regionChooseFragment -> R.string.choosing_region
-                    else -> R.string.app_name
-                }
-            )
-        }
-
-        private fun shouldHideTitle(destinationId: Int): Boolean {
-            return destinationId in listOf(
-                R.id.vacancyFragment,
-                R.id.favoriteFragment,
-                R.id.filtersFragment,
-                R.id.workChooseFragment,
-                R.id.countryChooseFragment,
-                R.id.regionChooseFragment,
-                R.id.industryChooseFragment
-            )
-        }
-
-        private fun updateFilterButtonVisibility(destinationId: Int) {
-            binding.filterButton.visibility = if (destinationId == R.id.searchFragment) {
-                View.VISIBLE
-            } else {
-                View.GONE
+    private fun getTitleText(destinationId: Int): String {
+        return getString(
+            when (destinationId) {
+                R.id.searchFragment -> R.string.job_search
+                R.id.favoriteFragment -> R.string.favorites
+                R.id.teamFragment -> R.string.team
+                R.id.countryChooseFragment -> R.string.choosing_country
+                R.id.regionChooseFragment -> R.string.choosing_region
+                else -> R.string.app_name
             }
+        )
+    }
+
+    private fun shouldHideTitle(destinationId: Int): Boolean {
+        return destinationId in listOf(
+            R.id.vacancyFragment,
+            R.id.favoriteFragment,
+            R.id.filtersFragment,
+            R.id.workChooseFragment,
+            R.id.countryChooseFragment,
+            R.id.regionChooseFragment,
+            R.id.industryChooseFragment
+        )
+    }
+
+    private fun updateFilterButtonVisibility(destinationId: Int) {
+        binding.filterButtonContainer.visibility = if (destinationId == R.id.searchFragment) {
+            View.VISIBLE
+        } else {
+            View.GONE
         }
+    }
 
-        private fun updateFilterButtonColor(destinationId: Int) {
+    private fun updateFilterButtonState(destinationId: Int) {
+        if (destinationId != R.id.searchFragment) return
 
-            if (destinationId != R.id.searchFragment) return
+        val emptyFilter = FilterSettings(
+            country = null,
+            region = null,
+            industry = null,
+            salary = 0,
+            onlyWithSalary = false,
+        )
+        val filterSettings = settingsInteractor.getFilterSettings()
 
-            val emptyFilter = FilterSettings(
-                country = null,
-                region = null,
-                industry = null,
-                salary = 0,
-                onlyWithSalary = false,
+        if (filterSettings == null|| filterSettings == emptyFilter) {
+            binding.filterBackground.visibility = View.GONE
+
+            val typedValue = TypedValue()
+            theme.resolveAttribute(
+                com.google.android.material.R.attr.colorOnPrimary,
+                typedValue,
+                true
             )
-            val filterSettings = settingsInteractor.getFilterSettings()
-            if (filterSettings == null || filterSettings == emptyFilter) {
+            binding.filterButton.imageTintList = ColorStateList.valueOf(typedValue.data)
+        } else {
+            val isFilterEmpty = filterSettings.country == null &&
+                filterSettings.region == null &&
+                filterSettings.industry == null &&
+                filterSettings.salary == 0 &&
+                !filterSettings.onlyWithSalary
+
+            if (isFilterEmpty) {
+                binding.filterBackground.visibility = View.GONE
+
                 val typedValue = TypedValue()
                 theme.resolveAttribute(
                     com.google.android.material.R.attr.colorOnPrimary,
@@ -133,7 +153,9 @@ class MainActivity : AppCompatActivity() {
                 )
                 binding.filterButton.imageTintList = ColorStateList.valueOf(typedValue.data)
             } else {
-                binding.filterButton.imageTintList = ContextCompat.getColorStateList(this, R.color.blue)
+                binding.filterBackground.visibility = View.VISIBLE
+                binding.filterButton.imageTintList = ColorStateList.valueOf(Color.WHITE)
             }
         }
     }
+}

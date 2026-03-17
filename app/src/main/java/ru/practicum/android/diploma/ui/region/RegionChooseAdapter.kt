@@ -16,6 +16,8 @@ class RegionChooseAdapter(
         notifyDataSetChanged()
     }
 
+    fun getCurrentList(): List<AreaUi> = regions
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RegionViewHolder {
         val binding = ItemRegionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RegionViewHolder(binding)

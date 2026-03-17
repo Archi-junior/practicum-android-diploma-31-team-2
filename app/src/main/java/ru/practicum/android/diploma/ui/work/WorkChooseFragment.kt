@@ -45,18 +45,18 @@ class WorkChooseFragment : Fragment() {
         }
 
         binding.clRegion.setOnClickListener {
-            val currentState = sharedViewModel.workChooseStateLiveData.value
-            if (currentState is WorkChooseState.Content && currentState.country != null) {
-                sharedViewModel.workOnAction(WorkAction.WorkRegionClick)
+            sharedViewModel.workOnAction(WorkAction.WorkRegionClick)
 
-                val bundle = Bundle().apply {
-                    putInt("countryId", currentState.country.id)
-                }
-                findNavController().navigate(
-                    R.id.action_workChooseFragment_to_regionChooseFragment,
-                    bundle
-                )
+            val bundle = Bundle().apply {
+                val countryId = (
+                    sharedViewModel.workChooseStateLiveData.value as? WorkChooseState.Content
+                    )?.country?.id ?: 0
+                putInt("countryId", countryId)
             }
+            findNavController().navigate(
+                R.id.action_workChooseFragment_to_regionChooseFragment,
+                bundle
+            )
         }
 
         binding.ivCountryClear.setOnClickListener {
@@ -132,6 +132,7 @@ class WorkChooseFragment : Fragment() {
                 tvCountryValue.isVisible = true
                 ivCountryClear.isVisible = true
                 tvCountryTitle.textSize = TITLE_SELECTED_TEXT_SIZE
+                binding.ivCountryArrow.isVisible = false
             } else {
                resetCountryView()
             }
@@ -145,20 +146,18 @@ class WorkChooseFragment : Fragment() {
                 tvRegionValue.isVisible = true
                 ivRegionClear.isVisible = true
                 tvRegionTitle.textSize = TITLE_SELECTED_TEXT_SIZE
+                binding.ivRegionArrow.isVisible = false
             } else {
                 resetRegionView()
             }
-
-            val hasCountry = (
-                sharedViewModel.workChooseStateLiveData.value as? WorkChooseState.Content
-            )?.country != null
-            clRegion.isEnabled = hasCountry
-            clRegion.alpha = if (hasCountry) VISUAL_ALPHA_VALUE else HALF_VISUAL_ALPHA_VALUE
+            clRegion.isEnabled = true
+            clRegion.alpha = VISUAL_ALPHA_VALUE
         }
     }
 
     private fun resetCountryView() {
         binding.apply {
+            ivCountryArrow.isVisible = true
             tvCountryValue.isVisible = false
             ivCountryClear.isVisible = false
             tvCountryTitle.textSize = TITLE_DEFAULT_TEXT_SIZE
@@ -167,6 +166,7 @@ class WorkChooseFragment : Fragment() {
 
     private fun resetRegionView() {
         binding.apply {
+            ivRegionArrow.isVisible = true
             tvRegionValue.isVisible = false
             ivRegionClear.isVisible = false
             tvRegionTitle.textSize = TITLE_DEFAULT_TEXT_SIZE
@@ -180,7 +180,6 @@ class WorkChooseFragment : Fragment() {
 
     companion object{
         const val VISUAL_ALPHA_VALUE = 1.0f
-        const val HALF_VISUAL_ALPHA_VALUE = 1.0f
         private const val TITLE_SELECTED_TEXT_SIZE = 12f
         private const val TITLE_DEFAULT_TEXT_SIZE = 16f
     }
