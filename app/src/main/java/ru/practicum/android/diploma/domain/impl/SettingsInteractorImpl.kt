@@ -15,4 +15,8 @@ class SettingsInteractorImpl(
     override fun getFilterSettings(): FilterSettings? {
         return repository.getFilterSettings()
     }
+
+    override fun clearFilterSettings() {
+        repository.clearFilterSettings()
+    }
 }

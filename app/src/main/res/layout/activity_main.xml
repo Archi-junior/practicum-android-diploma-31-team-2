@@ -30,17 +30,31 @@
             android:textColor="?attr/colorOnPrimary"
             android:textSize="22sp" />
 
-        <ImageView
-            android:id="@+id/filterButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <FrameLayout
+            android:id="@+id/filterButtonContainer"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="4dp"
-            android:contentDescription="@string/filter_icon"
-            android:padding="12dp"
-            android:src="@drawable/ic_filter_icon"
-            android:visibility="gone"/>
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/filterBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/filter_background"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/filterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/filter_icon"
+                android:src="@drawable/ic_filter_icon"
+                app:tint="?attr/colorOnPrimary" />
+        </FrameLayout>
     </LinearLayout>
 
     <androidx.fragment.app.FragmentContainerView

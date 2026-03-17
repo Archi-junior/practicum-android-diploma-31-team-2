@@ -93,6 +93,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?attr/colorOnPrimary"
                 app:layout_constraintBottom_toBottomOf="@id/tvCountryValue"
                 app:layout_constraintEnd_toStartOf="@id/ivCountryArrow"
                 app:layout_constraintTop_toTopOf="@id/tvCountryValue" />
@@ -146,6 +147,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?attr/colorOnPrimary"
                 app:layout_constraintBottom_toBottomOf="@id/tvRegionValue"
                 app:layout_constraintEnd_toStartOf="@id/ivRegionArrow"
                 app:layout_constraintTop_toTopOf="@id/tvRegionValue" />

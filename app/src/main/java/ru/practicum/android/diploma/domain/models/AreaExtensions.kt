@@ -12,6 +12,10 @@ fun List<Area>.getRegionsForCountry(countryId: Int): List<Area> {
 }
 
 fun List<Area>.findCountryByRegion(regionId: Int): Area? {
-    val region = find { it.id == regionId } ?: return null
-    return find { it.id == region.parentId }
+    forEach { country ->
+        if (country.areas.any { it.id == regionId }) {
+            return country
+        }
+    }
+    return null
 }

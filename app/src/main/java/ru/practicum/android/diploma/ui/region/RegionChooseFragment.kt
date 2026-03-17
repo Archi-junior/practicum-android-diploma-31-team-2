@@ -8,17 +8,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel  // Добавить этот импорт
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.RegionChooseFragmentBinding
 import ru.practicum.android.diploma.presentation.mapper.AreaUi
 import ru.practicum.android.diploma.presentation.mapper.toDomainArea
-import ru.practicum.android.diploma.ui.work.WorkAction
 import ru.practicum.android.diploma.ui.filters.SharedViewModel
 
 class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
@@ -26,13 +26,16 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
     private var _binding: RegionChooseFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: SharedViewModel by activityViewModel()
+    private val sharedViewModel: SharedViewModel by activityViewModel()
+    private val viewModel: RegionViewModel by viewModel()
+    private val searchQuery = MutableStateFlow("")
 
     private val countryId: Int by lazy {
-        arguments?.getInt("countryId") ?: throw IllegalArgumentException("countryId required")
+        arguments?.getInt("countryId") ?: 0
     }
 
     private lateinit var adapter: RegionChooseAdapter
+    private var isFirstLoad = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,7 +46,13 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
         setupSearch()
         setupObservers()
 
-        viewModel.loadRegions(countryId)
+        showLoading()
+
+        if (countryId > 0) {
+            viewModel.loadRegions(countryId)
+        } else {
+            viewModel.loadAllRegions()
+        }
     }
 
     private fun setupToolbar() {
@@ -53,8 +62,14 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
     }
 
     private fun setupRecyclerView() {
-        adapter = RegionChooseAdapter(emptyList()) { region ->
-            viewModel.regionOnAction(RegionAction.RegionSelectItem(region.toDomainArea()))
+        adapter = RegionChooseAdapter(emptyList()) { regionUi ->
+            val region = regionUi.toDomainArea()
+            sharedViewModel.regionOnAction(RegionAction.RegionSelectItem(region))
+
+            if (countryId == 0) {
+                sharedViewModel.findAndSetCountryByRegion(region)
+            }
+
             findNavController().popBackStack()
         }
         binding.listRegionRecyclerView.apply {
@@ -65,7 +80,7 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
 
     private fun setupSearch() {
         binding.searchRegionEditText.addTextChangedListener { text ->
-            viewModel.updateSearchQuery(text.toString())
+            searchQuery.value = text.toString()
         }
     }
 
@@ -73,7 +88,7 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
         viewLifecycleOwner.lifecycleScope.launch {
             combine(
                 viewModel.regions,
-                viewModel.searchQuery.debounce(DEBOUNCE_TIME).distinctUntilChanged()
+                searchQuery.debounce(DEBOUNCE_TIME).distinctUntilChanged()
             ) { regions, query ->
                 if (query.isBlank()) {
                     regions
@@ -84,37 +99,60 @@ class RegionChooseFragment : Fragment(R.layout.region_choose_fragment) {
                 }
             }.collect { filteredRegions ->
                 adapter.updateRegions(filteredRegions)
-                updatePlaceholders(filteredRegions)
-                binding.listRegionRecyclerView.isVisible = filteredRegions.isNotEmpty()
-                binding.listRegionRecyclerView.visibility = View.VISIBLE
+                if (!viewModel.isLoading.value) {
+                    updateUI(filteredRegions)
+                }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
-                if (!isLoading && viewModel.regions.value.isNotEmpty()) {
-                    binding.listRegionRecyclerView.isVisible = true
+                if (isLoading) {
+                    showLoading()
+                } else {
+                    isFirstLoad = false
+                    updateUI(adapter.getCurrentList())
                 }
             }
         }
     }
 
-    private fun updatePlaceholders(regions: List<AreaUi>) {
-        when {
-            viewModel.error.value != null -> {
-                binding.noListPlaceholder.isVisible = true
-                binding.noRegionPlaceholder.isVisible = false
-                binding.listRegionRecyclerView.isVisible = false
+    private fun updateUI(filteredRegions: List<AreaUi>) {
+        val hasError = viewModel.error.value != null
+        val hasSearchQuery = searchQuery.value.isNotBlank()
+        val hasRegions = filteredRegions.isNotEmpty()
+
+        binding.apply {
+            progressBar.isVisible = false
+            listRegionRecyclerView.isVisible = false
+            noRegionPlaceholder.isVisible = false
+            noListPlaceholder.isVisible = false
+            searchRegionEditText.isVisible = true
+
+            when {
+                hasError -> {
+                    noListPlaceholder.isVisible = true
+                }
+                !hasRegions && hasSearchQuery -> {
+                    noRegionPlaceholder.isVisible = true
+                }
+                !hasRegions && !hasSearchQuery && !isFirstLoad -> {
+                    noRegionPlaceholder.isVisible = true
+                }
+                else -> {
+                    listRegionRecyclerView.isVisible = true
+                }
             }
-            regions.isEmpty() && viewModel.searchQuery.value.isBlank() -> {
-                binding.noRegionPlaceholder.isVisible = true
-                binding.noListPlaceholder.isVisible = false
-                binding.listRegionRecyclerView.isVisible = false
-            }
-            else -> {
-                binding.noRegionPlaceholder.isVisible = false
-                binding.noListPlaceholder.isVisible = false
-            }
+        }
+    }
+
+    private fun showLoading() {
+        binding.apply {
+            progressBar.isVisible = true
+            listRegionRecyclerView.isVisible = false
+            noRegionPlaceholder.isVisible = false
+            noListPlaceholder.isVisible = false
+            searchRegionEditText.isVisible = false
         }
     }
 

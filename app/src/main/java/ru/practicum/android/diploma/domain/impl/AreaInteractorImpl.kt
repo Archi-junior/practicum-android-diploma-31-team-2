@@ -29,9 +29,10 @@ class AreaInteractorImpl(
         repository.searchRegions(query, countryId)
 
     override suspend fun findCountryByRegion(regionId: Int): Area? {
-        val result = getAllRegions().first()
+        val result = getAllAreas().first()
         return if (result is ResultHttp.Success) {
-            result.data.findCountryByRegion(regionId)
+            val country = result.data.findCountryByRegion(regionId)
+            country
         } else {
             null
         }

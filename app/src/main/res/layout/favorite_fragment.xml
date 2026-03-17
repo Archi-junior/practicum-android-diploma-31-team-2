@@ -26,7 +26,7 @@
     <ImageView
         android:id="@+id/ivEmpty"
         style="@style/FavoriteImageView.Empty"
-        android:src="@drawable/favorite_list_empty"
+        android:src="@drawable/image_error_list_empty"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,7 +52,7 @@
     <ImageView
         android:id="@+id/ivCouldntGetList"
         style="@style/FavoriteImageView.CouldntGetList"
-        android:src="@drawable/favorite_couldnt_get_list"
+        android:src="@drawable/image_error_couldnt_get_list"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

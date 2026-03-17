@@ -61,13 +61,22 @@ class FiltersActionHandler(
     }
 
     fun handleFiltersReset() {
+        settingsInteractor.clearFilterSettings()
         filtersStateLiveData.postValue(
-            (filtersStateLiveData.value as FiltersState.Content).copy(
+            FiltersState.Content(
                 country = null,
                 region = null,
                 industry = null,
                 salary = 0,
-                onlyWithSalary = false,
+                onlyWithSalary = false
+            )
+        )
+        workChooseStateLiveData.postValue(
+            WorkChooseState.Content(
+                country = null,
+                region = null,
+                isCountrySelected = false,
+                isRegionSelected = false
             )
         )
     }

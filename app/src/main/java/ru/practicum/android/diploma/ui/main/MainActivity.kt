@@ -1,11 +1,14 @@
 package ru.practicum.android.diploma.ui.main
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import org.koin.android.ext.android.inject
@@ -13,7 +16,6 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.ActivityMainBinding
 import ru.practicum.android.diploma.domain.SettingsInteractor
 import ru.practicum.android.diploma.domain.models.FilterSettings
-import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,7 +32,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
         navController = navHostFragment.navController
         setupBottomNavigation()
         setupDestinationListener()
@@ -51,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             updateTitle(destination.id)
             updateFilterButtonVisibility(destination.id)
-            updateFilterButtonColor(destination.id)
+            updateFilterButtonState(destination.id)
         }
     }
 
@@ -62,6 +65,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTitle(destinationId: Int) {
+        when (destinationId) {
+            R.id.vacancyFragment -> {
+                binding.bottomNavigationView.isVisible = false
+            }
+
+            else -> {
+                binding.bottomNavigationView.isVisible = true
+            }
+        }
         binding.titleText.apply {
             text = getTitleText(destinationId)
             visibility = if (shouldHideTitle(destinationId)) View.GONE else View.VISIBLE
@@ -94,15 +106,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateFilterButtonVisibility(destinationId: Int) {
-        binding.filterButton.visibility = if (destinationId == R.id.searchFragment) {
+        binding.filterButtonContainer.visibility = if (destinationId == R.id.searchFragment) {
             View.VISIBLE
         } else {
             View.GONE
         }
     }
 
-    private fun updateFilterButtonColor(destinationId: Int) {
-
+    private fun updateFilterButtonState(destinationId: Int) {
         if (destinationId != R.id.searchFragment) return
 
         val emptyFilter = FilterSettings(
@@ -113,7 +124,10 @@ class MainActivity : AppCompatActivity() {
             onlyWithSalary = false,
         )
         val filterSettings = settingsInteractor.getFilterSettings()
-        if (filterSettings == null || filterSettings == emptyFilter) {
+
+        if (filterSettings == null|| filterSettings == emptyFilter) {
+            binding.filterBackground.visibility = View.GONE
+
             val typedValue = TypedValue()
             theme.resolveAttribute(
                 com.google.android.material.R.attr.colorOnPrimary,
@@ -122,7 +136,26 @@ class MainActivity : AppCompatActivity() {
             )
             binding.filterButton.imageTintList = ColorStateList.valueOf(typedValue.data)
         } else {
-            binding.filterButton.imageTintList = ContextCompat.getColorStateList(this, R.color.blue)
+            val isFilterEmpty = filterSettings.country == null &&
+                filterSettings.region == null &&
+                filterSettings.industry == null &&
+                filterSettings.salary == 0 &&
+                !filterSettings.onlyWithSalary
+
+            if (isFilterEmpty) {
+                binding.filterBackground.visibility = View.GONE
+
+                val typedValue = TypedValue()
+                theme.resolveAttribute(
+                    com.google.android.material.R.attr.colorOnPrimary,
+                    typedValue,
+                    true
+                )
+                binding.filterButton.imageTintList = ColorStateList.valueOf(typedValue.data)
+            } else {
+                binding.filterBackground.visibility = View.VISIBLE
+                binding.filterButton.imageTintList = ColorStateList.valueOf(Color.WHITE)
+            }
         }
     }
 }

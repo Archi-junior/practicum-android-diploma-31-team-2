@@ -14,14 +14,13 @@ import ru.practicum.android.diploma.domain.ResultHttp
 import ru.practicum.android.diploma.domain.SettingsInteractor
 import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.domain.models.Industry
-import ru.practicum.android.diploma.presentation.mapper.AreaUi
-import ru.practicum.android.diploma.presentation.mapper.toAreaUiModel
 import ru.practicum.android.diploma.ui.industry.IndustryAction
 import ru.practicum.android.diploma.ui.industry.IndustryChooseState
 import ru.practicum.android.diploma.ui.country.CountryAction
 import ru.practicum.android.diploma.ui.country.CountryChooseState
 import ru.practicum.android.diploma.ui.region.RegionAction
 import ru.practicum.android.diploma.ui.region.RegionChooseState
+import ru.practicum.android.diploma.ui.region.RegionSelectionHandler
 import ru.practicum.android.diploma.ui.work.WorkAction
 import ru.practicum.android.diploma.ui.work.WorkActionHandler
 import ru.practicum.android.diploma.ui.work.WorkChooseState
@@ -29,10 +28,9 @@ import ru.practicum.android.diploma.ui.work.WorkChooseState
 class SharedViewModel(
     private val areaInteractor: AreaInteractor,
     private val industryInteractor: IndustriesInteractor,
-    settingsInteractor: SettingsInteractor,
+    private val settingsInteractor: SettingsInteractor,
 ) : ViewModel() {
 
-    private val filterSettings = settingsInteractor.getFilterSettings()
     private var areas = mutableListOf<Area>()
     private var industries = mutableListOf<Industry>()
 
@@ -48,44 +46,46 @@ class SharedViewModel(
     private val _workChooseStateLiveData = MutableLiveData<WorkChooseState>(WorkChooseState.Initial)
     val workChooseStateLiveData: LiveData<WorkChooseState> = _workChooseStateLiveData
 
-    private val _filtersStateLiveData = MutableLiveData<FiltersState>(
-        FiltersState.Content(
+    private val _filtersStateLiveData = MutableLiveData<FiltersState>()
+    val filtersStateLiveData: LiveData<FiltersState> = _filtersStateLiveData
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error
+
+    private var workActionHandler: WorkActionHandler
+    private var filtersActionHandler: FiltersActionHandler
+
+    private val regionSelectionHandler: RegionSelectionHandler
+
+    init {
+        loadSavedFilters()
+
+        workActionHandler = WorkActionHandler(_workChooseStateLiveData, _filtersStateLiveData)
+
+        filtersActionHandler = FiltersActionHandler(
+            _filtersStateLiveData,
+            _workChooseStateLiveData,
+            settingsInteractor
+        )
+
+        regionSelectionHandler = RegionSelectionHandler(
+            areaInteractor = areaInteractor,
+            workChooseStateLiveData = _workChooseStateLiveData
+        )
+    }
+
+    private fun loadSavedFilters() {
+        val filterSettings = settingsInteractor.getFilterSettings()
+        _filtersStateLiveData.value = FiltersState.Content(
             country = filterSettings?.country,
             region = filterSettings?.region,
             industry = filterSettings?.industry,
             salary = filterSettings?.salary ?: 0,
             onlyWithSalary = filterSettings?.onlyWithSalary ?: false,
         )
-    )
-    val filtersStateLiveData: LiveData<FiltersState> = _filtersStateLiveData
-
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery
-
-    private val _regions = MutableStateFlow<List<AreaUi>>(emptyList())
-    val regions: StateFlow<List<AreaUi>> = _regions
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    private var workActionHandler: WorkActionHandler = WorkActionHandler(
-        _workChooseStateLiveData, _filtersStateLiveData
-    )
-    private var filtersActionHandler: FiltersActionHandler
-
-    init {
-        filtersActionHandler = FiltersActionHandler(
-            _filtersStateLiveData,
-            _workChooseStateLiveData,
-            settingsInteractor
-        )
-    }
-
-    fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
     }
 
     fun industryOnAction(action: IndustryAction) {
@@ -148,11 +148,16 @@ class SharedViewModel(
                 )
             }
             is RegionAction.RegionSelectItem -> {
-                _workChooseStateLiveData.postValue(
-                    (workChooseStateLiveData.value as WorkChooseState.Content).copy(
-                        region = action.region
+                val updatedWorkState = when (val currentWorkState = workChooseStateLiveData.value) {
+                    is WorkChooseState.Content -> currentWorkState.copy(region = action.region)
+                    else -> WorkChooseState.Content(
+                        country = null,
+                        region = action.region,
+                        isCountrySelected = false,
+                        isRegionSelected = true
                     )
-                )
+                }
+                _workChooseStateLiveData.postValue(updatedWorkState)
             }
         }
     }
@@ -175,10 +180,18 @@ class SharedViewModel(
             is FiltersAction.FiltersWorkClear -> filtersActionHandler.handleFiltersWorkClear()
             is FiltersAction.FiltersIndustryChange -> onFiltersIndustryChange()
             is FiltersAction.FiltersIndustryClear -> filtersActionHandler.handleFiltersIndustryClear()
-            is FiltersAction.FiltersSalaryChange -> filtersActionHandler.handleFiltersSalaryChange(action.salary)
-            is FiltersAction.FiltersSalaryClear -> filtersActionHandler.handleFiltersSalaryClear()
-            is FiltersAction.FiltersOnlyWithSalaryChange ->
+            is FiltersAction.FiltersSalaryChange -> {
+                filtersActionHandler.handleFiltersSalaryChange(action.salary)
+
+            }
+            is FiltersAction.FiltersSalaryClear -> {
+                filtersActionHandler.handleFiltersSalaryClear()
+
+            }
+            is FiltersAction.FiltersOnlyWithSalaryChange -> {
                 filtersActionHandler.handleFiltersOnlyWithSalaryChange(action.onlyWithSalary)
+
+            }
             is FiltersAction.FiltersApply -> filtersActionHandler.handleFiltersApply()
             is FiltersAction.FiltersReset -> filtersActionHandler.handleFiltersReset()
         }
@@ -274,20 +287,7 @@ class SharedViewModel(
         }
     }
 
-    fun loadRegions(countryId: Int) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            areaInteractor.getRegionsByCountry(countryId).collect { result ->
-                when (result) {
-                    is ResultHttp.Success -> {
-                        _regions.value = result.data.map { it.toAreaUiModel() }
-                        _error.value = null
-                    }
-                    is ResultHttp.Error -> {}
-                    is ResultHttp.NoConnection -> {}
-                }
-                _isLoading.value = false
-            }
-        }
+    fun findAndSetCountryByRegion(region: Area) {
+        regionSelectionHandler.findAndSetCountryByRegion(region, viewModelScope)
     }
 }
